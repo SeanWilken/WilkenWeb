@@ -1,0 +1,418 @@
+// **********************
+//  IMPORT DEPENDENCIES
+// **********************
+// **********************
+// NOTHING TO SEE HERE...
+// @import '../Modules/Portfolio/Games/TileSort/style/style.scss';
+
+@import url('https://fonts.googleapis.com/css2?family=Ubuntu:wght@500&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Vollkorn&display=swap');
+@import url('https://fonts.googleapis.com/css?family=Bungee&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Exo:ital,wght@0,100;0,200;0,600;1,300&display=swap');
+
+// TEST SANDBOX STYLES *******************
+
+// @import url('https://fonts.googleapis.com/css2?family=Exo:ital,wght@0,600;1,300&display=swap');
+// @import url('https://fonts.googleapis.com/css2?family=Philosopher:ital@1&display=swap');
+// @import url('https://fonts.googleapis.com/css2?family=Big+Shoulders+Inline+Text:wght@100&display=swap');
+// @import url('https://fonts.googleapis.com/css2?family=Abel&display=swap');
+
+// USEFUL LINKS:
+// https://convertacolor.com/
+// https://paletton.com/#uid=1000u0kllllaFw0g0qFqFg0w0aF
+
+// THEME COLORS
+// Light-Blue-Slate (plain text) 
+// HEX: #69A69A // RGB: (105,166,154)
+// Blue-Slate (html background fade)
+// HEX: #0f2e3b // RGB: (15,46,59)
+// Dark-Blue-Slate (game grid container)
+// HEX: #010E14 // RGB: (1,14,20)
+// IS-SUCCESS (Win condition)
+// HEX: #00ff00 // RGB: (0,255,0)
+// COMMENT GREEN #0A5A00 // NOT USED CURRENTLY
+// IS-DANGER (Action items / text)
+// Red Pink: 
+// HEX: #FF2843 // RBG: (255,40,67)
+
+// PALETTON CHOICES:
+// BLUE
+// 1E4150
+// LIGHT RANGE: // HEX: #325665 // RGB: (50, 86, 101)
+// MID RANGE: // HEX: #0f2e3b // RGB: (15,46,59)
+// DARK RANGE: // HEX: #010E14 // RGB: (1,14,20)
+
+// ORANGE
+// LIGHT RANGE: // HEX: #FF5B41 //161, 141, 75
+// MID RANGE: // HEX: #FF2A09 //94, 76, 20
+// DARK RANGE: // HEX: #CD1C00 //61, 47, 4
+// DARKEST RANGE: // HEX: #991500 //31, 24, 0
+
+// COMPLIMENT RED
+// LIGHT RANGE: // HEX: #A14B4B //161, 75, 75
+// MID RANGE: // HEX: #5E1414 //94, 20, 20 *******
+// DARK RANGE: // HEX: #3D0404 //61, 4, 4
+// DARKEST RANGE: // HEX: #1F0000 //31, 0, 0
+
+// UNSPLASH PHOTOS
+// I DID NOT MAKE TAKE OR MAKE THESE!!
+// CREDIT GOES TO ACCOUNT LINK ABOVE
+// CHECK THEM OUT
+// https://unsplash.com/@aperturevintage
+// background-image: url("../public/imgs/unsplash/spaceSunset.jpg");
+
+// https://unsplash.com/@n8rayfield
+// background-image: url("../public/imgs/unsplash/spaceTreeRadiate.jpg");
+
+// https://unsplash.com/@wilstewart3
+// background-image: url("../public/imgs/unsplash/space.jpg");
+
+//https://unsplash.com/@carlosandres11
+// background-image: url("../public/imgs/unsplash/moonFade.jpg");
+
+//https://unsplash.com/@cbarbalis
+// background-image: url("../public/imgs/unsplash/blurSun.jpg");
+
+// TEST SANDBOX STYLES *******************
+
+// **********************
+// GENERAL CLASSES
+// **********************
+// #elmish-app {
+//     background: linear-gradient(rgb(1, 14, 20), rgb(15, 71, 95));
+//     background-image: url("../public/imgs/space.jpg");
+//     background-size: cover;
+//     background-repeat: no-repeat;
+// }
+html {
+    background-image: url("../public/imgs/unsplash/space.jpg");
+    background-size: auto;
+    background-repeat: no-repeat;
+}
+// **********************
+.headerTitle {
+    color: #69A69A;
+    font-family: "Exo";
+    font-weight: 300;
+    font-size: 100px;
+}
+.headerNavColumns {
+    flex-direction: column;
+    padding: 10px;
+    font-family: "Exo";
+    font-style: italic;
+    font-weight: 300;
+    align-content: center;
+}
+.headerNavLinks {
+    font-size: 20px;
+    padding: 5px;
+    &:hover {
+        font-size: 35px;
+    }
+}
+// ACTIONS
+.blurContent {
+    -webkit-filter: blur(5px);
+    filter: blur(5px);
+    &:hover {
+        -webkit-filter: blur(0px);
+        filter: blur(0px);
+    }
+}
+// **********************
+
+// *************************
+// GENERAL REUSABLE CLASSES
+// *************************
+.contentCard {
+    padding: 50px;
+    border: 1px solid #000000;
+    box-shadow: 10px 10px 10px black;
+    background-image: url("../public/imgs/unsplash/blurSun.jpg");
+    background-size:cover;
+    background-repeat: no-repeat;
+    color: #69A69A;
+    font-family: "Exo";
+    text-align: center;
+    h1 {
+        font-size: 50px;
+        font-weight: 600;
+    }
+    h2 {
+        font-size: 30px;
+        font-weight: 300;
+        font-style: italic;
+        color: #dddddd;
+    }
+    p {
+        font-size: 20px;
+        font-weight: 200;
+        color: #dddddd;
+    }
+    a {
+        color: #FF2843;
+        font-family: "Ubuntu";
+        font-size: 20px;
+    }
+    columns {
+        flex-direction: column;
+        display: flex;
+        align-items: center;
+        padding: 10px;
+    }
+}
+.welcomeContentCard {
+    @extend .contentCard;
+    background-image: url("../public/imgs/unsplash/moonFade.jpg");
+}
+.aboutContentCard {
+    @extend .contentCard;
+    background-size: cover;
+    background-position: center;
+    background-image: url("../public/imgs/unsplash/spaceSunset.jpg");
+}
+.contactContentCard {
+    @extend .contentCard;
+    background-image: url("../public/imgs/unsplash/spaceSunset.jpg");
+    background-size: cover;
+    background-position: center;
+}
+.contentCardTextBackground {
+    background-color: rgba(0,0,0, .75);
+    padding: 25px;
+}
+// *************************
+// GENERAL ELEMENTS
+// **********************
+.columnContainer {
+    padding: 50px; 
+}    
+// **********************
+
+// **********************
+// WELCOME PAGE CLASSES
+// **********************
+.welcomeHeroImage {
+    background: #dddddd;
+    // background-image: url("../public/imgs/Bricklines.png");
+    border: 1px solid #000000;
+    box-shadow: 10px 10px 10px black;
+    padding: 50px;
+}
+// EXTEND!!
+.welcomeNextSectionCard  {
+    display: block;
+    position: static;
+    padding: 50px;
+    background: #010E14;
+    border: 1px solid #000000;
+    box-shadow: 15px 10px 10px black;
+    background-image: url("../public/imgs/unsplash/moonFade.jpg");
+    background-size:cover;
+    color: #69A69A;
+    font-family: "Exo";
+    font-style: normal;
+    text-align: center;
+    h1 {
+        font-size: 30px;
+        font-weight: 600;
+    }
+    h2 {
+        display: none;
+        color: #FF2843;
+        font-family: "Ubuntu";
+        font-size: 30px;
+        font-size: 30px;
+    }
+    p {
+        font-size: 20px;
+        font-weight: 200;
+    }
+    // '&' is the parent selector
+    &:hover {
+        border: 2px solid #FF2843; 
+        h1 {
+            display: none;
+        }
+        h2 {
+            display: block;
+            font-family: "Ubuntu";
+            color: #FF2843;
+        }
+    }
+}
+// **********************
+
+// **********************
+// ABOUT SECTION CLASSES
+.aboutSectionContainer {
+    background-image: url("../public/imgs/Break\ Rules.png");
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+}
+// **********************
+
+// **********************
+// PORTFOLIO SECTION CLASSES
+// THIS SHOULD BE BIGGER, HAS SAME HOVER FUNCTIONALITY AS WELCOME NEXT SECTION
+// SHOULD EXTEND A CLASS, NOT DOUBLE IMPLEMENT THE GALLERY CARDS (PORT AND WELCOME)
+.portfolioGalleryCard  {
+    display: block;
+    position: static;
+    padding: 50px;
+    background: #010E14;
+    // PICK A GOOD BACKGROUND
+    background-image: url("../public/imgs/unsplash/blurSun.jpg");
+    background-size: cover;
+    background-position: center;
+    border: 1px solid #000000;
+    box-shadow: 15px 10px 10px black;
+    color:#0f2e3b;
+    font-family: "Exo";
+    font-style: normal;
+    text-align: center;
+    h1 {
+        font-size: 30px;
+        font-weight: 600;
+    }
+    h2 {
+        display: none;
+        color: #FF2843;
+        font-family: "Ubuntu";
+        font-size: 30px;
+        font-size: 30px;
+    }
+    p {
+        font-size: 20px;
+        font-weight: 200;
+    }
+    // '&' is the parent selector
+    &:hover {
+        border: 2px solid #FF2843; 
+        h1 {
+            display: none;
+        }
+        h2 {
+            display: block;
+            font-family: "Ubuntu";
+            color: #FF2843;
+        }
+    }
+}
+.backToGallery {
+    padding: 15px;
+    border: 1px solid #FF2843;
+    font-family: "Exo";
+    font-size: 20px;
+    p {
+        color: #FF2843;
+        font-weight: 600;
+    }
+}
+// **********************
+// GALLERY CLASSES
+// **********************
+// this is specific to game section tiles?
+.selectionTile {
+    padding: 20px;
+    box-shadow: 5px 5px 5px black;
+    background: #010E14; 
+    background-image: url("../public/imgs/unsplash/moonFade.jpg");
+    background-size:cover;
+    text-align: center;
+    p {
+        font-family: "Vollkorn";
+        font-size: 18px;
+        color: #69A69A;
+    }
+    h1 {
+        color: #FF2843;
+        font-size: 45px;
+        font-family: "Ubuntu";
+    }
+    &:hover {
+        border: 2px solid #FF2843;
+    }
+}
+.gameGridControlBar {
+    margin: 15px;
+    border: 1px solid #000000;
+    box-shadow: 10px 10px 10px black;
+    background: #010E14;
+    background-image: url("../public/imgs/Bricklines.png");
+    background-size: contain;
+    background-position-x: center;
+    font-family: "Exo";
+    font-size: 20px;
+    text-align: center;
+    h1 {
+        font-size: 45px;
+    }
+    p {
+        padding: 10px;
+        color: #69A69A;
+        font-style: italic;
+        font-weight: 600;
+    }
+    a {
+        color: #FF2843;
+        &:hover {
+            font-size: 30px;
+        }  
+    }
+    .level-item {
+        padding: 10px;
+    }
+}
+.gameGridContainer {
+    text-align: -webkit-center;
+    margin: 20px;
+    padding: 30px;
+    background: #031A23;
+    // PICK A GOOD BACKGROUND!!
+    border: 1px solid #000000;
+}
+// NEEDS ANIMATIONS?
+// SCROLL WINNER ACROSS GRID SECTION MIGHT BE COOL
+.levelCompletedCard {
+    background: #010E14; 
+    border: 2px solid #00ff00;
+    box-shadow: 15px 10px 10px black;
+    text-align: center;
+    font-family: "Bungee";
+    font-size: 100px;
+    color: #00ff00;
+    margin: 20px;
+    padding: 20px;
+}
+// **********************
+// **********************
+// ART GALLERY CLASSES
+// **********************
+.galleryTitleCard {
+    font-size: 75px;
+    color: #69A69A;
+    font-family: "Exo";
+    font-style: italic;
+    text-align: center;
+    h1 { font-weight: 600; }
+}
+.galleryDescriptionCard {
+    font-size: 25px;
+    color: #69A69A;
+    font-family: "Exo";
+    text-align: center;
+}
+.galleryImage {
+    border: 1px solid #000000;
+    box-shadow: 10px 10px 10px black;
+    background-color: #ffffff;
+    padding: 100px;
+    margin-left: auto;
+    margin-right: auto;
+    text-align: center;
+    overflow: hidden;
+}
+// **********************
