@@ -29,16 +29,16 @@ let mainAbout =
                 Tile.child [ ] [ Image.image [] [ img [Src "./imgs/Out for Blood.png"] ] ]
                 Tile.child [] [ 
                     Container.container [ Container.Props [ ClassName "aboutContentCard" ] ] [
-                        div [ ]  [
-                            Tile.parent [] [
-                                Tile.parent [ Tile.IsVertical; Tile.Size Tile.Is11 ] [
-                                    Tile.child [Tile.Props [ ClassName "contentCardTextBackground"] ] [
-                                        h1 [] [ str "General"]
-                                        p [] [ str "I wrote this website as a way to demonstrate some of my skills, processes, and personal traits / interests. As a mainly self-taught computer programmer, I am constantly looking for new and interesting aspects of technology. Check back frquently to see what's new, as I plan to update this with new features, games and content. I wrote all the code from a boilerplate, drew all the icons and designs seen across the website, and am hosting and running continuous deployments for development. Check out the portfolio section for some example demo's, explore some drawings or check out the source code that comprises the different sections and the website itself..." ]
-                                    ]
+                        Level.level [ Level.Level.Props [ ClassName "contentCardTextBackground"] ] [
+                            Level.item [] [
+                                Tile.child [ ] [
+                                    h1 [] [ str "General"]
+                                    p [] [ str "I wrote this website as a way to demonstrate some of my skills, processes, and personal traits / interests. As a mainly self-taught computer programmer, I am constantly looking for new and interesting aspects of technology. Check back frquently to see what's new, as I plan to update this with new features, games and content. I wrote all the code from a boilerplate, drew all the icons and designs seen across the website, and am hosting and running continuous deployments for development. Check out the portfolio section for some example demo's, explore some drawings or check out the source code that comprises the different sections and the website itself..." ]
                                 ]
-                                Columns.columns [ Columns.IsVCentered ] [ Column.column [] [ Tile.child [Tile.IsVertical; Tile.Size Tile.Is1;] [ Image.image [ Image.Is64x64 ] [ img [ Src "./imgs/icons/LeftNavButton.png"] ] ] ] ]
                             ]
+                        ]
+                        Level.level [ Level.Level.Props [ ClassName "aboutSectionHoverSelection"] ] [
+                            p [] [ str "Read More" ]
                         ]
                     ]
                 ]
@@ -60,7 +60,6 @@ let mainAbout =
         // deployed the code with the boys on release nights
 
 // ADD EXTRA DETAIL SECTIONS
-
 // ANIMATE CARD SLIDING WITH ARROW SOMEHOW?
 let secondaryAbout =
     Tile.ancestor [] [
@@ -68,16 +67,16 @@ let secondaryAbout =
             Level.level [] [
                 Tile.child [] [ 
                     Container.container [ Container.Props [ ClassName "aboutContentCard" ] ] [
-                        div [] [
-                            Tile.parent [] [
-                                Columns.columns [ Columns.IsVCentered ] [ Column.column [] [ Tile.child [Tile.IsVertical; Tile.Size Tile.Is1;] [ Image.image [ Image.Is64x64 ] [ img [ Src "./imgs/icons/RightNavButton.png"] ] ] ] ]
-                                Tile.parent [] [
-                                    Tile.child [ Tile.Props [ ClassName "contentCardTextBackground" ] ] [
-                                        h1 [] [ str "Professional"]
-                                        p [] [ str "I've been working as a software engineer for around 5 years. Through this time, I've worked as a full stack developer, tester, requirement gatherer, technical support assistance. I enjoy learning & discussing new languages, practices and design patterns, thinking critically and creatively to solve issues, etc.. blah blah." ]
-                                    ]
+                        Level.level [ Level.Level.Props [ ClassName "contentCardTextBackground"] ] [
+                            Level.item [] [
+                                Tile.child [ ] [
+                                    h1 [] [ str "Professional"]
+                                    p [] [ str "I've been working as a software engineer for around 5 years. Through this time, I've worked as a full stack developer, tester, requirement gatherer, technical support assistance. I enjoy learning & discussing new languages, practices and design patterns, thinking critically and creatively to solve issues, etc.. blah blah." ]
                                 ]
                             ]
+                        ]
+                        Level.level [ Level.Level.Props [ ClassName "aboutSectionHoverSelection"] ] [
+                            p [] [ str "Read More" ]
                         ]
                     ]
                 ]
@@ -86,7 +85,6 @@ let secondaryAbout =
             ]
         ]
     ]
-    
 
 // personal
     // sailed the carribean, enjoys getting fkn wrkd
@@ -100,24 +98,28 @@ let secondaryAbout =
 let tertiaryAbout =
     Tile.ancestor [] [
         Tile.parent [] [
-            Tile.child [] [
-                Container.container [ Container.Props [ ClassName "aboutContentCard" ] ] [
-                    div [ ClassName "contentCardTextBackground" ] [ // NOT SURE I LIKE IT FULL DISTRIBUTED
-                        h1 [] [ str "Personal"]
-                        p [] [ str "I'm a person just like you (unless you are a bot), who enjoys kicking back and relaxing. What that really means is I like to party and not be tied to a schedule for personal matters. Check out some pics below at IRL shenanigans." ]
-                        Level.level [] [
+            Level.level [] [
+                Tile.child [] [ 
+                    Container.container [ Container.Props [ ClassName "aboutContentCard" ] ] [
+                        Level.level [ Level.Level.Props [ ClassName "contentCardTextBackground"] ] [
                             Level.item [] [
-                                Image.image [ Image.Is64x64 ] [ img [ Src "./imgs/icons/UpNavButton.png"] ] 
+                                Tile.child [ ] [
+                                    h1 [] [ str "Personal"]
+                                    p [] [ str "I'm a person just like you (unless you are a bot), who enjoys kicking back and relaxing. Check out some IRL shenanigans pics below." ]
+                                ]
                             ]
                         ]
+                        Level.level [ Level.Level.Props [ ClassName "aboutSectionHoverSelection"] ] [
+                            p [] [ str "Read More" ]
+                        ]
                     ]
-                ]
-                Container.container [ Container.Props [ ClassName "columnContainer" ] ] [
-                    Columns.columns [] [
-                        // ADD / UPDATE LIFE PICS
-                        Image.image [] [ img [Src "./imgs/Bowing Bubbles.png"] ]
-                        Image.image [] [ img [Src "./imgs/Backstabber.png"] ]
-                        Image.image [] [ img [Src "./imgs/Misfortune.png"] ]
+                    Container.container [ Container.Props [ ClassName "columnContainer" ] ] [
+                        Columns.columns [] [
+                            // ADD / UPDATE LIFE PICS
+                            Image.image [] [ img [Src "./imgs/Bowing Bubbles.png"] ]
+                            Image.image [] [ img [Src "./imgs/Backstabber.png"] ]
+                            Image.image [] [ img [Src "./imgs/Misfortune.png"] ]
+                        ]
                     ]
                 ]
             ]

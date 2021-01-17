@@ -58,9 +58,11 @@ let update (msg: Msg) (model: SharedCodeGallery.Model): SharedCodeGallery.Model 
         model, Cmd.none
 
 let CodeGalleryHeader =
-    Container.container [ Container.Props [ ClassName "contentCard" ]] [
+    Container.container [ Container.Props [ ClassName "aboutContentCard" ]] [
+        Container.container [] [
             h1 [] [ str "Code Gallery" ]
             p [] [ str "Select one of the below to try out or view the source code." ]
+        ]
     ]
 
 // GENERIC NOT IMPLEMENTED YET

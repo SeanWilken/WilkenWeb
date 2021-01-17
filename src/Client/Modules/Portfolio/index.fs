@@ -42,7 +42,7 @@ let update (msg: Msg) (model: SharedPortfolioGallery.Model): SharedPortfolioGall
 
 // VIEW
 let PortfolioHeader =
-    Container.container [ Container.Props [ClassName "contentCard"] ] [
+    Container.container [ Container.Props [ClassName "aboutContentCard"] ] [
         Container.container [] [
             h1 [] [ str "Portfolio" ]
             p [] [ str "Select one of the below to delve deeper into the rabbit hole." ]
@@ -54,11 +54,9 @@ let PortfolioSplitView dispatch =
         Tile.ancestor [] [
             Tile.parent [Tile.IsVertical] [
                 a [ OnClick(fun _ -> LoadSection (SharedPortfolioGallery.CodeGallery SharedCodeGallery.CodeGallery) |> dispatch ) ] [
-                Container.container [ Container.Props [ ClassName "portfolioGalleryCard"]] [
-                // different background and size for image
-                // Container.container [ Container.Props [ ClassName "welcomeNextSectionCard"]] [
+                Container.container [ Container.Props [ ClassName "portfolioSectionHoverSelection"]] [
                         Tile.child [] [ 
-                            // Image.image [] [ img [Src "./imgs/Code twin.png"] ]
+                            // Image.image [] [ img [Src "./imgs/Green twin.png"] ]
                             h1 [] [ str "PLAY OR REVIEW CODE" ]
                             h2 [] [ str "CODE GALLERY" ]
                         ]
@@ -68,11 +66,11 @@ let PortfolioSplitView dispatch =
             // TODO PROFESSIONAL RESUME CONDENSED PDF / PAGE VERSION
             Tile.parent [Tile.IsVertical] [
                 a [ OnClick(fun _ -> LoadSection (SharedPortfolioGallery.DesignGallery SharedDesignGallery.getInitialModel) |> dispatch ) ] [
-                Container.container [ Container.Props [ ClassName "portfolioGalleryCard" ]] [
+                Container.container [ Container.Props [ ClassName "portfolioSectionHoverSelection" ]] [
                         Tile.child [] [ 
+                            // Image.image [] [ img [Src "./imgs/Red twin.png"] ]
                             h1 [] [ str "CHECK OUT SOME DRAWINGS" ]
                             h2 [] [ str "DESIGN GALLERY" ]
-                            // Image.image [] [ img [Src "./imgs/Design twin.png"] ]
                         ]
                     ]
                 ]

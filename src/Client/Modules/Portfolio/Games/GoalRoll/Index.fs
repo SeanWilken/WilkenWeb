@@ -178,11 +178,13 @@ let goalRollLevelCreator goalRollModel dispatch =
 let view model dispatch =
     Container.container [] [
         SharedModule.backToGallery QuitGame dispatch
-        Container.container [ Container.Props [ ClassName "contentCard" ] ] [
-            h1 [] [ str "Goal Roll"]
-            p [] [ str "- Roll the ball to the goal, travels in straight lines and stops when it hits a wall or blocked tile."]
-            p [] [ str "- Travels in straight lines and stops when it hits a wall or blocked tile."]
-            p [] [ str "- Use the arrows next to the ball in order to roll it in the desired direction."]
+        Container.container [ Container.Props [ ClassName "aboutContentCard" ] ] [
+            Container.container [] [
+                h1 [] [ str "Goal Roll"]
+                p [] [ str "- Roll the ball to the goal, travels in straight lines and stops when it hits a wall or blocked tile."]
+                p [] [ str "- Travels in straight lines and stops when it hits a wall or blocked tile."]
+                p [] [ str "- Use the arrows next to the ball in order to roll it in the desired direction."]
+            ]
         ]
         goalRollHeaderControls model.LevelIndex [0..3] dispatch
         match model.GameState with

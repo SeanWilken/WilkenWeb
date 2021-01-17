@@ -1,14 +1,15 @@
 // **********************
 //  IMPORT DEPENDENCIES
 // **********************
-// **********************
-// NOTHING TO SEE HERE...
-// @import '../Modules/Portfolio/Games/TileSort/style/style.scss';
 
 @import url('https://fonts.googleapis.com/css2?family=Ubuntu:wght@500&display=swap');
 @import url('https://fonts.googleapis.com/css2?family=Vollkorn&display=swap');
 @import url('https://fonts.googleapis.com/css?family=Bungee&display=swap');
 @import url('https://fonts.googleapis.com/css2?family=Exo:ital,wght@0,100;0,200;0,600;1,300&display=swap');
+
+// NOTHING TO SEE HERE...
+// @import '../Modules/Portfolio/Games/TileSort/style/style.scss';
+// **********************
 
 // TEST SANDBOX STYLES *******************
 
@@ -73,7 +74,7 @@
 //https://unsplash.com/@cbarbalis
 // background-image: url("../public/imgs/unsplash/blurSun.jpg");
 
-// TEST SANDBOX STYLES *******************
+// END TEST SANDBOX STYLES *******************
 
 // **********************
 // GENERAL CLASSES
@@ -129,9 +130,6 @@ html {
     padding: 50px;
     border: 1px solid #000000;
     box-shadow: 10px 10px 10px black;
-    background-image: url("../public/imgs/unsplash/blurSun.jpg");
-    background-size:cover;
-    background-repeat: no-repeat;
     color: #69A69A;
     font-family: "Exo";
     text-align: center;
@@ -162,15 +160,26 @@ html {
         padding: 10px;
     }
 }
+.contentCardTextBackground {
+    background-color: rgba(0, 0, 0, .6);
+    padding: 25px;
+    margin: 5px;
+}
 .welcomeContentCard {
     @extend .contentCard;
     background-image: url("../public/imgs/unsplash/moonFade.jpg");
+    background-size:cover;
+    background-repeat: no-repeat;
 }
 .aboutContentCard {
     @extend .contentCard;
     background-size: cover;
     background-position: center;
     background-image: url("../public/imgs/unsplash/spaceSunset.jpg");
+    align-content: center;
+    .container {
+        @extend .contentCardTextBackground;
+    }
 }
 .contactContentCard {
     @extend .contentCard;
@@ -178,38 +187,10 @@ html {
     background-size: cover;
     background-position: center;
 }
-.contentCardTextBackground {
-    background-color: rgba(0,0,0, .75);
-    padding: 25px;
-}
-// *************************
-// GENERAL ELEMENTS
-// **********************
-.columnContainer {
-    padding: 50px; 
-}    
-// **********************
-
-// **********************
-// WELCOME PAGE CLASSES
-// **********************
-.welcomeHeroImage {
-    background: #dddddd;
-    // background-image: url("../public/imgs/Bricklines.png");
-    border: 1px solid #000000;
-    box-shadow: 10px 10px 10px black;
-    padding: 50px;
-}
-// EXTEND!!
-.welcomeNextSectionCard  {
+.hoverActionSectionCard  {
     display: block;
     position: static;
     padding: 50px;
-    background: #010E14;
-    border: 1px solid #000000;
-    box-shadow: 15px 10px 10px black;
-    background-image: url("../public/imgs/unsplash/moonFade.jpg");
-    background-size:cover;
     color: #69A69A;
     font-family: "Exo";
     font-style: normal;
@@ -229,7 +210,6 @@ html {
         font-size: 20px;
         font-weight: 200;
     }
-    // '&' is the parent selector
     &:hover {
         border: 2px solid #FF2843; 
         h1 {
@@ -241,6 +221,53 @@ html {
             color: #FF2843;
         }
     }
+}
+.welcomeNextSectionCard  {
+    @extend .hoverActionSectionCard;
+    background: #010E14;
+    border: 1px solid #000000;
+    box-shadow: 15px 10px 10px black;
+    background-image: url("../public/imgs/unsplash/moonFade.jpg");
+    background-size:cover;
+}
+.aboutSectionHoverSelection {
+    @extend .contentCardTextBackground;
+    @extend .hoverActionSectionCard;
+    background: rgba(0, 0, 0, .75);
+    box-shadow: none;
+    padding: 0px;
+    font-weight: 100;
+    &:hover {
+        p { 
+            color: #FF2843; 
+            font-weight: 600;
+        }
+    }
+}
+// THIS SHOULD BE BIGGER, HAS SAME HOVER FUNCTIONALITY AS WELCOME NEXT SECTION
+.portfolioSectionHoverSelection  {
+    @extend .hoverActionSectionCard;
+    // // PICK A GOOD BACKGROUND
+    background-image: url("../public/imgs/unsplash/moonFade.jpg");
+    background-size: cover;
+    background-position: center;
+    border: 1px solid #000000;
+    box-shadow: 15px 10px 10px black;
+}
+// *************************
+// GENERAL ELEMENTS
+.columnContainer {
+    padding: 50px; 
+}    
+// **********************
+
+// **********************
+// WELCOME PAGE CLASSES
+.welcomeHeroImage {
+    background: #dddddd;
+    border: 1px solid #000000;
+    box-shadow: 10px 10px 10px black;
+    padding: 50px;
 }
 // **********************
 
@@ -256,51 +283,6 @@ html {
 
 // **********************
 // PORTFOLIO SECTION CLASSES
-// THIS SHOULD BE BIGGER, HAS SAME HOVER FUNCTIONALITY AS WELCOME NEXT SECTION
-// SHOULD EXTEND A CLASS, NOT DOUBLE IMPLEMENT THE GALLERY CARDS (PORT AND WELCOME)
-.portfolioGalleryCard  {
-    display: block;
-    position: static;
-    padding: 50px;
-    background: #010E14;
-    // PICK A GOOD BACKGROUND
-    background-image: url("../public/imgs/unsplash/blurSun.jpg");
-    background-size: cover;
-    background-position: center;
-    border: 1px solid #000000;
-    box-shadow: 15px 10px 10px black;
-    color:#0f2e3b;
-    font-family: "Exo";
-    font-style: normal;
-    text-align: center;
-    h1 {
-        font-size: 30px;
-        font-weight: 600;
-    }
-    h2 {
-        display: none;
-        color: #FF2843;
-        font-family: "Ubuntu";
-        font-size: 30px;
-        font-size: 30px;
-    }
-    p {
-        font-size: 20px;
-        font-weight: 200;
-    }
-    // '&' is the parent selector
-    &:hover {
-        border: 2px solid #FF2843; 
-        h1 {
-            display: none;
-        }
-        h2 {
-            display: block;
-            font-family: "Ubuntu";
-            color: #FF2843;
-        }
-    }
-}
 .backToGallery {
     padding: 15px;
     border: 1px solid #FF2843;
@@ -312,8 +294,9 @@ html {
     }
 }
 // **********************
-// GALLERY CLASSES
+
 // **********************
+// GALLERY CLASSES
 // this is specific to game section tiles?
 .selectionTile {
     padding: 20px;
@@ -323,7 +306,7 @@ html {
     background-size:cover;
     text-align: center;
     p {
-        font-family: "Vollkorn";
+        font-family: "Exo";
         font-size: 18px;
         color: #69A69A;
     }
@@ -370,8 +353,11 @@ html {
     text-align: -webkit-center;
     margin: 20px;
     padding: 30px;
-    background: #031A23;
     // PICK A GOOD BACKGROUND!!
+    background-image: url("../public/imgs/unsplash/spaceSunset.jpg");
+    background-position: center;
+    background-size: cover;
+    background-repeat: no-repeat;
     border: 1px solid #000000;
 }
 // NEEDS ANIMATIONS?
@@ -388,9 +374,9 @@ html {
     padding: 20px;
 }
 // **********************
+
 // **********************
 // ART GALLERY CLASSES
-// **********************
 .galleryTitleCard {
     font-size: 75px;
     color: #69A69A;

@@ -86,7 +86,8 @@ let decodeDifficultyByString string =
 
 // TILE SORT CONTROLS HEADER
 let tileSortHeader =
-    Container.container [ Container.Props [ ClassName "contentCard" ] ] [
+    Container.container [ Container.Props [ ClassName "aboutContentCard" ] ] [
+        Container.container [] [
             h1 [] [ str "Tile Sort"]
             p [] [ str "- Rearrange the tiles in correct ascending order, starting with the top left position being the lowest number." ]
             p [] [ str "- Select one of the tiles adjacent to the empty space to slide that tile into the blank."]
@@ -96,6 +97,7 @@ let tileSortHeader =
             // p [] [ str "- Use the 'New Round' button to generate a new board of the selected difficulty."]
             // p [] [ str "- Use the 'Reset Round' button to set the board back to it's initial state."]
         ]
+    ]
 // DIFFICULTY SELECTOR CONTROLS
 let difficultySelector (currentDifficulty: TileSortDifficulty) dispatch =
     Level.item [ Level.Item.HasTextCentered; ] [

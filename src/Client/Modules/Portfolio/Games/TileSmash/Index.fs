@@ -48,7 +48,8 @@ let goalRollRowCreator (rowPositions: LaneObject list) dispatch =
 
 // TILE SORT CONTROLS HEADER
 let tileSmashHeader =
-    Container.container [ Container.Props [ ClassName "contentCard" ] ] [
+    Container.container [ Container.Props [ ClassName "aboutContentCard" ] ] [
+        Container.container [] [
             h1 [] [ str "Tile Smash"]
             p [] [ str "- Survival Mode:" ]
             p [] [ str "- Smash the tile before it's timer runs out." ]
@@ -57,6 +58,7 @@ let tileSmashHeader =
             p [] [ str "- Smashing bombs takes away 2 HP."]
             // p [] [ str "- Time Attack: 30 or 60 seconds?: how many can you smash?" ]
         ]
+    ]
 
 // function to place a new flag or mark as missed if not smashed in the time alotted (have tile scroll color as interval reaches end)
 let tileSmashBoardView gridPositions dispatch =
