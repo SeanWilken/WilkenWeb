@@ -70,6 +70,7 @@ let nextButton dispatch =
         ]
 
 let galleryEntryCard piece description dispatch = 
+    Container.container [ Container.Props [ Style [Padding 20] ] ] [
         Tile.ancestor [] [
             Tile.parent [] [
                 Tile.child [] [
@@ -78,31 +79,32 @@ let galleryEntryCard piece description dispatch =
                     ]
                 ]
             ]
-            Tile.parent [Tile.IsVertical; Tile.Size Tile.Is5] [
-                Tile.parent [] [
-                    Container.container [ Container.Props [ Style [TextAlign TextAlignOptions.Center] ] ] [
-                        Level.level [] [
-                            Level.item [] [ previousButton dispatch ]
-                            Level.item [] [ SharedModule.backToGallery BackToPortfolio dispatch ]
-                            Level.item [] [ nextButton dispatch ]
+            Tile.parent [] [
+                Level.level [] [
+                    Container.container [] [
+                        Container.container [ Container.Props [ClassName "galleryTitleCard"] ] [
+                            h1 [] [ str piece ]
+                        ]   
+                        Container.container [ Container.Props [ ClassName "galleryDescriptionCard" ] ] [
+                            p [] [ str description ]
                         ]
-                    ]
-                ]
-                Tile.child [] [
-                    Container.container [ Container.Props [ClassName "galleryTitleCard"] ] [
-                        Container.container [] [ h1 [] [ str piece ] ]
-                    ]
-                ]
-                Tile.child [] [
-                    Container.container [ Container.Props [ ClassName "galleryDescriptionCard" ] ] [
-                        p [] [ str description ]
                     ]
                 ]
             ]
         ]
+    ]
 
 let view (model: SharedDesignGallery.Model) dispatch =
     Container.container [] [
+            Tile.parent [] [
+                Container.container [ Container.Props [ Style [TextAlign TextAlignOptions.Center] ] ] [
+                    Level.level [] [
+                        Level.item [] [ previousButton dispatch ]
+                        Level.item [] [ SharedModule.backToGallery BackToPortfolio dispatch ]
+                        Level.item [] [ nextButton dispatch ]
+                    ]
+                ]
+            ]
             let piece, description = getGalleryCardByIndex model.CurrentPieceIndex
             galleryEntryCard piece description dispatch
         ]
