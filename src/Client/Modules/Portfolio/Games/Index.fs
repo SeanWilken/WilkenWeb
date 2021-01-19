@@ -68,7 +68,7 @@ let CodeGalleryHeader =
 // GENERIC NOT IMPLEMENTED YET
 // iterative generation of gallery item cards
 let makeCodeGalleryEntryItem title description dispatch =
-    Container.container [ Container.Props [ ClassName "columnContainer"] ] [
+    Container.container [ Container.Props [ ClassName "paddedContainer"] ] [
         Columns.columns [ Columns.IsCentered ] [
             Column.column [Column.Width (Screen.All, Column.Is8)] [
                 a [ OnClick(fun _ -> LoadSection (SharedCodeGallery.TileSort SharedTileSort.getInitialBoard) |> dispatch ) ] [ // NEEDS TO GENERATE ITEM LIKE HEADER CONTROLS // NEEDS SAME CALL TO ITEM?
@@ -86,7 +86,7 @@ let makeCodeGalleryEntryItem title description dispatch =
 // ITERATE THROUGH THESE TO GENERATE
 // ODD NUMBERS GENERATE LEFT SIDE BUTTON
 let CodeGalleryTileSort dispatch =
-    Container.container [ Container.Props [ ClassName "columnContainer"] ] [
+    Container.container [ Container.Props [ ClassName "paddedContainer"] ] [
         Columns.columns [ Columns.IsCentered ] [
             Column.column [Column.Width (Screen.All, Column.Is8)] [
                 a [ OnClick(fun _ -> LoadSection (SharedCodeGallery.TileSort SharedTileSort.getInitialBoard) |> dispatch ) ] [
@@ -100,7 +100,7 @@ let CodeGalleryTileSort dispatch =
     ]
 
 let CodeGalleryGoalRoll dispatch =
-    Container.container [ Container.Props [ ClassName "columnContainer" ] ] [
+    Container.container [ Container.Props [ ClassName "paddedContainer" ] ] [
         Columns.columns [ Columns.IsCentered ] [
             Column.column [Column.Width (Screen.All, Column.Is7)] [
                 a [ OnClick(fun _ -> LoadSection (SharedCodeGallery.GoalRoll SharedGoalRoll.initModel) |> dispatch ) ] [
@@ -117,7 +117,7 @@ let CodeGalleryGoalRoll dispatch =
 // TODO
 // NEW WIP, JUST HOPPED IN
 let CodeGalleryTileSmash dispatch =
-    Container.container [ Container.Props [ ClassName "columnContainer"] ] [
+    Container.container [ Container.Props [ ClassName "paddedContainer"] ] [
         Columns.columns [ Columns.IsCentered ] [
             Column.column [Column.Width (Screen.All, Column.Is8)] [
                 a [ OnClick(fun _ -> LoadSection (SharedCodeGallery.TileSmash SharedTileSmash.initModel) |> dispatch ) ] [

@@ -76,7 +76,7 @@ let secondaryAbout =
                             ]
                         ]
                         Level.level [ Level.Level.Props [ ClassName "aboutSectionHoverSelection"] ] [
-                            p [] [ str "Read More" ]
+                            p [] [ str "Read More" ] // these will pull up modal!!
                         ]
                     ]
                 ]
@@ -113,7 +113,7 @@ let tertiaryAbout =
                             p [] [ str "Read More" ]
                         ]
                     ]
-                    Container.container [ Container.Props [ ClassName "columnContainer" ] ] [
+                    Container.container [ Container.Props [ ClassName "paddedContainer" ] ] [
                         Columns.columns [] [
                             // ADD / UPDATE LIFE PICS
                             Image.image [] [ img [Src "./imgs/Bowing Bubbles.png"] ]

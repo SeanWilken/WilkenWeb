@@ -59,36 +59,27 @@ let getGalleryCardByIndex (index: int) =
     piece, description
 
 // SECTION HEADER CONTROLS
-// HOVER MAKES IT RED? IDK
 let previousButton dispatch =
         a [ OnClick(fun _ -> SetCurrentPieceIndex (-1) |> dispatch ); ] [
             Image.image [ Image.Is64x64 ] [ img [ Src "./imgs/icons/LeftNavButton.png"] ] 
         ]
 let nextButton dispatch =
         a [ OnClick(fun _ -> SetCurrentPieceIndex (1) |> dispatch ); ] [
-            Image.image [ Image.Is64x64 ] [ img [ Src "./imgs/icons/RightNavButton.png"] ] 
+            Image.image [ Image.Is64x64; ] [ img [ Src "./imgs/icons/RightNavButton.png"] ] 
         ]
 
 let galleryEntryCard piece description dispatch = 
-    Container.container [ Container.Props [ Style [Padding 20] ] ] [
-        Tile.ancestor [] [
-            Tile.parent [] [
-                Tile.child [] [
-                    Container.container [ Container.Props [ ClassName "galleryImage"; ] ] [
-                        Image.image [] [ img [ Src ("./imgs/" + piece + ".png") ] ]
-                    ]
-                ]
-            ]
-            Tile.parent [] [
-                Level.level [] [
-                    Container.container [] [
-                        Container.container [ Container.Props [ClassName "galleryTitleCard"] ] [
-                            h1 [] [ str piece ]
-                        ]   
-                        Container.container [ Container.Props [ ClassName "galleryDescriptionCard" ] ] [
-                            p [] [ str description ]
-                        ]
-                    ]
+    Container.container [ Container.Props [ ClassName "paddedContainer" ] ] [
+        Container.container [ Container.Props [  Style [ ]; ClassName "galleryImage"; ] ] [
+            Image.image [] [ img [ Src ("./imgs/" + piece + ".png") ] ]
+        ]
+        Level.level [] [
+            Tile.child [Tile.IsVertical] [
+                Container.container [ Container.Props [ClassName "galleryTitleCard"] ] [
+                    h1 [] [ str piece ]
+                ]   
+                Container.container [ Container.Props [ ClassName "galleryDescriptionCard" ] ] [
+                    p [] [ str description ]
                 ]
             ]
         ]

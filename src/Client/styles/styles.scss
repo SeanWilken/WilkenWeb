@@ -256,7 +256,7 @@ html {
 }
 // *************************
 // GENERAL ELEMENTS
-.columnContainer {
+.paddedContainer {
     padding: 50px; 
 }    
 // **********************
@@ -400,5 +400,6 @@ html {
     margin-right: auto;
     text-align: center;
     overflow: hidden;
+    max-width: 60%;
 }
 // **********************

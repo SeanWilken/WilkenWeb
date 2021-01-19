@@ -50,7 +50,7 @@ let PortfolioHeader =
     ]
 
 let PortfolioSplitView dispatch =
-    Container.container [ Container.Props [ Style [PaddingTop 25] ] ] [ //ClassName "" ] ] [//columnContainer
+    Container.container [ Container.Props [ Style [PaddingTop 25] ] ] [ //ClassName "" ] ] [//paddedContainer
         Tile.ancestor [] [
             Tile.parent [Tile.IsVertical] [
                 a [ OnClick(fun _ -> LoadSection (SharedPortfolioGallery.CodeGallery SharedCodeGallery.CodeGallery) |> dispatch ) ] [
