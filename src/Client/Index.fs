@@ -31,6 +31,7 @@ open Contact
 // Represents submodule msg's to be passed along the elmish update dispatch loop
 type WebAppMsg =
     | WelcomeMsg of Welcome.Msg
+    | AboutMsg of AboutSection.Msg // FOR MODAL INTRODUCTION // TEMPORARY
     | PortfolioMsg of Portfolio.Msg
     | SwitchToOtherApp of string // please wrap me
     | LoadPage of string // WIP
@@ -47,8 +48,6 @@ type WebAppMsg =
 
 // PAGE ROUTER
 // ------------
-
-
 let pageParser : Parser<PageRouter.Page -> PageRouter.Page,_> =
     oneOf
         [
@@ -60,6 +59,8 @@ let pageParser : Parser<PageRouter.Page -> PageRouter.Page,_> =
 
 let urlParser location = parsePath pageParser location
 
+// left and right menu arrow navigation < on left side goes back a section if not on welcome,
+// > on right side goes forward a section if not on contact
 let urlUpdate (result: PageRouter.Page option) (model: SharedWebAppModels.Model) =
     match result with
     | None ->
@@ -67,7 +68,8 @@ let urlUpdate (result: PageRouter.Page option) (model: SharedWebAppModels.Model)
     | Some PageRouter.Page.Welcome ->
         SharedWebAppModels.Model.Welcome, Cmd.none
     | Some PageRouter.Page.About ->
-        SharedWebAppModels.Model.AboutSection, Cmd.none
+        // TEMPORARY
+        SharedWebAppModels.Model.AboutSection (SharedAboutSection.getInitialModel), Cmd.none
     | Some PageRouter.Page.Portfolio ->
         SharedWebAppModels.Model.Portfolio (SharedPortfolioGallery.PortfolioGallery), Cmd.none
     | Some PageRouter.Page.Contact ->
@@ -103,6 +105,14 @@ let loadPage path = async {
     return page
 }
 
+
+
+
+
+
+
+
+// the init has to have same signature and be called from the index html
 let init (path: PageRouter.Page option) : SharedWebAppModels.Model * Cmd<WebAppMsg> =
     urlUpdate path SharedWebAppModels.Model.Welcome
 
@@ -111,7 +121,12 @@ let update (msg: WebAppMsg) (model: SharedWebAppModels.Model): SharedWebAppModel
     
     | WelcomeMsg msg, SharedWebAppModels.Model.Welcome ->
         // model, Cmd.none
-        SharedWebAppModels.AboutSection, Navigation.newUrl (PageRouter.fromModelToPath (SharedWebAppModels.AboutSection)) //(PageRouter.toPath PageRouter.Page.About)
+        SharedWebAppModels.AboutSection (SharedAboutSection.getInitialModel), Navigation.newUrl (PageRouter.fromModelToPath (SharedWebAppModels.AboutSection SharedAboutSection.getInitialModel)) //(PageRouter.toPath PageRouter.Page.About)
+
+    // TEMPORARY
+    | AboutMsg msg, SharedWebAppModels.Model.AboutSection (model) ->
+        let thing, com = AboutSection.update msg model
+        SharedWebAppModels.AboutSection thing, Cmd.none
 
     | PortfolioMsg msg, SharedWebAppModels.Portfolio model ->
         match msg, model with
@@ -199,7 +214,7 @@ let headerContent (model: SharedWebAppModels.Model) dispatch =
                         let currentContentSection = 
                             match model with
                             | SharedWebAppModels.Welcome -> "Welcome"
-                            | SharedWebAppModels.AboutSection -> "AboutSection"
+                            | SharedWebAppModels.AboutSection model -> "AboutSection"
                             | SharedWebAppModels.Portfolio _ -> "Portfolio"
                             | SharedWebAppModels.Contact -> "Contact"
                         let areaStyle = if currentContentSection = areaName then [ Color "#69A69A"; FontWeight 600] else [ Color "#FF2843";] // is-normal-text vs is-danger class refactor
@@ -216,7 +231,8 @@ let view (model : SharedWebAppModels.Model) (dispatch : WebAppMsg -> unit) =
         headerContent model dispatch
         Container.container [ Container.Props [Style [ Padding 15; ] ] ] [ // STYLE THIS??
             match model with
-            | SharedWebAppModels.AboutSection -> AboutSection.view
+            // TEMPORARY
+            | SharedWebAppModels.AboutSection model -> AboutSection.view model (AboutMsg >> dispatch)
             | SharedWebAppModels.Welcome -> Welcome.view (WelcomeMsg >> dispatch)
             | SharedWebAppModels.Portfolio SharedPortfolioGallery.PortfolioGallery -> Portfolio.view SharedPortfolioGallery.PortfolioGallery (PortfolioMsg >> dispatch)
             | SharedWebAppModels.Portfolio (SharedPortfolioGallery.DesignGallery model) -> Portfolio.view (SharedPortfolioGallery.DesignGallery model) (PortfolioMsg >> dispatch)

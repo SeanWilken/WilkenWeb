@@ -56,7 +56,8 @@ let getPage pageString = async { // string path variable
     // this should be match case to return the appropriate model
     match pageString with
     | "/about" -> //http://localhost:8085/api/IPageApi/GetPage // "/about"
-        return SharedWebAppModels.AboutSection
+        // TEMPORARY
+        return SharedWebAppModels.AboutSection SharedAboutSection.getInitialModel
     | "/contact" ->
         return SharedWebAppModels.Contact
     | "/portfolio" ->

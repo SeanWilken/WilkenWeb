@@ -802,10 +802,19 @@ module SharedPortfolioGallery =
 
     let getInitialModel = PortfolioGallery
 
+module SharedAboutSection =
+    type Model =
+        {
+            ActiveModalIndex : int
+            ModalIsActive : bool
+        }
+       
+    let getInitialModel = {ActiveModalIndex = 0; ModalIsActive = false}
+
 module SharedWebAppModels =
     type Model =
         | Welcome
-        | AboutSection
+        | AboutSection of SharedAboutSection.Model
         | Portfolio of SharedPortfolioGallery.Model
         | Contact
 
@@ -824,7 +833,7 @@ module PageRouter =
         function
         | SharedWebAppModels.Welcome ->
             "/welcome"
-        | SharedWebAppModels.AboutSection ->
+        | SharedWebAppModels.AboutSection _ ->
             "/about"
         | SharedWebAppModels.Portfolio (SharedPortfolioGallery.PortfolioGallery) ->
             "/portfolio"
@@ -890,7 +899,7 @@ module PageRouter =
     let fromPath =
         function
         | "/about" ->
-            SharedWebAppModels.AboutSection //About
+            SharedWebAppModels.AboutSection (SharedAboutSection.getInitialModel)
         | "/portfolio" ->
             SharedWebAppModels.Portfolio (SharedPortfolioGallery.PortfolioGallery)
         | "/contact" ->

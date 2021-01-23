@@ -181,6 +181,16 @@ html {
         @extend .contentCardTextBackground;
     }
 }
+
+// this is ugly at breakpoints
+// needs further definition of subsections
+.aboutModalContentCard {
+    @extend .aboutContentCard;
+    .level-item {
+        @extend .contentCardTextBackground;
+    }
+}
+
 .contactContentCard {
     @extend .contentCard;
     background-image: url("../public/imgs/unsplash/spaceSunset.jpg");
