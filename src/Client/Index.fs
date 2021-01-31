@@ -73,19 +73,19 @@ let update (msg: WebAppMsg) (model: SharedWebAppModels.Model): SharedWebAppModel
 
         // PORTFOLIO GALLERY SUB MODULE
         | LoadSection (SharedPortfolioGallery.PortfolioGallery), _ -> 
-            SharedWebAppModels.Portfolio SharedPortfolioGallery.PortfolioGallery, Cmd.none
+            SharedWebAppModels.Portfolio model, Cmd.ofMsg (LoadPage (Page.Portfolio Landing))
         
         // CODE GALLERY SUB MODULE
         | LoadSection (SharedPortfolioGallery.CodeGallery (SharedCodeGallery.CodeGallery)), _ ->
-           SharedWebAppModels.Portfolio (SharedPortfolioGallery.CodeGallery (SharedCodeGallery.CodeGallery)), Cmd.none
+           SharedWebAppModels.Portfolio model, Cmd.ofMsg (LoadPage (Page.Portfolio (Code (CodeSection.Landing))))
         | CodeGalleryMsg CodeGallery.Msg.BackToPortfolio, _ -> 
-            SharedWebAppModels.Portfolio SharedPortfolioGallery.PortfolioGallery, Cmd.none
+            SharedWebAppModels.Portfolio model, Cmd.ofMsg (LoadPage (Page.Portfolio Landing))
 
         // ART GALLERY SUB MODULE
         | LoadSection (SharedPortfolioGallery.DesignGallery ({CurrentPieceIndex = 0}) ), _ ->  // TAKE PLAIN MODEL??? COMPILER COMPLAININ'
-           SharedWebAppModels.Portfolio (SharedPortfolioGallery.DesignGallery (SharedDesignGallery.getInitialModel)), Cmd.none
+           SharedWebAppModels.Portfolio model, Cmd.ofMsg (LoadPage (Page.Portfolio (Design)))
         | ArtGalleryMsg ArtGallery.Msg.BackToPortfolio, _ -> 
-            SharedWebAppModels.Portfolio SharedPortfolioGallery.PortfolioGallery, Cmd.none
+            SharedWebAppModels.Portfolio model, Cmd.ofMsg (LoadPage (Page.Portfolio Landing))
         // default case, bad hack // please fix this
         | msg, model ->
             let portfolioModel, com = Portfolio.update msg model
@@ -95,7 +95,7 @@ let update (msg: WebAppMsg) (model: SharedWebAppModels.Model): SharedWebAppModel
         // handles page route for top level
         match string with
         | "AboutSection" -> model, Cmd.ofMsg (LoadPage Page.About)
-        | "Portfolio" -> model, Cmd.ofMsg (LoadPage Page.Portfolio)
+        | "Portfolio" -> model, Cmd.ofMsg (LoadPage (Page.Portfolio(Landing)))
         | "Contact" -> model, Cmd.ofMsg (LoadPage Page.Contact)
         | "Welcome"
         | _ ->

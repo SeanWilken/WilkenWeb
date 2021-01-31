@@ -71,7 +71,7 @@ let makeCodeGalleryEntryItem title description dispatch =
     Container.container [ Container.Props [ ClassName "paddedContainer"] ] [
         Columns.columns [ Columns.IsCentered ] [
             Column.column [Column.Width (Screen.All, Column.Is8)] [
-                a [ OnClick(fun _ -> LoadSection (SharedCodeGallery.TileSort SharedTileSort.getInitialBoard) |> dispatch ) ] [ // NEEDS TO GENERATE ITEM LIKE HEADER CONTROLS // NEEDS SAME CALL TO ITEM?
+                a [ OnClick(fun _ -> LoadSection (SharedCodeGallery.TileSort SharedTileSort.initModel) |> dispatch ) ] [ // NEEDS TO GENERATE ITEM LIKE HEADER CONTROLS // NEEDS SAME CALL TO ITEM?
                     div [ ClassName "selectionTile"] [
                         h1 [] [ str title ]
                         p [] [ str description ] 
@@ -89,7 +89,7 @@ let CodeGalleryTileSort dispatch =
     Container.container [ Container.Props [ ClassName "paddedContainer"] ] [
         Columns.columns [ Columns.IsCentered ] [
             Column.column [Column.Width (Screen.All, Column.Is8)] [
-                a [ OnClick(fun _ -> LoadSection (SharedCodeGallery.TileSort SharedTileSort.getInitialBoard) |> dispatch ) ] [
+                a [ OnClick(fun _ -> LoadSection (SharedCodeGallery.TileSort SharedTileSort.initModel) |> dispatch ) ] [
                     div [ ClassName "selectionTile"] [
                         h1 [] [ str "Tile Sort" ]
                         p [] [ str "Arrange the tiles in the correct order, with the missing number being the empty." ] 

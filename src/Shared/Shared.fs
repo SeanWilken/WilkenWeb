@@ -92,7 +92,7 @@ module GridGame =
 module SharedGoalRoll =
 
     open GridGame
-    
+
     type Model =
         {
             LevelIndex: int
@@ -103,6 +103,8 @@ module SharedGoalRoll =
             GameState: GridGame.RoundState
             // MovementsMade: MovementDirection list
         }
+
+    let levelCeiling = 3
 
     let getBallPositionIndex (gameGridPositions: GridBoard) =
         getObjectPositionIndex gameGridPositions Ball
@@ -285,12 +287,14 @@ module SharedTileSmash =
 
     open GridGame
 
+
     type Model = {
         TileSmashGridBoard: GridBoard
         HitPoints: int
         TilesSmashed: int
         }
 
+    let levelCeiling = 1
     let gridDimension = 8
     let generateEmptyTileSmashGrid gridDimension =
         { GridPositions = [
@@ -335,6 +339,7 @@ module SharedTileSort =
         GameState: GridGame.RoundState // determines whether the puzzle has been solved or in progress
     }
 
+    let levelCeiling = 3
     // REFACTOR TO GAMES HELPER? A LOT OF THIS IS REUSABLE / REQUIRED BY GOALROLL
     // HELPER FUNCTIONS FOR RANDOMIZATION
     // Random Instance
@@ -535,7 +540,8 @@ module SharedTileSort =
             Turns = []
         }
     // Helper function for getting initial model
-    let getInitialBoard =
+    let initModel =
+    // let getInitialBoard =
         let initialDifficulty = Simple
         let initialRound = createNewRoundGameBoardBasedOnDifficulty initialDifficulty
         {
