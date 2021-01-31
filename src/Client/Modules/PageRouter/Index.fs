@@ -56,10 +56,8 @@ type Page =
 
 let toPath =
     function
-    | Some About ->
-        "/about"
-    | Some Portfolio ->
-        "/portfolio"
+    | Some About -> "/about"
+    | Some Portfolio -> "/portfolio"
     // | About General ->
     //     "/about"
     // | About Personal ->
@@ -78,49 +76,9 @@ let toPath =
     //         sprintf "/portfolio/tileSort/%i" int 
     // | Portfolio (Design int) ->
     //     sprintf "/portfolio/design/%i" int
-    | Some Contact ->
-        "/contact"
-    | Some Welcome ->
-        "/welcome"
-    | _ ->
-        ""
-
-// let fromModelToPath =
-//     function
-//     | SharedWebAppModels.Welcome ->
-//         "/welcome"
-//     | SharedWebAppModels.AboutSection _ ->
-//         "/about"
-//     | SharedWebAppModels.Portfolio (SharedPortfolioGallery.PortfolioGallery) ->
-//         "/portfolio"
-//     | SharedWebAppModels.Portfolio (SharedPortfolioGallery.CodeGallery _) ->
-//         "/portfolio/code"
-//     | SharedWebAppModels.Portfolio (SharedPortfolioGallery.DesignGallery _) ->
-//         "/portfolio/designs"
-//     // | SharedWebAppModels.Portfolio (SharedPortfolioGallery.DesignGallery _) ->
-//     //     "/portfolio/code"
-//     // | About General ->
-//     //     "/about"
-//     // | About Personal ->
-//     //     "/about/personal"
-//     // | About Professional ->
-//     //     "/about/professional"
-//     // | About Resume ->
-//     //     "/about/resume"
-//     // | Portfolio (Code (CodeUrl (codeSection, int))) ->
-//     //     match codeSection, int with
-//     //     | GoalRoll, int ->
-//     //         sprintf "/portfolio/goalRoll/%i" int 
-//     //     | TileSmash, int ->
-//     //         sprintf "/portfolio/tileSmash/%i" int 
-//     //     | TileSort, int ->
-//     //         sprintf "/portfolio/tileSort/%i" int 
-//     // | Portfolio (Design int) ->
-//     //     sprintf "/portfolio/design/%i" int
-//     | SharedWebAppModels.Contact ->
-//         "/contact"
-//     // | _ ->
-//     //     "/welcome"
+    | Some Contact -> "/contact"
+    | None 
+    | Some Welcome -> "/welcome"
 
 let pageParser : Parser<Page -> Page,_> =
     oneOf
@@ -143,7 +101,7 @@ let urlUpdate (result: Page option) (model: SharedWebAppModels.Model) =
         SharedWebAppModels.Portfolio SharedPortfolioGallery.PortfolioGallery, Navigation.modifyUrl (toPath (Some Page.Portfolio))
     | Some Page.Contact ->
         SharedWebAppModels.Contact, Navigation.modifyUrl (toPath (Some Page.Contact))
-    | _ 
+    // SHOULD BE A 404 OR ERROR PAGE
     | None ->
         SharedWebAppModels.Welcome, Navigation.modifyUrl (toPath (Some Page.Welcome))
 

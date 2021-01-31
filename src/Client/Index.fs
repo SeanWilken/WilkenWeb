@@ -35,6 +35,7 @@ type WebAppMsg =
     | AboutMsg of AboutSection.Msg // FOR MODAL INTRODUCTION // TEMPORARY
     | PortfolioMsg of Portfolio.Msg
     | SwitchToOtherApp of string // please wrap me
+    | LoadPage of Page
     // | LoadPage of string // WIP
     // | PageLoad of SharedWebAppModels.Model // WIP
     | ErrorMsg of exn// WIP
@@ -62,18 +63,14 @@ type WebAppMsg =
 
 // the init has to have same signature and be called from the index html
 let init (path: PageRouter.Page option) : SharedWebAppModels.Model * Cmd<WebAppMsg> =
-    // PageRouter.urlUpdate path SharedWebAppModels.Model.Welcome
-    // PageRouter.urlUpdate path SharedWebAppModels.Model.Welcome
     PageRouter.urlUpdate path SharedWebAppModels.Model.Welcome
 
 let update (msg: WebAppMsg) (model: SharedWebAppModels.Model): SharedWebAppModels.Model * Cmd<WebAppMsg> =
     match msg, model with
     
     | WelcomeMsg msg, SharedWebAppModels.Model.Welcome ->
-        // model, Cmd.none
-        SharedWebAppModels.AboutSection (SharedAboutSection.getInitialModel), Navigation.newUrl(PageRouter.toPath (Some PageRouter.Page.About)) //(PageRouter.fromModelToPath (SharedWebAppModels.AboutSection SharedAboutSection.getInitialModel)) //
+        model, Cmd.ofMsg (LoadPage Page.About)
 
-    // TEMPORARY
     | AboutMsg msg, SharedWebAppModels.Model.AboutSection (model) ->
         let thing, com = AboutSection.update msg model
         SharedWebAppModels.AboutSection thing, Cmd.none
@@ -104,21 +101,14 @@ let update (msg: WebAppMsg) (model: SharedWebAppModels.Model): SharedWebAppModel
     | SwitchToOtherApp string, _ ->
         // handles page route for top level
         match string with
-        | "AboutSection" -> 
-            SharedWebAppModels.AboutSection SharedAboutSection.getInitialModel, Navigation.newUrl(PageRouter.toPath (Some PageRouter.Page.About))
-        | "Portfolio" -> 
-            SharedWebAppModels.Portfolio SharedPortfolioGallery.PortfolioGallery, Navigation.newUrl(PageRouter.toPath (Some PageRouter.Page.Portfolio))
-        | "Contact" -> 
-            SharedWebAppModels.Contact, Navigation.newUrl(PageRouter.toPath (Some PageRouter.Page.Contact))
+        | "AboutSection" -> model, Cmd.ofMsg (LoadPage Page.About)
+        | "Portfolio" -> model, Cmd.ofMsg (LoadPage Page.Portfolio)
+        | "Contact" -> model, Cmd.ofMsg (LoadPage Page.Contact)
         | "Welcome"
         | _ ->
-            SharedWebAppModels.Welcome, Navigation.newUrl(PageRouter.toPath (Some PageRouter.Page.Welcome))
-    // SHOULD USE THIS?
-    // | LoadPage page, model ->
-        // pageModel, Cmd.none    
-    // | PageLoad page, _ ->
-    //     // page, Navigation.newUrl (PageRouter.fromModelToPath (page))
-    //     page, Navigation.newUrl (PageRouter.toPath (Some page))
+            model, Cmd.ofMsg (LoadPage Page.Welcome)
+    | LoadPage page, model ->
+        urlUpdate (Some page) model
     | _ -> model, Cmd.none
 
 open Fable.React
@@ -165,7 +155,7 @@ let headerContent (model: SharedWebAppModels.Model) dispatch =
                         let currentContentSection = 
                             match model with
                             | SharedWebAppModels.Welcome -> "Welcome"
-                            | SharedWebAppModels.AboutSection model -> "AboutSection"
+                            | SharedWebAppModels.AboutSection _ -> "AboutSection"
                             | SharedWebAppModels.Portfolio _ -> "Portfolio"
                             | SharedWebAppModels.Contact -> "Contact"
                         let areaStyle = if currentContentSection = areaName then [ Color "#69A69A"; FontWeight 600] else [ Color "#FF2843";] // is-normal-text vs is-danger class refactor
