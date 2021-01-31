@@ -9,8 +9,9 @@ module PageRouter
 
 open Elmish
 open Fable
-open Index
+// open Index
 open Portfolio
+open Shared
 
 // IS THIS NEEDED, OR LEAVE IN 
 // ------------
@@ -53,12 +54,51 @@ type Page =
     // | Portfolio of PortfolioSection
     | Contact
 
-// let toPath =
+let toPath =
+    function
+    | Some About ->
+        "/about"
+    | Some Portfolio ->
+        "/portfolio"
+    // | About General ->
+    //     "/about"
+    // | About Personal ->
+    //     "/about/personal"
+    // | About Professional ->
+    //     "/about/professional"
+    // | About Resume ->
+    //     "/about/resume"
+    // | Portfolio (Code (CodeUrl (codeSection, int))) ->
+    //     match codeSection, int with
+    //     | GoalRoll, int ->
+    //         sprintf "/portfolio/goalRoll/%i" int 
+    //     | TileSmash, int ->
+    //         sprintf "/portfolio/tileSmash/%i" int 
+    //     | TileSort, int ->
+    //         sprintf "/portfolio/tileSort/%i" int 
+    // | Portfolio (Design int) ->
+    //     sprintf "/portfolio/design/%i" int
+    | Some Contact ->
+        "/contact"
+    | Some Welcome ->
+        "/welcome"
+    | _ ->
+        ""
+
+// let fromModelToPath =
 //     function
-//     | About ->
+//     | SharedWebAppModels.Welcome ->
+//         "/welcome"
+//     | SharedWebAppModels.AboutSection _ ->
 //         "/about"
-//     | Portfolio ->
+//     | SharedWebAppModels.Portfolio (SharedPortfolioGallery.PortfolioGallery) ->
 //         "/portfolio"
+//     | SharedWebAppModels.Portfolio (SharedPortfolioGallery.CodeGallery _) ->
+//         "/portfolio/code"
+//     | SharedWebAppModels.Portfolio (SharedPortfolioGallery.DesignGallery _) ->
+//         "/portfolio/designs"
+//     // | SharedWebAppModels.Portfolio (SharedPortfolioGallery.DesignGallery _) ->
+//     //     "/portfolio/code"
 //     // | About General ->
 //     //     "/about"
 //     // | About Personal ->
@@ -77,40 +117,35 @@ type Page =
 //     //         sprintf "/portfolio/tileSort/%i" int 
 //     // | Portfolio (Design int) ->
 //     //     sprintf "/portfolio/design/%i" int
-//     | Contact ->
+//     | SharedWebAppModels.Contact ->
 //         "/contact"
-//     | Welcome ->
-//         "/home"
+//     // | _ ->
+//     //     "/welcome"
 
 let pageParser : Parser<Page -> Page,_> =
     oneOf
         [
-            map Page.Welcome (s "welcome")
-            map Page.About (s "about")
-            map Page.Portfolio (s "portfolio")
-            map Page.Contact (s "contact")
+            map Page.Welcome (s "/welcome")
+            map Page.About (s "/about")
+            map Page.Portfolio (s "/portfolio")
+            map Page.Contact (s "/contact")
         ]
 
 let urlParser location = parsePath pageParser location
 
-// // REQUIRES WEBAPPMODEL
-// // WHICH MAKES THIS MODULE APPEAR LOWER THAN INDEX.FS IN THE CLIENT.FSPROJ
-// // BAD?
-// let urlUpdate (result: Page option) (model: WebAppModel) =
-//     match result with
-//     | None ->
-//         WebAppModel.Welcome, Cmd.none//Navigation.modifyUrl (toPath Page.Welcome)
-//     | Some Page.Welcome ->
-//         WebAppModel.Welcome, Cmd.none//Navigation.modifyUrl (toPath Page.Welcome)
-//     | Some Page.About ->
-//         WebAppModel.AboutSection, Cmd.none//Navigation.modifyUrl (toPath Page.About)
-//     | Some Page.Portfolio ->
-//         WebAppModel.Portfolio PortfolioGallery, Cmd.none//Navigation.modifyUrl (toPath Page.Portfolio)
-//     | Some Page.Contact ->
-//         WebAppModel.Contact, Cmd.none
-//         //Navigation.modifyUrl (toPath Page.Contact)
-//     // | Some Page.Welcome ->
-//     // | Some Page.Welcome ->
+let urlUpdate (result: Page option) (model: SharedWebAppModels.Model) =
+    match result with
+    | Some Page.Welcome ->
+        SharedWebAppModels.Welcome, Navigation.modifyUrl (toPath (Some Welcome))
+    | Some Page.About ->
+        SharedWebAppModels.AboutSection SharedAboutSection.getInitialModel, Navigation.modifyUrl (toPath (Some Page.About))
+    | Some Page.Portfolio ->
+        SharedWebAppModels.Portfolio SharedPortfolioGallery.PortfolioGallery, Navigation.modifyUrl (toPath (Some Page.Portfolio))
+    | Some Page.Contact ->
+        SharedWebAppModels.Contact, Navigation.modifyUrl (toPath (Some Page.Contact))
+    | _ 
+    | None ->
+        SharedWebAppModels.Welcome, Navigation.modifyUrl (toPath (Some Page.Welcome))
 
 
 

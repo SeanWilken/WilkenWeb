@@ -9,7 +9,6 @@
         <None Include="index.html" />
         <None Include="paket.references" />
         <Compile Include="Modules\Shared\Index.fs" />
-        <Compile Include="Modules\ToDo\Index.fs" />
         <Compile Include="Modules\About\Index.fs" />
         <Compile Include="Modules\Portfolio\Games\GoalRoll\Index.fs" />
         <Compile Include="Modules\Portfolio\Games\PivotPoints\Index.fs" />
@@ -20,8 +19,8 @@
         <Compile Include="Modules\Portfolio\index.fs" />
         <Compile Include="Modules\Contact\Index.fs" />
         <Compile Include="Modules\Welcome\Index.fs" />
-        <Compile Include="Index.fs" />
         <Compile Include="Modules\PageRouter\Index.fs" />
+        <Compile Include="Index.fs" />
         <Compile Include="App.fs" />
     </ItemGroup>
     <ItemGroup>

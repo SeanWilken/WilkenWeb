@@ -24,6 +24,31 @@ let update msg model =
         model, Cmd.ofMsg QuitGame
 
 
+// Time drives main game state, as things happen in intervals contained within the main loop
+    // tile expire -> scales with time remaining
+
+    // smaller game grid, doesn't work well on 1080 (ALSO OTHER SECTIONS REVIEW)
+    // What is a tile smash board
+        // empty board with spaces
+            // smash
+            // bomb
+            // heart / clock
+            // blank
+
+// function to sleep and update the smash tiles
+    // if clicked
+        // smashed -> destroy active -> incrementScore -> spawnNewTile
+        // missed time -> tileExpire -> loseHealth -> spawn New
+        // wrongTile -> loseHealth
+
+        // Time attack version -> heart = clock to gain more time
+            // bomb takes away time
+
+// sleep function on spawn with timeout value for expiration
+// explode if timeoutValue reached
+// if clicked, intercept that timeout & destroy the tile and spawn a new one, with a fresh countdown clock
+
+
 let goalRollRowCreator (rowPositions: LaneObject list) dispatch =
     Level.level [] [
         Tile.parent [] [

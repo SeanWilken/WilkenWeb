@@ -51,6 +51,8 @@ let modalContent = [
     "More content about the personal aspects of myself and qualities"
 ]
 
+// fulma timeline to walk through timeline of events
+
 let toggleModal model index =
     let test = if (index <> model.ActiveModalIndex) then { model with ActiveModalIndex = index } else model
     { test with ModalIsActive = not model.ModalIsActive }

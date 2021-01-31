@@ -2,7 +2,8 @@ module App
 
 open Elmish
 open Elmish.React
-open Shared
+// open Shared
+open PageRouter
 
 #if DEBUG
 open Elmish.Debug
@@ -18,6 +19,5 @@ Program.mkProgram Index.init Index.update Index.view
 #if DEBUG
 |> Program.withDebugger
 #endif
-// SHOULD BE USING THE PAGEROUTER
-|> Program.toNavigable Index.urlParser Index.urlUpdate
+|> Program.toNavigable PageRouter.urlParser PageRouter.urlUpdate
 |> Program.run

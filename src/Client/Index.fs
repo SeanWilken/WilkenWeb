@@ -4,6 +4,7 @@ module Index
 open Elmish
 open Fable.Remoting.Client
 open Shared
+open PageRouter
 
 // URL BROWSER UPDATES
 open Elmish.UrlParser
@@ -34,94 +35,43 @@ type WebAppMsg =
     | AboutMsg of AboutSection.Msg // FOR MODAL INTRODUCTION // TEMPORARY
     | PortfolioMsg of Portfolio.Msg
     | SwitchToOtherApp of string // please wrap me
-    | LoadPage of string // WIP
-    | PageLoad of SharedWebAppModels.Model // WIP
+    // | LoadPage of string // WIP
+    // | PageLoad of SharedWebAppModels.Model // WIP
     | ErrorMsg of exn// WIP
 
 // TODO CLEAN ME TF UP
 // TODO GENERIC ROUTER
 // TODO TYPES FOR PAGES?
 // TODO HELPER FUNCTIONS?
-// TODO HYDRATE REQUEST TO SERVER
-
-
 
 // PAGE ROUTER
-// ------------
-let pageParser : Parser<PageRouter.Page -> PageRouter.Page,_> =
-    oneOf
-        [
-            map PageRouter.Page.Welcome (s "welcome")
-            map PageRouter.Page.About (s "about")
-            map PageRouter.Page.Portfolio (s "portfolio")
-            map PageRouter.Page.Contact (s "contact")
-        ]
-
-let urlParser location = parsePath pageParser location
-
-// left and right menu arrow navigation < on left side goes back a section if not on welcome,
-// > on right side goes forward a section if not on contact
-let urlUpdate (result: PageRouter.Page option) (model: SharedWebAppModels.Model) =
-    match result with
-    | None ->
-        SharedWebAppModels.Model.Welcome, Cmd.none
-    | Some PageRouter.Page.Welcome ->
-        SharedWebAppModels.Model.Welcome, Cmd.none
-    | Some PageRouter.Page.About ->
-        // TEMPORARY
-        SharedWebAppModels.Model.AboutSection (SharedAboutSection.getInitialModel), Cmd.none
-    | Some PageRouter.Page.Portfolio ->
-        SharedWebAppModels.Model.Portfolio (SharedPortfolioGallery.PortfolioGallery), Cmd.none
-    | Some PageRouter.Page.Contact ->
-        SharedWebAppModels.Model.Contact, Cmd.none
-    // | Some PageRouter.Page.About ->
-    //     AboutSection, Cmd.none
-    // | Some PageRouter.Page.Portfolio ->
-    //     Portfolio PortfolioGallery, Cmd.none
-    // | Some PageRouter.Page.Contact ->
-    //     Contact, Cmd.none
-        //Navigation.modifyUrl (toPath Page.Contact)
-    // | Some Page.Welcome ->
-    // | Some Page.Welcome ->
-
-// IMPORTANT!!
-//hydrate model if retrieved from server response json
-
-
-
-
-// PAGE ROUTER
+// if had to hit server
 // ------------
 
 // implementation of IPageApi
 // this uses the route builder!!
-let pageApi =
-    Remoting.createApi()
-    |> Remoting.withRouteBuilder Route.builder
-    |> Remoting.buildProxy<IPageApi>
+// let pageApi =
+//     Remoting.createApi()
+//     |> Remoting.withRouteBuilder Route.builder
+//     |> Remoting.buildProxy<IPageApi>
 
-let loadPage path = async {
-    let! page = pageApi.GetPage path
-    return page
-}
-
-
-
-
-
-
-
+// let loadPage path = async {
+//     let! page = pageApi.GetPage path
+//     return page
+// }
 
 // the init has to have same signature and be called from the index html
 let init (path: PageRouter.Page option) : SharedWebAppModels.Model * Cmd<WebAppMsg> =
-    urlUpdate path SharedWebAppModels.Model.Welcome
+    // PageRouter.urlUpdate path SharedWebAppModels.Model.Welcome
+    // PageRouter.urlUpdate path SharedWebAppModels.Model.Welcome
+    PageRouter.urlUpdate path SharedWebAppModels.Model.Welcome
 
 let update (msg: WebAppMsg) (model: SharedWebAppModels.Model): SharedWebAppModels.Model * Cmd<WebAppMsg> =
     match msg, model with
     
     | WelcomeMsg msg, SharedWebAppModels.Model.Welcome ->
         // model, Cmd.none
-        SharedWebAppModels.AboutSection (SharedAboutSection.getInitialModel), Navigation.newUrl (PageRouter.fromModelToPath (SharedWebAppModels.AboutSection SharedAboutSection.getInitialModel)) //(PageRouter.toPath PageRouter.Page.About)
+        SharedWebAppModels.AboutSection (SharedAboutSection.getInitialModel), Navigation.newUrl(PageRouter.toPath (Some PageRouter.Page.About)) //(PageRouter.fromModelToPath (SharedWebAppModels.AboutSection SharedAboutSection.getInitialModel)) //
 
     // TEMPORARY
     | AboutMsg msg, SharedWebAppModels.Model.AboutSection (model) ->
@@ -155,19 +105,20 @@ let update (msg: WebAppMsg) (model: SharedWebAppModels.Model): SharedWebAppModel
         // handles page route for top level
         match string with
         | "AboutSection" -> 
-            model, Cmd.OfAsync.either loadPage "/about" PageLoad ErrorMsg
+            SharedWebAppModels.AboutSection SharedAboutSection.getInitialModel, Navigation.newUrl(PageRouter.toPath (Some PageRouter.Page.About))
         | "Portfolio" -> 
-            model, Cmd.OfAsync.either loadPage "/portfolio" PageLoad ErrorMsg
+            SharedWebAppModels.Portfolio SharedPortfolioGallery.PortfolioGallery, Navigation.newUrl(PageRouter.toPath (Some PageRouter.Page.Portfolio))
         | "Contact" -> 
-            model, Cmd.OfAsync.either loadPage "/contact" PageLoad ErrorMsg
-        | _ -> 
-            model, Cmd.OfAsync.either loadPage "/welcome" PageLoad ErrorMsg
+            SharedWebAppModels.Contact, Navigation.newUrl(PageRouter.toPath (Some PageRouter.Page.Contact))
+        | "Welcome"
+        | _ ->
+            SharedWebAppModels.Welcome, Navigation.newUrl(PageRouter.toPath (Some PageRouter.Page.Welcome))
     // SHOULD USE THIS?
     // | LoadPage page, model ->
-    //     let! pageModel = Cmd.OfAsync.perform loadPage page () PageLoad 
-    //     pageModel, Cmd.none    
-    | PageLoad page, _ ->
-        page, Navigation.newUrl (PageRouter.fromModelToPath (page))
+        // pageModel, Cmd.none    
+    // | PageLoad page, _ ->
+    //     // page, Navigation.newUrl (PageRouter.fromModelToPath (page))
+    //     page, Navigation.newUrl (PageRouter.toPath (Some page))
     | _ -> model, Cmd.none
 
 open Fable.React

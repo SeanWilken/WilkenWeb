@@ -820,119 +820,112 @@ module SharedWebAppModels =
 
 // NEEDS MAJOR REVIEW FOR HYDRATION OF SERVER REQUEST
 // url updating and page routing
-module PageRouter =
+// module PageRouter =
 
-    // PAGE SHOULD REALLY NOT EXIST UNLESS A WRAPPER IS REQUIRED
-    type Page =
-        | Welcome
-        | About
-        | Portfolio
-        | Contact
+//     // PAGE SHOULD REALLY NOT EXIST UNLESS A WRAPPER IS REQUIRED
+//     type Page =
+//         | Welcome
+//         | About
+//         | Portfolio
+//         | Contact
 
-    let fromModelToPath =
-        function
-        | SharedWebAppModels.Welcome ->
-            "/welcome"
-        | SharedWebAppModels.AboutSection _ ->
-            "/about"
-        | SharedWebAppModels.Portfolio (SharedPortfolioGallery.PortfolioGallery) ->
-            "/portfolio"
-        | SharedWebAppModels.Portfolio (SharedPortfolioGallery.CodeGallery _) ->
-            "/portfolio/code"
-        | SharedWebAppModels.Portfolio (SharedPortfolioGallery.DesignGallery _) ->
-            "/portfolio/designs"
-        // | SharedWebAppModels.Portfolio (SharedPortfolioGallery.DesignGallery _) ->
-        //     "/portfolio/code"
-        // | About General ->
-        //     "/about"
-        // | About Personal ->
-        //     "/about/personal"
-        // | About Professional ->
-        //     "/about/professional"
-        // | About Resume ->
-        //     "/about/resume"
-        // | Portfolio (Code (CodeUrl (codeSection, int))) ->
-        //     match codeSection, int with
-        //     | GoalRoll, int ->
-        //         sprintf "/portfolio/goalRoll/%i" int 
-        //     | TileSmash, int ->
-        //         sprintf "/portfolio/tileSmash/%i" int 
-        //     | TileSort, int ->
-        //         sprintf "/portfolio/tileSort/%i" int 
-        // | Portfolio (Design int) ->
-        //     sprintf "/portfolio/design/%i" int
-        | SharedWebAppModels.Contact ->
-            "/contact"
-        // | _ ->
-        //     "/welcome"
+//     let fromModelToPath =
+//         function
+//         | SharedWebAppModels.Welcome ->
+//             "/welcome"
+//         | SharedWebAppModels.AboutSection _ ->
+//             "/about"
+//         | SharedWebAppModels.Portfolio (SharedPortfolioGallery.PortfolioGallery) ->
+//             "/portfolio"
+//         | SharedWebAppModels.Portfolio (SharedPortfolioGallery.CodeGallery _) ->
+//             "/portfolio/code"
+//         | SharedWebAppModels.Portfolio (SharedPortfolioGallery.DesignGallery _) ->
+//             "/portfolio/designs"
+//         // | SharedWebAppModels.Portfolio (SharedPortfolioGallery.DesignGallery _) ->
+//         //     "/portfolio/code"
+//         // | About General ->
+//         //     "/about"
+//         // | About Personal ->
+//         //     "/about/personal"
+//         // | About Professional ->
+//         //     "/about/professional"
+//         // | About Resume ->
+//         //     "/about/resume"
+//         // | Portfolio (Code (CodeUrl (codeSection, int))) ->
+//         //     match codeSection, int with
+//         //     | GoalRoll, int ->
+//         //         sprintf "/portfolio/goalRoll/%i" int 
+//         //     | TileSmash, int ->
+//         //         sprintf "/portfolio/tileSmash/%i" int 
+//         //     | TileSort, int ->
+//         //         sprintf "/portfolio/tileSort/%i" int 
+//         // | Portfolio (Design int) ->
+//         //     sprintf "/portfolio/design/%i" int
+//         | SharedWebAppModels.Contact ->
+//             "/contact"
+//         // | _ ->
+//         //     "/welcome"
 
-    let toPath =
-        function
-        | About ->
-            "/about"
-        | Portfolio ->
-            "/portfolio"
-        | Contact ->
-            "/contact"
-        | _
-        | Welcome ->
-            "/welcome"
-        // | About General ->
-        //     "/about"
-        // | About Personal ->
-        //     "/about/personal"
-        // | About Professional ->
-        //     "/about/professional"
-        // | About Resume ->
-        //     "/about/resume"
-        // | Portfolio (Code (CodeUrl (codeSection, int))) ->
-        //     match codeSection, int with
-        //     | GoalRoll, int ->
-        //         sprintf "/portfolio/goalRoll/%i" int 
-        //     | TileSmash, int ->
-        //         sprintf "/portfolio/tileSmash/%i" int 
-        //     | TileSort, int ->
-        //         sprintf "/portfolio/tileSort/%i" int 
-        // | Portfolio (Design int) ->
-        //     sprintf "/portfolio/design/%i" int
+//     let toPath =
+//         function
+//         | About ->
+//             "/about"
+//         | Portfolio ->
+//             "/portfolio"
+//         | Contact ->
+//             "/contact"
+//         | _
+//         | Welcome ->
+//             "/welcome"
+//         // | About General ->
+//         //     "/about"
+//         // | About Personal ->
+//         //     "/about/personal"
+//         // | About Professional ->
+//         //     "/about/professional"
+//         // | About Resume ->
+//         //     "/about/resume"
+//         // | Portfolio (Code (CodeUrl (codeSection, int))) ->
+//         //     match codeSection, int with
+//         //     | GoalRoll, int ->
+//         //         sprintf "/portfolio/goalRoll/%i" int 
+//         //     | TileSmash, int ->
+//         //         sprintf "/portfolio/tileSmash/%i" int 
+//         //     | TileSort, int ->
+//         //         sprintf "/portfolio/tileSort/%i" int 
+//         // | Portfolio (Design int) ->
+//         //     sprintf "/portfolio/design/%i" int
     
-    let fromPath =
-        function
-        | "/about" ->
-            SharedWebAppModels.AboutSection (SharedAboutSection.getInitialModel)
-        | "/portfolio" ->
-            SharedWebAppModels.Portfolio (SharedPortfolioGallery.PortfolioGallery)
-        | "/contact" ->
-            SharedWebAppModels.Contact
-        | "/welcome"
-        | _ ->
-            SharedWebAppModels.Welcome
-        // | About General ->
-        //     "/about"
-        // | About Personal ->
-        //     "/about/personal"
-        // | About Professional ->
-        //     "/about/professional"
-        // | About Resume ->
-        //     "/about/resume"
-        // | Portfolio (Code (CodeUrl (codeSection, int))) ->
-        //     match codeSection, int with
-        //     | GoalRoll, int ->
-        //         sprintf "/portfolio/goalRoll/%i" int 
-        //     | TileSmash, int ->
-        //         sprintf "/portfolio/tileSmash/%i" int 
-        //     | TileSort, int ->
-        //         sprintf "/portfolio/tileSort/%i" int 
-        // | Portfolio (Design int) ->
-        //     sprintf "/portfolio/design/%i" int
-
-    // NEED A HYDRATION METHOD FOR WHEN URL IS ACCESSED DIRECTLY, CANNOT GET PAGE CURRENTLY, returns model without webapp view
-
-    // REVIEW TO UNDERSTAND!!
-    // ------------
-
-
-// API / SERVER CALLS
+//     let fromPath =
+//         function
+//         | "/about" ->
+//             SharedWebAppModels.AboutSection (SharedAboutSection.getInitialModel)
+//         | "/portfolio" ->
+//             SharedWebAppModels.Portfolio (SharedPortfolioGallery.PortfolioGallery)
+//         | "/contact" ->
+//             SharedWebAppModels.Contact
+//         | "/welcome"
+//         | _ ->
+//             SharedWebAppModels.Welcome
+//         // | About General ->
+//         //     "/about"
+//         // | About Personal ->
+//         //     "/about/personal"
+//         // | About Professional ->
+//         //     "/about/professional"
+//         // | About Resume ->
+//         //     "/about/resume"
+//         // | Portfolio (Code (CodeUrl (codeSection, int))) ->
+//         //     match codeSection, int with
+//         //     | GoalRoll, int ->
+//         //         sprintf "/portfolio/goalRoll/%i" int 
+//         //     | TileSmash, int ->
+//         //         sprintf "/portfolio/tileSmash/%i" int 
+//         //     | TileSort, int ->
+//         //         sprintf "/portfolio/tileSort/%i" int 
+//         // | Portfolio (Design int) ->
+//         //     sprintf "/portfolio/design/%i" int
+//         // API / SERVER CALLS
 // NEEDS REFACTOR
 // Ensure that the Client and Server use same end-point
 module Route =
@@ -944,43 +937,3 @@ type IPageApi =
     {
         GetPage :  string -> Async<SharedWebAppModels.Model>
     }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-// REMOVE THIS
-// REVIEW IF NEED TO MAKE SERVER CALLS
-type Todo =
-    { Id : Guid
-      Description : string }
-
-module Todo =
-    let isValid (description: string) =
-        String.IsNullOrWhiteSpace description |> not
-
-    let create (description: string) =
-        { Id = Guid.NewGuid()
-          Description = description }
-
-// REMOVE THIS
-// API / SERVER CALLS
-// 'INTERFACE' FOR API CALLS
-type ITodosApi =
-    { getTodos : unit -> Async<Todo list>
-      removeTodo : Todo -> Async<Todo list> // has signature
-      addTodo : Todo -> Async<Todo> }
