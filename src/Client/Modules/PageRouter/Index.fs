@@ -9,7 +9,6 @@ module PageRouter
 
 open Elmish
 open Fable
-// open Index
 open Portfolio
 open Shared
 
@@ -77,33 +76,32 @@ let toPath =
     // | Portfolio (Design int) ->
     //     sprintf "/portfolio/design/%i" int
     | Some Contact -> "/contact"
-    | None 
+    | None
     | Some Welcome -> "/welcome"
 
 let pageParser : Parser<Page -> Page,_> =
     oneOf
         [
-            map Page.Welcome (s "/welcome")
-            map Page.About (s "/about")
-            map Page.Portfolio (s "/portfolio")
-            map Page.Contact (s "/contact")
+            map Page.Welcome (s "welcome")
+            map Page.About (s "about")
+            map Page.Portfolio (s "portfolio")
+            map Page.Contact (s "contact")
         ]
 
 let urlParser location = parsePath pageParser location
 
 let urlUpdate (result: Page option) (model: SharedWebAppModels.Model) =
     match result with
-    | Some Page.Welcome ->
-        SharedWebAppModels.Welcome, Navigation.modifyUrl (toPath (Some Welcome))
     | Some Page.About ->
-        SharedWebAppModels.AboutSection SharedAboutSection.getInitialModel, Navigation.modifyUrl (toPath (Some Page.About))
+        SharedWebAppModels.AboutSection SharedAboutSection.getInitialModel, Navigation.newUrl (toPath (Some About))
     | Some Page.Portfolio ->
-        SharedWebAppModels.Portfolio SharedPortfolioGallery.PortfolioGallery, Navigation.modifyUrl (toPath (Some Page.Portfolio))
+        SharedWebAppModels.Portfolio SharedPortfolioGallery.PortfolioGallery, Navigation.newUrl (toPath (Some Portfolio))
     | Some Page.Contact ->
-        SharedWebAppModels.Contact, Navigation.modifyUrl (toPath (Some Page.Contact))
+        SharedWebAppModels.Contact, Navigation.newUrl (toPath (Some Contact))
     // SHOULD BE A 404 OR ERROR PAGE
-    | None ->
-        SharedWebAppModels.Welcome, Navigation.modifyUrl (toPath (Some Page.Welcome))
+    | None
+    | Some Page.Welcome ->
+        SharedWebAppModels.Welcome, Navigation.newUrl (toPath (Some Welcome))
 
 
 

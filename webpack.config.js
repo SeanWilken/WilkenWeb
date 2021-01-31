@@ -112,8 +112,12 @@ module.exports = {
         symlinks: false
     },
     // Configuration for webpack-dev-server
+    // historyApiFallback enabled to allow path based routes to be passed into app
+    // without this, it will not try to load the app @ index, rather look for one
+    // at that specific path. Hash based routing works without this.
     devServer: {
         publicPath: '/',
+        historyApiFallback: true,
         contentBase: resolve(CONFIG.assetsDir),
         host: '0.0.0.0',
         port: CONFIG.devServerPort,

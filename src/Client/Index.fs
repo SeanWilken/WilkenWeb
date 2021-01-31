@@ -2,13 +2,9 @@
 module Index
 
 open Elmish
-open Fable.Remoting.Client
 open Shared
 open PageRouter
 
-// URL BROWSER UPDATES
-open Elmish.UrlParser
-open Elmish.Navigation
 
 // Section Items
 open Welcome
@@ -21,6 +17,7 @@ open Contact
 // STORE: -> IMPLEMENT PRINTFUL API
 // https://www.printful.com/api
 // https://www.printful.com/docs
+// HELPER FUNCS?
 
 // Represents which of the web app's subsections is to be displayed
 // Welcome -> not much to see here, a landing page with element to drive along user interaction
@@ -40,10 +37,6 @@ type WebAppMsg =
     // | PageLoad of SharedWebAppModels.Model // WIP
     | ErrorMsg of exn// WIP
 
-// TODO CLEAN ME TF UP
-// TODO GENERIC ROUTER
-// TODO TYPES FOR PAGES?
-// TODO HELPER FUNCTIONS?
 
 // PAGE ROUTER
 // if had to hit server
