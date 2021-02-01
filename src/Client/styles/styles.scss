@@ -116,6 +116,7 @@ html {
 .blurContent {
     -webkit-filter: blur(5px);
     filter: blur(5px);
+    padding: 25px;
     &:hover {
         -webkit-filter: blur(0px);
         filter: blur(0px);
@@ -180,6 +181,10 @@ html {
     .container {
         @extend .contentCardTextBackground;
     }
+}
+//hack
+.modalContent {
+    max-width: 100%;
 }
 
 // this is ugly at breakpoints
@@ -268,6 +273,9 @@ html {
 // GENERAL ELEMENTS
 .paddedContainer {
     padding: 50px; 
+}    
+.halfPaddedContainer {
+    padding: 25px; 
 }    
 // **********************
 

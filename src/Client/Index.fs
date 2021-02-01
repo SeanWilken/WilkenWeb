@@ -19,13 +19,6 @@ open Contact
 // https://www.printful.com/docs
 // HELPER FUNCS?
 
-// Represents which of the web app's subsections is to be displayed
-// Welcome -> not much to see here, a landing page with element to drive along user interaction
-// AboutSection -> Overview of the purpose of the web app, in this case some details about it's creator
-// Portfolio -> Split view landing page to separate categories from one another at a high level
-// Contact -> How to get in touch with the entity the web app represents
-
-// ACTUALLY NEED ONE GLOBAL STATE OBJECT TO PERSIST ANY GAME LEVELS COMPLETED TYPE FUNCTIONALITY!!
 // Represents submodule msg's to be passed along the elmish update dispatch loop
 type WebAppMsg =
     | WelcomeMsg of Welcome.Msg
@@ -33,22 +26,18 @@ type WebAppMsg =
     | PortfolioMsg of Portfolio.Msg
     | SwitchToOtherApp of string // please wrap me
     | LoadPage of Page
-    // | LoadPage of string // WIP
-    // | PageLoad of SharedWebAppModels.Model // WIP
     | ErrorMsg of exn// WIP
 
 
 // PAGE ROUTER
 // if had to hit server
 // ------------
-
 // implementation of IPageApi
 // this uses the route builder!!
 // let pageApi =
 //     Remoting.createApi()
 //     |> Remoting.withRouteBuilder Route.builder
 //     |> Remoting.buildProxy<IPageApi>
-
 // let loadPage path = async {
 //     let! page = pageApi.GetPage path
 //     return page
@@ -61,36 +50,41 @@ let init (path: PageRouter.Page option) : SharedWebAppModels.Model * Cmd<WebAppM
 let update (msg: WebAppMsg) (model: SharedWebAppModels.Model): SharedWebAppModels.Model * Cmd<WebAppMsg> =
     match msg, model with
     
+    // WELCOME PAGE
     | WelcomeMsg msg, SharedWebAppModels.Model.Welcome ->
         model, Cmd.ofMsg (LoadPage Page.About)
 
+    // ABOUT PAGE
+    | AboutMsg (NextSection),  model ->
+        model, Cmd.ofMsg (LoadPage (Page.Portfolio Landing))
+    | AboutMsg (PreviousSection), model ->
+        model, Cmd.ofMsg (LoadPage (Page.Welcome))
     | AboutMsg msg, SharedWebAppModels.Model.AboutSection (model) ->
         let thing, com = AboutSection.update msg model
         SharedWebAppModels.AboutSection thing, Cmd.none
 
+    // PORTFOLIO PAGE
     | PortfolioMsg msg, SharedWebAppModels.Portfolio model ->
         match msg, model with
-
         // PORTFOLIO GALLERY SUB MODULE
         | LoadSection (SharedPortfolioGallery.PortfolioGallery), _ -> 
             SharedWebAppModels.Portfolio model, Cmd.ofMsg (LoadPage (Page.Portfolio Landing))
-        
         // CODE GALLERY SUB MODULE
         | LoadSection (SharedPortfolioGallery.CodeGallery (SharedCodeGallery.CodeGallery)), _ ->
            SharedWebAppModels.Portfolio model, Cmd.ofMsg (LoadPage (Page.Portfolio (Code (CodeSection.Landing))))
         | CodeGalleryMsg CodeGallery.Msg.BackToPortfolio, _ -> 
             SharedWebAppModels.Portfolio model, Cmd.ofMsg (LoadPage (Page.Portfolio Landing))
-
         // ART GALLERY SUB MODULE
-        | LoadSection (SharedPortfolioGallery.DesignGallery ({CurrentPieceIndex = 0}) ), _ ->  // TAKE PLAIN MODEL??? COMPILER COMPLAININ'
+        | LoadSection (SharedPortfolioGallery.DesignGallery ({CurrentPieceIndex = 0}) ), _ ->
            SharedWebAppModels.Portfolio model, Cmd.ofMsg (LoadPage (Page.Portfolio (Design)))
         | ArtGalleryMsg ArtGallery.Msg.BackToPortfolio, _ -> 
             SharedWebAppModels.Portfolio model, Cmd.ofMsg (LoadPage (Page.Portfolio Landing))
-        // default case, bad hack // please fix this
+        // default case
         | msg, model ->
             let portfolioModel, com = Portfolio.update msg model
             SharedWebAppModels.Portfolio portfolioModel, Cmd.map PortfolioMsg com
     
+    // HEADER NAV ROUTING
     | SwitchToOtherApp string, _ ->
         // handles page route for top level
         match string with
@@ -123,16 +117,16 @@ let contentAreas = FSharpType.GetUnionCases typeof<SharedWebAppModels.Model>
 // of their attention (such as a code example being played, or some art being viewed)
 let headerBlurSelector model = 
     match model with
+    | SharedWebAppModels.Contact ->
+        Container.Props [ ClassName "blurContent" ]
     | SharedWebAppModels.Portfolio model ->
         match model with
         | SharedPortfolioGallery.PortfolioGallery ->
-            Container.Props [ Style [Padding 25;] ] // STYLE THIS??
+            Container.Props [ ClassName "halfPaddedContainer" ]
         | _ -> 
-            Container.Props [ ClassName "blurContent"; Style [Padding 25;] ] // STYLE THIS??
-    | SharedWebAppModels.Contact -> // REMOVE OR KEEP???
-        Container.Props [ ClassName "blurContent"; Style [Padding 25;] ] // STYLE THIS??
+            Container.Props [ ClassName "blurContent" ]
     | _ ->
-        Container.Props [ Style [Padding 25;] ] // STYLE THIS??
+        Container.Props [ ClassName "halfPaddedContainer" ]
 
 // Web App Header Nav content 
 let headerContent (model: SharedWebAppModels.Model) dispatch =
@@ -165,7 +159,6 @@ let view (model : SharedWebAppModels.Model) (dispatch : WebAppMsg -> unit) =
         headerContent model dispatch
         Container.container [ Container.Props [Style [ Padding 15; ] ] ] [ // STYLE THIS??
             match model with
-            // TEMPORARY
             | SharedWebAppModels.AboutSection model -> AboutSection.view model (AboutMsg >> dispatch)
             | SharedWebAppModels.Welcome -> Welcome.view (WelcomeMsg >> dispatch)
             | SharedWebAppModels.Portfolio SharedPortfolioGallery.PortfolioGallery -> Portfolio.view SharedPortfolioGallery.PortfolioGallery (PortfolioMsg >> dispatch)

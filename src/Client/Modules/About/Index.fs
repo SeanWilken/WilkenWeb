@@ -14,68 +14,95 @@ open Shared.SharedAboutSection
     // ADD EXTRA DETAIL SECTIONS (WIP)
 
     // TODO -> CONTENT SECTIONS -> {LARGE HERO STYLE TILE + QUICK DESCRIPT} -> CLICK TO MAKE HERO CONTENT WITH LONG DESCRIPTION / DETAILS
-        // CONTENT SECTIONS IS A SEMI MAJOR REFACTOR, IN THAT SUB NESTED MODULES NEED TO BE CREATED AND HANDLED
-        // GENERAL: GENERAL ABOUT ME INFO
-        // PERSONAL: About me as individual, short and sweet
-            // sailed the carribean, enjoys getting fkn wrkd
-            // laid back individual
-            // lmao: humble, handsome, talented, intelligent, etc..  <- reference sodapoppin
-            // enjoy being creative, 
-        // PROFESSIONAL: professional and achievements made in any field
-            // working with programming languages for around 5 years
-            // worked as developer, helpdesk / support, tester, customer detail gathering and writing custom solutions, custom platform developer / enhancements
-            // can focus well alone or work well with groups or other individuals
-            // enjoy learning and applying new languages and techniques
-            // all icons and designs used were made by me.
-            // this site needs to address the fact that all of this doesn't exactly align with what a typical business requires:
-                // worked with building custom data processors
-                // worked with custom transforms of data to fit to platform requirements (custom solutions, magento, etc..)
-                // front end changes by user and business alike
-                // Taken / review calls, emails and reports to help resolve customer and business issues
-                // deployed the code with the boys on release nights
         // SKILLS & RESUME: Boiled down content sections into a professional resume
 
+    // Fix the modal content with better styling and details
+
     // HOW DO I DRIVE CONTINUOUS USAGE OF THE SITE TO PRGORESS THE USER EXPERIENCE
-        // PREVIOUS SECTION ELEMENT -> WELCOME
-        // NEXT SECTION ELEMENT -> PORTFOLIO
+       // STYLE AND ANIMATION WISE, NEED A COHESIVE FLOW THROUGH THE SECTIONS OF THE WEBSITE, CURRENT IMPLEMENTATION IS FRAGMENTED IN NAVIGATION COMMANDS (WHERE AND HOW)
 
 type Msg =
     | ToggleModal of int
+    | PreviousSection
+    | NextSection
+    | SwitchModal of int
 
-// this should be more structured to be passed to a function for generating the modal content based on the index
-// structure in a way the formating can plug in easily for all subsections
-// title, main blurb, bullet point list, etc..(?)
-let modalContent = [
-    "More content about the general nature of this website and myself"
-    "More content about the professional aspects of myself and abilities"
-    "More content about the personal aspects of myself and qualities"
-]
+let generalModalContent = {
+    Title = "General"
+    MainContent = [
+        "I wrote this website as a way to demonstrate some of my skills, processes, and personal traits / interests. As a mainly self-taught computer programmer, I am constantly looking for new and interesting aspects of technology. Check back frquently to see what's new, as I plan to update this with new features, games and content."
+        "I wrote all the code from a boilerplate, drew all the icons and graphic designs seen across the website, and am hosting and running continuous deployments for development."
+        "Check out the portfolio section for some example demo's, explore some drawings or check out the source code that comprises the different sections and the website itself..."
+    ]
+    PreviousLabel = "Welcome"
+    NextLabel = "Professional"
+}
+let professionalModalContent = {
+    Title = "Professional"
+    MainContent = [
+        "I wrote all the code from a SAFE Stack boilerplate, and am hosting and running continuous deployments for development."
+        "I've been working with programming languages for about 5 years."
+        "In that time, I've been a: full-stack developer, tester, help-desk / support, requirement gatherer, custom integration specialist and a lot more.."
+        "I've worked with mid and small team sizes, and work well with others or alone."
+        "Worked with custom and open source platforms, packages and libraries."
+        "Worked many late nights tinkering, fixing bugs, deploying new code and putting out the fires."
+        "I enjoy learning new technologies, paradigms, techniques, and solutions to problems, including those outside my domain and interests."
+        "Worked with clients to come up with solutions for problems and bottlenecks being faced. Source requirements, come up with timelines, architecture and logical solutions for such work and implemented the final custom solutions that get deployed into production environments."
+        "I've built things like custom data processors, designed custom themes, upgraded existing projects, created new features, implemented highly requested features and QoL updates, changed the buttons color, and much more!"
+    ]
+    PreviousLabel = "General"
+    NextLabel = "Personal"
+}
+let personalModalContent = {
+    Title = "Personal"
+    MainContent = [
+        "I enjoy living life in the momement, learning and experiencing new things and being creative. Check out some of my drawings & let me know what you think."
+        "I'm a laid back individual who doesn't mind getting his hands dirty or facing challenges."
+        "I can go off the rails a bit and my imagination tends to run wild when giving the liberty to do so, but also a highly motivated and hard working individual."
+        "Fun fact: I've sailed the carribean sea back to the states on a boat that was fixed up by myself, two relatives and a bunch of misfits we met in our travels!"
+    ]
+    PreviousLabel = "Professional"
+    NextLabel = "Portfolio"
+}
+
+let aboutModalContentSections = [ generalModalContent; professionalModalContent; personalModalContent ]
 
 // fulma timeline to walk through timeline of events
-
 let toggleModal model index =
-    let test = if (index <> model.ActiveModalIndex) then { model with ActiveModalIndex = index } else model
-    { test with ModalIsActive = not model.ModalIsActive }
+    let activeModal = if (index <> model.ActiveModalIndex) then { model with ActiveModalIndex = index } else model
+    { activeModal with ModalIsActive = not model.ModalIsActive }
 
 let update msg model : Model * Cmd<Msg> =
     match msg with
     | ToggleModal int ->
         let toggled = toggleModal model int
         toggled, Cmd.none
+    | SwitchModal int ->
+        match int with
+        | 1 -> { model with ActiveModalIndex = model.ActiveModalIndex + 1 }, Cmd.none
+        | -1 -> { model with ActiveModalIndex = model.ActiveModalIndex - 1}, Cmd.none
+        | _ -> model, Cmd.none
+    | _ -> model, Cmd.none
 
-let genericModal model dispatch =
+let genericModal model dispatch modalContent =
     Modal.modal [ Modal.IsActive model.ModalIsActive ] [ 
         Modal.background [Props [ OnClick (fun _ -> ToggleModal model.ActiveModalIndex |> dispatch) ]] []
-        Modal.content [ ] [ 
-            Level.level [] [
-                Container.container [ Container.Props [ ClassName "aboutModalContentCard" ] ] [
-                    Level.level [] [ Level.item [] [ h1 [] [ str "General"] ] ] // this should be the title of the modal content data
-                    Level.level [ Level.Level.Props [ ClassName "contentCardTextBackground"] ] [
-                        // img?
-                        Level.item [ ] [ // this should be the content of the modal content data
-                            p [] [ str "I wrote this website as a way to demonstrate some of my skills, processes, and personal traits / interests. As a mainly self-taught computer programmer, I am constantly looking for new and interesting aspects of technology. Check back frquently to see what's new, as I plan to update this with new features, games and content. I wrote all the code from a boilerplate, drew all the icons and designs seen across the website, and am hosting and running continuous deployments for development. Check out the portfolio section for some example demo's, explore some drawings or check out the source code that comprises the different sections and the website itself..." ]
+        Modal.content [ Props [ ClassName "modalContent"; ] ] [
+            Container.container [] [
+                Level.level [] [
+                    Container.container [ Container.Props [ ClassName "aboutModalContentCard" ] ] [
+                        Level.level [] [ Level.item [] [ h1 [] [ str modalContent.Title ] ] ]
+                        Level.level [ Level.Level.Props [ ClassName "contentCardTextBackground"] ] [
+                            // img?
+                            for detail in modalContent.MainContent do
+                                Level.item [ ] [
+                                    p [] [ str detail ]
+                                ]
+                            Level.level [] [
+                                Level.item [ Level.Item.Props [ OnClick(fun _ -> (if (model.ActiveModalIndex = 0) then PreviousSection else SwitchModal (-1)) |> dispatch ) ] ] [ p [] [ str (modalContent.PreviousLabel) ] ]
+                                Level.item [ Level.Item.Props [ OnClick(fun _ -> (if (model.ActiveModalIndex = aboutModalContentSections.Length - 1) then NextSection else SwitchModal (1)) |> dispatch) ] ] [ p [] [ str (modalContent.NextLabel) ] ]
+                            ]
                         ]
-                        Level.item [ ] [ p [] [ str (modalContent.Item(model.ActiveModalIndex)) ] ]
                     ]
                 ]
             ]
@@ -169,5 +196,5 @@ let view model dispatch =
         mainAbout dispatch
         secondaryAbout dispatch
         tertiaryAbout dispatch
-        genericModal model dispatch
+        genericModal (model) (dispatch) (aboutModalContentSections.Item(model.ActiveModalIndex))
     ]

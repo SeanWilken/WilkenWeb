@@ -809,15 +809,28 @@ module SharedPortfolioGallery =
     let getInitialModel = PortfolioGallery
 
 module SharedAboutSection =
+
     type Model =
         {
             ActiveModalIndex : int
             ModalIsActive : bool
         }
+
+    type ModalContent = {
+        Title: string
+        MainContent: string list
+        PreviousLabel: string
+        NextLabel: string
+    }
        
     let getInitialModel = {ActiveModalIndex = 0; ModalIsActive = false}
 
 module SharedWebAppModels =
+    // Represents which of the web app's subsections is to be displayed
+    // Welcome -> not much to see here, a landing page with element to drive along user interaction
+    // AboutSection -> Overview of the purpose of the web app, in this case some details about it's creator
+    // Portfolio -> Split view landing page to separate categories from one another at a high level
+    // Contact -> How to get in touch with the entity the web app represents
     type Model =
         | Welcome
         | AboutSection of SharedAboutSection.Model
