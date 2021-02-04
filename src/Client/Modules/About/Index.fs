@@ -93,10 +93,10 @@ let genericModal model dispatch modalContent =
                                 Level.item [ ] [ p [] [ str detail ] ]
                             Level.level [] [
                                 a [] [ 
-                                    Level.item [ Level.Item.Props [ OnClick(fun _ -> (if (model.ActiveModalIndex = 0) then PreviousSection else SwitchModal (-1)) |> dispatch ) ] ] ] [ 
+                                    Level.item [ Level.Item.Props [ OnClick(fun _ -> (if (model.ActiveModalIndex = 0) then PreviousSection else SwitchModal (-1)) |> dispatch ) ] ] [ 
                                         Image.image [Image.Is64x64] [ img [Src "./imgs/icons/LeftNavButton.png"] ]
                                         str (modalContent.PreviousLabel);
-                                    ] 
+                                    ]
                                 ]
                                 a [] [ 
                                     Level.item [ Level.Item.Props [ OnClick(fun _ -> (if (model.ActiveModalIndex = aboutModalContentSections.Length - 1) then NextSection else SwitchModal (1)) |> dispatch) ] ] [ 
