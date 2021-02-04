@@ -133,7 +133,8 @@ let headerContent (model: SharedWebAppModels.Model) dispatch =
     Container.container [ headerBlurSelector model ] [
         Level.level [] [
             Level.item [] [
-                p [ ClassName "headerTitle" ] [ str "Sean Wilken" ] // DIFFERENT FONT STYLE
+                Image.image [Image.Is128x128] [ img [ Src "./imgs/icons/Logo blue.png"; ] ]
+                p [ ClassName "headerTitle" ] [ str "Sean Wilken" ]
             ]
             Level.item [ ] [
                 Columns.columns [ Columns.Props [ Style[ FlexDirection "column"; Padding 10; FontFamily "Exo"; FontStyle "italic"; TextAlign TextAlignOptions.Center]; ] ] [ // STYLE THIS??
@@ -157,7 +158,7 @@ let headerContent (model: SharedWebAppModels.Model) dispatch =
 let view (model : SharedWebAppModels.Model) (dispatch : WebAppMsg -> unit) =
     div [] [
         headerContent model dispatch
-        Container.container [ Container.Props [Style [ Padding 15; ] ] ] [ // STYLE THIS??
+        Container.container [ Container.Props [ Style [ Padding 15; ] ] ] [// style hack?
             match model with
             | SharedWebAppModels.AboutSection model -> AboutSection.view model (AboutMsg >> dispatch)
             | SharedWebAppModels.Welcome -> Welcome.view (WelcomeMsg >> dispatch)

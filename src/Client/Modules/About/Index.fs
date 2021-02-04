@@ -40,15 +40,10 @@ let generalModalContent = {
 let professionalModalContent = {
     Title = "Professional"
     MainContent = [
-        "I wrote all the code from a SAFE Stack boilerplate, and am hosting and running continuous deployments for development."
-        "I've been working with programming languages for about 5 years."
-        "In that time, I've been a: full-stack developer, tester, help-desk / support, requirement gatherer, custom integration specialist and a lot more.."
-        "I've worked with mid and small team sizes, and work well with others or alone."
-        "Worked with custom and open source platforms, packages and libraries."
-        "Worked many late nights tinkering, fixing bugs, deploying new code and putting out the fires."
-        "I enjoy learning new technologies, paradigms, techniques, and solutions to problems, including those outside my domain and interests."
-        "Worked with clients to come up with solutions for problems and bottlenecks being faced. Source requirements, come up with timelines, architecture and logical solutions for such work and implemented the final custom solutions that get deployed into production environments."
+        "I wrote all the code from a SAFE Stack boilerplate, and am hosting and running continuous deployments for development. I've been working with programming languages for about 5 years. In that time, I've been a: full-stack developer, tester, help-desk / support, requirement gatherer, custom integration specialist and a lot more.."
+        "I've worked: with mid and small team sizes, working well with others or alone, with custom solutions, open source projects, many late nights tinkering, fixing bugs, deploying new code and putting out the fires, with clients to come up with solutions for problems and bottlenecks being faced. Source requirements, come up with timelines, architecture and logical solutions for such work and implemented the final custom solutions that get deployed into production environments."
         "I've built things like custom data processors, designed custom themes, upgraded existing projects, created new features, implemented highly requested features and QoL updates, changed the buttons color, and much more!"
+        "I enjoy learning new technologies, paradigms, techniques, and solutions to problems, including those outside my domain and interests."
     ]
     PreviousLabel = "General"
     NextLabel = "Personal"
@@ -95,12 +90,20 @@ let genericModal model dispatch modalContent =
                         Level.level [ Level.Level.Props [ ClassName "contentCardTextBackground"] ] [
                             // img?
                             for detail in modalContent.MainContent do
-                                Level.item [ ] [
-                                    p [] [ str detail ]
-                                ]
+                                Level.item [ ] [ p [] [ str detail ] ]
                             Level.level [] [
-                                Level.item [ Level.Item.Props [ OnClick(fun _ -> (if (model.ActiveModalIndex = 0) then PreviousSection else SwitchModal (-1)) |> dispatch ) ] ] [ p [] [ str (modalContent.PreviousLabel) ] ]
-                                Level.item [ Level.Item.Props [ OnClick(fun _ -> (if (model.ActiveModalIndex = aboutModalContentSections.Length - 1) then NextSection else SwitchModal (1)) |> dispatch) ] ] [ p [] [ str (modalContent.NextLabel) ] ]
+                                a [] [ 
+                                    Level.item [ Level.Item.Props [ OnClick(fun _ -> (if (model.ActiveModalIndex = 0) then PreviousSection else SwitchModal (-1)) |> dispatch ) ] ] ] [ 
+                                        Image.image [Image.Is64x64] [ img [Src "./imgs/icons/LeftNavButton.png"] ]
+                                        str (modalContent.PreviousLabel);
+                                    ] 
+                                ]
+                                a [] [ 
+                                    Level.item [ Level.Item.Props [ OnClick(fun _ -> (if (model.ActiveModalIndex = aboutModalContentSections.Length - 1) then NextSection else SwitchModal (1)) |> dispatch) ] ] [ 
+                                        str (modalContent.NextLabel);  
+                                        Image.image [Image.Is64x64] [ img [Src "./imgs/icons/RightNavButton.png"] ] 
+                                    ] 
+                                ] 
                             ]
                         ]
                     ]
