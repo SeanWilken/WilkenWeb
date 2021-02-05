@@ -5,7 +5,7 @@
 @import url('https://fonts.googleapis.com/css2?family=Ubuntu:wght@500&display=swap');
 @import url('https://fonts.googleapis.com/css2?family=Vollkorn&display=swap');
 @import url('https://fonts.googleapis.com/css?family=Bungee&display=swap');
-@import url('https://fonts.googleapis.com/css2?family=Exo:ital,wght@0,100;0,200;0,600;1,300&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Exo:ital,wght@0,100;0,200;0,300;0,600;1,300&display=swap');
 
 // NOTHING TO SEE HERE...
 // @import '../Modules/Portfolio/Games/TileSort/style/style.scss';
@@ -71,6 +71,12 @@
 //https://unsplash.com/@carlosandres11
 // background-image: url("../public/imgs/unsplash/moonFade.jpg");
 
+//https://unsplash.com/@walkator on Unsplash
+// background-image: url("../public/imgs/unsplash/walkator-code-unsplash.jpg");
+
+//https://unsplash.com/@jdiegoph on Unsplash
+// background-image: url("../public/imgs/unsplash/diego-ph-design-unsplash.jpg");
+
 //https://unsplash.com/@cbarbalis
 // background-image: url("../public/imgs/unsplash/blurSun.jpg");
 
@@ -94,7 +100,7 @@ html {
 .headerTitle {
     color: #69A69A;
     font-family: "Exo";
-    font-weight: 300;
+    font-weight: 100;
     font-size: 90px;
 }
 .headerNavColumns {
@@ -182,6 +188,13 @@ html {
         @extend .contentCardTextBackground;
     }
 }
+.portfolioContentCard {
+    @extend .aboutContentCard;
+    padding: 25px;
+    .container {
+        @extend .contentCardTextBackground;
+    }
+}
 //hack
 .modalContent {
     max-width: 100%;
@@ -263,11 +276,29 @@ html {
 .portfolioSectionHoverSelection  {
     @extend .hoverActionSectionCard;
     // // PICK A GOOD BACKGROUND
-    background-image: url("../public/imgs/unsplash/moonFade.jpg");
+    // background-image: url("../public/imgs/unsplash/moonFade.jpg");
     background-size: cover;
     background-position: center;
     border: 1px solid #000000;
     box-shadow: 15px 10px 10px black;
+    padding: 150px;
+    margin: 10px;
+    // &:hover {
+        // div {
+        //     padding: 50px;
+        // }
+    // }
+}
+
+.portfolioCodeCard {
+    @extend .portfolioSectionHoverSelection;
+    background-image: url("../public/imgs/unsplash/walkator-code-unsplash.jpg");
+    width: auto;
+}
+.portfolioDesignCard {
+    @extend .portfolioSectionHoverSelection;
+    background-image: url("../public/imgs/unsplash/diego-ph-design-unsplash.jpg");
+    width: auto;
 }
 // *************************
 // GENERAL ELEMENTS

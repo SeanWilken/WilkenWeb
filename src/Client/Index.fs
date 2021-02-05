@@ -128,13 +128,17 @@ let headerBlurSelector model =
     | _ ->
         Container.Props [ ClassName "halfPaddedContainer" ]
 
-// Web App Header Nav content 
+// Web App Header Nav content
 let headerContent (model: SharedWebAppModels.Model) dispatch =
     Container.container [ headerBlurSelector model ] [
         Level.level [] [
             Level.item [] [
-                Image.image [Image.Is128x128] [ img [ Src "./imgs/icons/Logo blue.png"; ] ]
-                p [ ClassName "headerTitle" ] [ str "Sean Wilken" ]
+                a [ OnClick(fun _ -> SwitchToOtherApp "Welcome" |> dispatch) ] [
+                    Level.item [] [ 
+                        Image.image [ Image.Is128x128 ] [ img [ Src "./imgs/icons/Logo blue.png"; ] ]
+                        p [ ClassName "headerTitle" ] [ str "Sean Wilken" ]
+                    ]
+                ]
             ]
             Level.item [ ] [
                 Columns.columns [ Columns.Props [ Style[ FlexDirection "column"; Padding 10; FontFamily "Exo"; FontStyle "italic"; TextAlign TextAlignOptions.Center]; ] ] [ // STYLE THIS??

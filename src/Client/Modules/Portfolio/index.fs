@@ -38,11 +38,11 @@ let update (msg: Msg) (model: SharedPortfolioGallery.Model): SharedPortfolioGall
     | CodeGalleryMsg msg, SharedPortfolioGallery.CodeGallery model ->
         let codeGalleryModel, com = CodeGallery.update msg model
         SharedPortfolioGallery.CodeGallery codeGalleryModel, Cmd.map CodeGalleryMsg com
-    | _ -> SharedPortfolioGallery.PortfolioGallery, Cmd.none // gross hack
+    | _ -> SharedPortfolioGallery.PortfolioGallery, Cmd.none
 
 // VIEW
 let PortfolioHeader =
-    Container.container [ Container.Props [ClassName "aboutContentCard"] ] [
+    Container.container [ Container.Props [ClassName "portfolioContentCard"] ] [
         Container.container [] [
             h1 [] [ str "Portfolio" ]
             p [] [ str "Select one of the below to delve deeper into the rabbit hole." ]
@@ -50,13 +50,12 @@ let PortfolioHeader =
     ]
 
 let PortfolioSplitView dispatch =
-    Container.container [ Container.Props [ Style [PaddingTop 25] ] ] [ //ClassName "" ] ] [//paddedContainer
+    Container.container [ Container.Props [ Style [PaddingTop 25] ] ] [
         Tile.ancestor [] [
             Tile.parent [Tile.IsVertical] [
                 a [ OnClick(fun _ -> LoadSection (SharedPortfolioGallery.CodeGallery SharedCodeGallery.CodeGallery) |> dispatch ) ] [
-                Container.container [ Container.Props [ ClassName "portfolioSectionHoverSelection"]] [
-                        Tile.child [] [ 
-                            // Image.image [] [ img [Src "./imgs/Green twin.png"] ]
+                Container.container [ Container.Props [ ClassName "portfolioCodeCard"]] [
+                        Tile.child [ Tile.Props [ClassName "contentCardTextBackground"] ] [ 
                             h1 [] [ str "PLAY OR REVIEW CODE" ]
                             h2 [] [ str "CODE GALLERY" ]
                         ]
@@ -66,9 +65,8 @@ let PortfolioSplitView dispatch =
             // TODO PROFESSIONAL RESUME CONDENSED PDF / PAGE VERSION
             Tile.parent [Tile.IsVertical] [
                 a [ OnClick(fun _ -> LoadSection (SharedPortfolioGallery.DesignGallery SharedDesignGallery.getInitialModel) |> dispatch ) ] [
-                Container.container [ Container.Props [ ClassName "portfolioSectionHoverSelection" ]] [
-                        Tile.child [] [ 
-                            // Image.image [] [ img [Src "./imgs/Red twin.png"] ]
+                Container.container [ Container.Props [ ClassName "portfolioDesignCard" ]] [
+                    Tile.child [ Tile.Props [ClassName "contentCardTextBackground"] ] [ 
                             h1 [] [ str "CHECK OUT SOME DRAWINGS" ]
                             h2 [] [ str "DESIGN GALLERY" ]
                         ]
