@@ -58,19 +58,38 @@ let getGalleryCardByIndex (index: int) =
     let piece, description = galleryPieces.Item(index)
     piece, description
 
-// SECTION HEADER CONTROLS
-let previousButton dispatch =
-        a [ OnClick(fun _ -> SetCurrentPieceIndex (-1) |> dispatch ); ] [
-            Image.image [ Image.Is64x64 ] [ img [ Src "./imgs/icons/LeftNavButton.png"] ] 
+// GRAY OUT OR NON HOVER / SELECTABLE IF AT 0 OR MAX INDEX?
+let bigPrevious dispatch =
+    Level.left [] [
+        a [ OnClick (fun _ -> SetCurrentPieceIndex (-1) |> dispatch) ] [
+            Container.container [ Container.Props [ ClassName "sectionNavigationPreviousButton" ] ] [
+                Columns.columns [ Columns.Props [ Style [ FlexDirection "column"; FontFamily "Bungee"; Color "#FF2843"] ] ] [
+                        Column.column [] [ p [] [str "P"] ]
+                        Column.column [] [ p [] [str "R"] ]
+                        Column.column [] [ p [] [str "E"] ]
+                        Column.column [] [ p [] [str "V"] ]
+                ]
+            ]
         ]
-let nextButton dispatch =
-        a [ OnClick(fun _ -> SetCurrentPieceIndex (1) |> dispatch ); ] [
-            Image.image [ Image.Is64x64; ] [ img [ Src "./imgs/icons/RightNavButton.png"] ] 
+    ]
+
+let bigNext dispatch =
+    Level.right [] [
+        a [ OnClick (fun _ -> SetCurrentPieceIndex (1) |> dispatch) ] [
+            Container.container [ Container.Props [ ClassName "sectionNavigationNextButton" ] ] [
+                Columns.columns [ Columns.Props [ Style [ FlexDirection "column"; FontFamily "Bungee"; Color "#FF2843"] ] ] [
+                    Column.column [] [ p [] [str "N"] ]
+                    Column.column [] [ p [] [str "E"] ]
+                    Column.column [] [ p [] [str "X"] ]
+                    Column.column [] [ p [] [str "T"] ]
+                ]
+            ]
         ]
+    ]
 
 let galleryEntryCard piece description dispatch = 
-    Container.container [ Container.Props [ ClassName "paddedContainer" ] ] [
-        Container.container [ Container.Props [  Style [ ]; ClassName "galleryImage"; ] ] [
+    div [] [
+        Container.container [ Container.Props [ ClassName "galleryImage"; ] ] [
             Image.image [] [ img [ Src ("./imgs/" + piece + ".png") ] ]
         ]
         Level.level [] [
@@ -85,17 +104,23 @@ let galleryEntryCard piece description dispatch =
         ]
     ]
 
-let view (model: SharedDesignGallery.Model) dispatch =
-    Container.container [] [
-            Tile.parent [] [
-                Container.container [ Container.Props [ Style [TextAlign TextAlignOptions.Center] ] ] [
-                    Level.level [] [
-                        Level.item [] [ previousButton dispatch ]
-                        Level.item [] [ SharedModule.backToGallery BackToPortfolio dispatch ]
-                        Level.item [] [ nextButton dispatch ]
-                    ]
+let galleryModal (model: SharedDesignGallery.Model) dispatch =
+    Modal.modal [ Modal.IsActive true ] [ 
+        Modal.background [ Props [ OnClick (fun _ -> BackToPortfolio |> dispatch) ]] []
+        Modal.content [ Props [ Style [ Width "100%"; ]; ] ] [
+            Level.level [] [
+                bigPrevious dispatch
+                Level.item [] [
+                    let piece, description = getGalleryCardByIndex model.CurrentPieceIndex
+                    galleryEntryCard piece description dispatch
                 ]
+                bigNext dispatch
             ]
-            let piece, description = getGalleryCardByIndex model.CurrentPieceIndex
-            galleryEntryCard piece description dispatch
         ]
+        Modal.close [ Modal.Close.Props [ Style [Color "#000"; BackgroundColor "#FF2843"]] ; Modal.Close.Size IsLarge; Modal.Close.OnClick (fun _ -> BackToPortfolio |> dispatch) ] [] 
+    ]
+
+let view (model: SharedDesignGallery.Model) dispatch =
+    Container.container [ Container.Props [ Style [ MaxWidth "100%"; BackgroundColor "rgba(0,0,0,.5)" ] ] ] [
+        galleryModal model dispatch
+    ]

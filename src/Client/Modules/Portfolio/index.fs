@@ -42,17 +42,19 @@ let update (msg: Msg) (model: SharedPortfolioGallery.Model): SharedPortfolioGall
 
 // VIEW
 let PortfolioHeader =
-    Container.container [ Container.Props [ClassName "portfolioContentCard"] ] [
-        Container.container [] [
-            h1 [] [ str "Portfolio" ]
-            p [] [ str "Select one of the below to delve deeper into the rabbit hole." ]
+    Level.level [ Level.Level.Props [ClassName "portfolioContentCard"] ] [
+        Level.item [] [
+            Container.container [] [
+                h1 [] [ str "Portfolio" ]
+                p [] [ str "Select one of the below to delve deeper into the rabbit hole." ]
+            ]
         ]
     ]
 
 let PortfolioSplitView dispatch =
-    Container.container [ Container.Props [ Style [PaddingTop 25] ] ] [
-        Tile.ancestor [] [
-            Tile.parent [Tile.IsVertical] [
+    div [ Style [ PaddingTop 25] ] [
+        Columns.columns [] [
+            Column.column [] [
                 a [ OnClick(fun _ -> LoadSection (SharedPortfolioGallery.CodeGallery SharedCodeGallery.CodeGallery) |> dispatch ) ] [
                 Container.container [ Container.Props [ ClassName "portfolioCodeCard"]] [
                         Tile.child [ Tile.Props [ClassName "contentCardTextBackground"] ] [ 
@@ -63,7 +65,7 @@ let PortfolioSplitView dispatch =
                 ]
             ]
             // TODO PROFESSIONAL RESUME CONDENSED PDF / PAGE VERSION
-            Tile.parent [Tile.IsVertical] [
+            Column.column [] [
                 a [ OnClick(fun _ -> LoadSection (SharedPortfolioGallery.DesignGallery SharedDesignGallery.getInitialModel) |> dispatch ) ] [
                 Container.container [ Container.Props [ ClassName "portfolioDesignCard" ]] [
                     Tile.child [ Tile.Props [ClassName "contentCardTextBackground"] ] [ 
@@ -77,10 +79,10 @@ let PortfolioSplitView dispatch =
     ]
 
 let view model dispatch =
-    Container.container [] [
+    div [] [
         match model with
         | SharedPortfolioGallery.PortfolioGallery ->
-            Container.container [] [
+            div [] [
                 PortfolioHeader
                 PortfolioSplitView dispatch
             ]

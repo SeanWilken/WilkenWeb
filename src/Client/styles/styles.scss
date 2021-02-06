@@ -61,22 +61,16 @@
 // CHECK THEM OUT
 // https://unsplash.com/@aperturevintage
 // background-image: url("../public/imgs/unsplash/spaceSunset.jpg");
-
 // https://unsplash.com/@n8rayfield
 // background-image: url("../public/imgs/unsplash/spaceTreeRadiate.jpg");
-
 // https://unsplash.com/@wilstewart3
 // background-image: url("../public/imgs/unsplash/space.jpg");
-
 //https://unsplash.com/@carlosandres11
 // background-image: url("../public/imgs/unsplash/moonFade.jpg");
-
 //https://unsplash.com/@walkator on Unsplash
 // background-image: url("../public/imgs/unsplash/walkator-code-unsplash.jpg");
-
 //https://unsplash.com/@jdiegoph on Unsplash
 // background-image: url("../public/imgs/unsplash/diego-ph-design-unsplash.jpg");
-
 //https://unsplash.com/@cbarbalis
 // background-image: url("../public/imgs/unsplash/blurSun.jpg");
 
@@ -95,8 +89,10 @@ html {
     background-image: url("../public/imgs/unsplash/space.jpg");
     background-size: auto;
     background-repeat: no-repeat;
+    padding: 10px;
 }
 // **********************
+// HEADER
 .headerTitle {
     color: #69A69A;
     font-family: "Exo";
@@ -118,11 +114,9 @@ html {
         font-size: 35px;
     }
 }
-// ACTIONS
 .blurContent {
     -webkit-filter: blur(5px);
     filter: blur(5px);
-    padding: 25px;
     &:hover {
         -webkit-filter: blur(0px);
         filter: blur(0px);
@@ -130,8 +124,9 @@ html {
 }
 // **********************
 
+
 // *************************
-// GENERAL REUSABLE CLASSES
+// BASE EXTENSIBLE SECTION CLASSES
 // *************************
 .contentCard {
     padding: 50px;
@@ -172,48 +167,32 @@ html {
     padding: 25px;
     margin: 5px;
 }
-.welcomeContentCard {
-    @extend .contentCard;
-    background-image: url("../public/imgs/unsplash/moonFade.jpg");
-    background-size:cover;
-    background-repeat: no-repeat;
+.mainContainer {
+    padding: 15px;
 }
-.aboutContentCard {
-    @extend .contentCard;
-    background-size: cover;
-    background-position: center;
-    background-image: url("../public/imgs/unsplash/spaceSunset.jpg");
-    align-content: center;
-    .container {
-        @extend .contentCardTextBackground;
+.paddedContainer {
+    padding: 50px; 
+}
+.sectionNavigationPreviousButton { 
+    padding: 50px;
+    background-color: rgba(0,0,0,.5);
+    &:hover {
+        font-size: 20px;
     }
 }
-.portfolioContentCard {
-    @extend .aboutContentCard;
+.sectionNavigationNextButton { 
+    padding: 50px;
+    background-color: rgba(0,0,0,.5);
+    &:hover {
+        font-size: 20px;
+    }
+}
+.sectionNavigationBackButton { 
     padding: 25px;
-    .container {
-        @extend .contentCardTextBackground;
+    background-color: rgba(0,0,0,.5);
+    &:hover {
+        font-size: 20px;
     }
-}
-//hack
-.modalContent {
-    max-width: 100%;
-}
-
-// this is ugly at breakpoints
-// needs further definition of subsections
-.aboutModalContentCard {
-    @extend .aboutContentCard;
-    .level-item {
-        @extend .contentCardTextBackground;
-    }
-}
-
-.contactContentCard {
-    @extend .contentCard;
-    background-image: url("../public/imgs/unsplash/spaceSunset.jpg");
-    background-size: cover;
-    background-position: center;
 }
 .hoverActionSectionCard  {
     display: block;
@@ -250,6 +229,23 @@ html {
         }
     }
 }
+// *************************
+
+
+// **********************
+// WELCOME PAGE CLASSES
+.welcomeContentCard {
+    @extend .contentCard;
+    background-image: url("../public/imgs/unsplash/moonFade.jpg");
+    background-size:cover;
+    background-repeat: no-repeat;
+}
+.welcomeHeroImage {
+    background: #dddddd;
+    border: 1px solid #000000;
+    box-shadow: 10px 10px 10px black;
+    padding: 50px;
+}
 .welcomeNextSectionCard  {
     @extend .hoverActionSectionCard;
     background: #010E14;
@@ -257,6 +253,33 @@ html {
     box-shadow: 15px 10px 10px black;
     background-image: url("../public/imgs/unsplash/moonFade.jpg");
     background-size:cover;
+}
+// **********************
+
+
+// **********************
+// ABOUT SECTION CLASSES
+.aboutSectionContainer {
+    background-image: url("../public/imgs/Break\ Rules.png");
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+}
+.aboutContentCard {
+    @extend .contentCard;
+    background-size: cover;
+    background-position: center;
+    background-image: url("../public/imgs/unsplash/spaceSunset.jpg");
+    align-content: center;
+    .container {
+        @extend .contentCardTextBackground;
+    }
+}
+.aboutModalContentCard {
+    @extend .aboutContentCard;
+    .level-item {
+        @extend .contentCardTextBackground;
+    }
 }
 .aboutSectionHoverSelection {
     @extend .contentCardTextBackground;
@@ -272,66 +295,38 @@ html {
         }
     }
 }
-// THIS SHOULD BE BIGGER, HAS SAME HOVER FUNCTIONALITY AS WELCOME NEXT SECTION
+// **********************
+
+
+// **********************
+// PORTFOLIO SECTION CLASSES
+.portfolioContentCard {
+    @extend .aboutContentCard;
+    padding: 10px;
+    .container {
+        @extend .contentCardTextBackground;
+    }
+}
 .portfolioSectionHoverSelection  {
     @extend .hoverActionSectionCard;
-    // // PICK A GOOD BACKGROUND
-    // background-image: url("../public/imgs/unsplash/moonFade.jpg");
     background-size: cover;
     background-position: center;
     border: 1px solid #000000;
     box-shadow: 15px 10px 10px black;
-    padding: 150px;
+    // padding: 150px;
     margin: 10px;
-    // &:hover {
-        // div {
-        //     padding: 50px;
-        // }
-    // }
 }
-
 .portfolioCodeCard {
     @extend .portfolioSectionHoverSelection;
     background-image: url("../public/imgs/unsplash/walkator-code-unsplash.jpg");
-    width: auto;
+    // width: auto;
+
 }
 .portfolioDesignCard {
     @extend .portfolioSectionHoverSelection;
     background-image: url("../public/imgs/unsplash/diego-ph-design-unsplash.jpg");
-    width: auto;
+    // width: auto;
 }
-// *************************
-// GENERAL ELEMENTS
-.paddedContainer {
-    padding: 50px; 
-}    
-.halfPaddedContainer {
-    padding: 25px; 
-}    
-// **********************
-
-// **********************
-// WELCOME PAGE CLASSES
-.welcomeHeroImage {
-    background: #dddddd;
-    border: 1px solid #000000;
-    box-shadow: 10px 10px 10px black;
-    padding: 50px;
-}
-// **********************
-
-// **********************
-// ABOUT SECTION CLASSES
-.aboutSectionContainer {
-    background-image: url("../public/imgs/Break\ Rules.png");
-    background-size: contain;
-    background-repeat: no-repeat;
-    background-position: center;
-}
-// **********************
-
-// **********************
-// PORTFOLIO SECTION CLASSES
 .backToGallery {
     padding: 15px;
     border: 1px solid #FF2843;
@@ -344,9 +339,9 @@ html {
 }
 // **********************
 
+
 // **********************
-// GALLERY CLASSES
-// this is specific to game section tiles?
+// PORTFOLIO CODE GALLERY CLASSES
 .selectionTile {
     padding: 20px;
     box-shadow: 5px 5px 5px black;
@@ -424,14 +419,16 @@ html {
 }
 // **********************
 
+
 // **********************
-// ART GALLERY CLASSES
+// PORTFOLIO DESIGN GALLERY CLASSES
 .galleryTitleCard {
     font-size: 75px;
     color: #69A69A;
     font-family: "Exo";
     font-style: italic;
     text-align: center;
+    min-width: 500px;
     h1 { font-weight: 600; }
 }
 .galleryDescriptionCard {
@@ -444,11 +441,20 @@ html {
     border: 1px solid #000000;
     box-shadow: 10px 10px 10px black;
     background-color: #ffffff;
-    padding: 100px;
-    margin-left: auto;
-    margin-right: auto;
     text-align: center;
-    overflow: hidden;
-    max-width: 60%;
+    .image {
+        max-width: fit-content;
+    }
+}
+// **********************
+
+
+// **********************
+// CONTACT
+.contactContentCard {
+    @extend .contentCard;
+    background-image: url("../public/imgs/unsplash/spaceSunset.jpg");
+    background-size: cover;
+    background-position: center;
 }
 // **********************

@@ -122,11 +122,11 @@ let headerBlurSelector model =
     | SharedWebAppModels.Portfolio model ->
         match model with
         | SharedPortfolioGallery.PortfolioGallery ->
-            Container.Props [ ClassName "halfPaddedContainer" ]
+            Container.Props [ ClassName "" ]
         | _ -> 
             Container.Props [ ClassName "blurContent" ]
     | _ ->
-        Container.Props [ ClassName "halfPaddedContainer" ]
+        Container.Props [ ClassName "" ]
 
 // Web App Header Nav content
 let headerContent (model: SharedWebAppModels.Model) dispatch =
@@ -162,7 +162,7 @@ let headerContent (model: SharedWebAppModels.Model) dispatch =
 let view (model : SharedWebAppModels.Model) (dispatch : WebAppMsg -> unit) =
     div [] [
         headerContent model dispatch
-        Container.container [ Container.Props [ Style [ Padding 15; ] ] ] [// style hack?
+        Container.container [ Container.Props [ ClassName "mainContainer" ] ] [
             match model with
             | SharedWebAppModels.AboutSection model -> AboutSection.view model (AboutMsg >> dispatch)
             | SharedWebAppModels.Welcome -> Welcome.view (WelcomeMsg >> dispatch)

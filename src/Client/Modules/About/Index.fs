@@ -82,7 +82,7 @@ let update msg model : Model * Cmd<Msg> =
 let genericModal model dispatch modalContent =
     Modal.modal [ Modal.IsActive model.ModalIsActive ] [ 
         Modal.background [Props [ OnClick (fun _ -> ToggleModal model.ActiveModalIndex |> dispatch) ]] []
-        Modal.content [ Props [ ClassName "modalContent"; ] ] [
+        Modal.content [] [
             Container.container [] [
                 Level.level [] [
                     Container.container [ Container.Props [ ClassName "aboutModalContentCard" ] ] [

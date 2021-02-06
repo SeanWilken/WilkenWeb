@@ -14,7 +14,6 @@ open TileSmash
 let view =
     Container.container [ Container.Props [ ClassName "" ] ] [
         Level.level [] [
-            // columns not aligned / same height, need custom class?
             Columns.columns [] [
                 Column.column [] [
                     Container.container [ Container.Props [ ClassName "contactContentCard" ] ] [
@@ -33,7 +32,6 @@ let view =
                         ]
                     ]
                 ]
-                // CARDS ARE NOT ALIGNED AS THERE IS DIFFERENT AMOUNTS OF TEXT
                 Column.column [] [ 
                     Container.container [ Container.Props [ ClassName "contactContentCard"; Style [Height "100%"] ] ] [// fixes not being aligned properly
                         div [ClassName "contentCardTextBackground"; Style [Padding 25] ] [
