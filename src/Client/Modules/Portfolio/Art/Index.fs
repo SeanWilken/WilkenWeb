@@ -36,10 +36,10 @@ type Msg =
     | BackToPortfolio
     | SetCurrentPieceIndex of int
 
-let init() =
+let init () =
     SharedDesignGallery.getInitialModel, Cmd.none
 
-let update msg (model : SharedDesignGallery.Model) =
+let update msg ( model : SharedDesignGallery.Model ) =
     match msg with
     | SetCurrentPieceIndex msg ->
         let desiredPieceIndex = 
@@ -49,25 +49,25 @@ let update msg (model : SharedDesignGallery.Model) =
                 then model.CurrentPieceIndex
             else
                 model.CurrentPieceIndex + msg
-        {model with CurrentPieceIndex = desiredPieceIndex}, Cmd.none
+        { model with CurrentPieceIndex = desiredPieceIndex }, Cmd.none
     | _ ->
         model, Cmd.none
 
 // HELPER FUNCTION TO BREAKDOWN THE GALLERY TUPLE
-let getGalleryCardByIndex (index: int) =
-    let piece, description = galleryPieces.Item(index)
+let getGalleryCardByIndex ( index: int ) =
+    let piece, description = galleryPieces.Item ( index )
     piece, description
 
 // GRAY OUT OR NON HOVER / SELECTABLE IF AT 0 OR MAX INDEX?
 let bigPrevious dispatch =
     Level.left [] [
-        a [ OnClick (fun _ -> SetCurrentPieceIndex (-1) |> dispatch) ] [
+        a [ OnClick ( fun _ -> SetCurrentPieceIndex (-1) |> dispatch ) ] [
             Container.container [ Container.Props [ ClassName "sectionNavigationPreviousButton" ] ] [
-                Columns.columns [ Columns.Props [ Style [ FlexDirection "column"; FontFamily "Bungee"; Color "#FF2843"] ] ] [
-                        Column.column [] [ p [] [str "P"] ]
-                        Column.column [] [ p [] [str "R"] ]
-                        Column.column [] [ p [] [str "E"] ]
-                        Column.column [] [ p [] [str "V"] ]
+                Columns.columns [ Columns.Props [ ClassName "sectionNavButtonCols" ] ] [
+                        Column.column [] [ p [] [ str "P" ] ]
+                        Column.column [] [ p [] [ str "R" ] ]
+                        Column.column [] [ p [] [ str "E" ] ]
+                        Column.column [] [ p [] [ str "V" ] ]
                 ]
             ]
         ]
@@ -75,13 +75,13 @@ let bigPrevious dispatch =
 
 let bigNext dispatch =
     Level.right [] [
-        a [ OnClick (fun _ -> SetCurrentPieceIndex (1) |> dispatch) ] [
+        a [ OnClick ( fun _ -> SetCurrentPieceIndex (1) |> dispatch ) ] [
             Container.container [ Container.Props [ ClassName "sectionNavigationNextButton" ] ] [
-                Columns.columns [ Columns.Props [ Style [ FlexDirection "column"; FontFamily "Bungee"; Color "#FF2843"] ] ] [
-                    Column.column [] [ p [] [str "N"] ]
-                    Column.column [] [ p [] [str "E"] ]
-                    Column.column [] [ p [] [str "X"] ]
-                    Column.column [] [ p [] [str "T"] ]
+                Columns.columns [ Columns.Props [ ClassName "sectionNavButtonCols" ] ] [
+                    Column.column [] [ p [] [ str "N" ] ]
+                    Column.column [] [ p [] [ str "E" ] ]
+                    Column.column [] [ p [] [ str "X" ] ]
+                    Column.column [] [ p [] [ str "T" ] ]
                 ]
             ]
         ]
@@ -89,25 +89,21 @@ let bigNext dispatch =
 
 let galleryEntryCard piece description dispatch = 
     div [] [
-        Container.container [ Container.Props [ ClassName "galleryImage"; ] ] [
-            Image.image [] [ img [ Src ("./imgs/" + piece + ".png") ] ]
+        Container.container [ Container.Props [ ClassName "galleryImage" ] ] [
+            Image.image [] [ img [ Src ( "./imgs/" + piece + ".png" ) ] ]
         ]
         Level.level [] [
-            Tile.child [Tile.IsVertical] [
-                Container.container [ Container.Props [ClassName "galleryTitleCard"] ] [
-                    h1 [] [ str piece ]
-                ]   
-                Container.container [ Container.Props [ ClassName "galleryDescriptionCard" ] ] [
-                    p [] [ str description ]
-                ]
+            Tile.child [ Tile.IsVertical ] [
+                Container.container [ Container.Props [ ClassName "galleryTitleCard" ] ] [ h1 [] [ str piece ] ]
+                Container.container [ Container.Props [ ClassName "galleryDescriptionCard" ] ] [ p [] [ str description ] ]
             ]
         ]
     ]
 
-let galleryModal (model: SharedDesignGallery.Model) dispatch =
+let galleryModal ( model: SharedDesignGallery.Model ) dispatch =
     Modal.modal [ Modal.IsActive true ] [ 
-        Modal.background [ Props [ OnClick (fun _ -> BackToPortfolio |> dispatch) ]] []
-        Modal.content [ Props [ Style [ Width "100%"; ]; ] ] [
+        Modal.background [ Props [ OnClick ( fun _ -> BackToPortfolio |> dispatch ) ] ] []
+        Modal.content [ Props [ClassName "modalContent"] ] [
             Level.level [] [
                 bigPrevious dispatch
                 Level.item [] [
@@ -117,10 +113,10 @@ let galleryModal (model: SharedDesignGallery.Model) dispatch =
                 bigNext dispatch
             ]
         ]
-        Modal.close [ Modal.Close.Props [ Style [Color "#000"; BackgroundColor "#FF2843"]] ; Modal.Close.Size IsLarge; Modal.Close.OnClick (fun _ -> BackToPortfolio |> dispatch) ] [] 
+        Modal.close [ Modal.Close.CustomClass "closeModal"; Modal.Close.Size IsLarge; Modal.Close.OnClick ( fun _ -> BackToPortfolio |> dispatch ) ] []
     ]
 
-let view (model: SharedDesignGallery.Model) dispatch =
-    Container.container [ Container.Props [ Style [ MaxWidth "100%"; BackgroundColor "rgba(0,0,0,.5)" ] ] ] [
+let view ( model: SharedDesignGallery.Model ) dispatch =
+    Container.container [] [
         galleryModal model dispatch
     ]

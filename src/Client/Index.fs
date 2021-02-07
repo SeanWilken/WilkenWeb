@@ -22,11 +22,11 @@ open Contact
 // Represents submodule msg's to be passed along the elmish update dispatch loop
 type WebAppMsg =
     | WelcomeMsg of Welcome.Msg
-    | AboutMsg of AboutSection.Msg // FOR MODAL INTRODUCTION // TEMPORARY
+    | AboutMsg of AboutSection.Msg
     | PortfolioMsg of Portfolio.Msg
     | SwitchToOtherApp of string // please wrap me
     | LoadPage of Page
-    | ErrorMsg of exn// WIP
+    | ErrorMsg of exn // WIP
 
 
 // PAGE ROUTER
@@ -43,23 +43,25 @@ type WebAppMsg =
 //     return page
 // }
 
+// DIRECTORY PAGE, DIRECT LINKS FROM ANY MODEL VIEW TO ANOTHER. MODAL VIEW?
+
 // the init has to have same signature and be called from the index html
-let init (path: PageRouter.Page option) : SharedWebAppModels.Model * Cmd<WebAppMsg> =
+let init ( path: PageRouter.Page option ) : SharedWebAppModels.Model * Cmd<WebAppMsg> =
     PageRouter.urlUpdate path SharedWebAppModels.Model.Welcome
 
-let update (msg: WebAppMsg) (model: SharedWebAppModels.Model): SharedWebAppModels.Model * Cmd<WebAppMsg> =
+let update ( msg: WebAppMsg ) ( model: SharedWebAppModels.Model ): SharedWebAppModels.Model * Cmd<WebAppMsg> =
     match msg, model with
     
     // WELCOME PAGE
     | WelcomeMsg msg, SharedWebAppModels.Model.Welcome ->
-        model, Cmd.ofMsg (LoadPage Page.About)
+        model, Cmd.ofMsg ( LoadPage Page.About )
 
     // ABOUT PAGE
-    | AboutMsg (NextSection),  model ->
-        model, Cmd.ofMsg (LoadPage (Page.Portfolio Landing))
-    | AboutMsg (PreviousSection), model ->
-        model, Cmd.ofMsg (LoadPage (Page.Welcome))
-    | AboutMsg msg, SharedWebAppModels.Model.AboutSection (model) ->
+    | AboutMsg ( NextSection ),  model ->
+        model, Cmd.ofMsg ( LoadPage ( Page.Portfolio Landing ) )
+    | AboutMsg ( PreviousSection ), model ->
+        model, Cmd.ofMsg ( LoadPage ( Page.Welcome ) )
+    | AboutMsg msg, SharedWebAppModels.Model.AboutSection ( model ) ->
         let thing, com = AboutSection.update msg model
         SharedWebAppModels.AboutSection thing, Cmd.none
 
@@ -67,18 +69,18 @@ let update (msg: WebAppMsg) (model: SharedWebAppModels.Model): SharedWebAppModel
     | PortfolioMsg msg, SharedWebAppModels.Portfolio model ->
         match msg, model with
         // PORTFOLIO GALLERY SUB MODULE
-        | LoadSection (SharedPortfolioGallery.PortfolioGallery), _ -> 
-            SharedWebAppModels.Portfolio model, Cmd.ofMsg (LoadPage (Page.Portfolio Landing))
+        | LoadSection ( SharedPortfolioGallery.PortfolioGallery ), _ -> 
+            SharedWebAppModels.Portfolio model, Cmd.ofMsg ( LoadPage ( Page.Portfolio Landing ) )
         // CODE GALLERY SUB MODULE
-        | LoadSection (SharedPortfolioGallery.CodeGallery (SharedCodeGallery.CodeGallery)), _ ->
-           SharedWebAppModels.Portfolio model, Cmd.ofMsg (LoadPage (Page.Portfolio (Code (CodeSection.Landing))))
+        | LoadSection ( SharedPortfolioGallery.CodeGallery ( SharedCodeGallery.CodeGallery ) ), _ ->
+           SharedWebAppModels.Portfolio model, Cmd.ofMsg ( LoadPage ( Page.Portfolio ( Code ( CodeSection.Landing ) ) ) )
         | CodeGalleryMsg CodeGallery.Msg.BackToPortfolio, _ -> 
-            SharedWebAppModels.Portfolio model, Cmd.ofMsg (LoadPage (Page.Portfolio Landing))
+            SharedWebAppModels.Portfolio model, Cmd.ofMsg ( LoadPage ( Page.Portfolio Landing ) )
         // ART GALLERY SUB MODULE
-        | LoadSection (SharedPortfolioGallery.DesignGallery ({CurrentPieceIndex = 0}) ), _ ->
-           SharedWebAppModels.Portfolio model, Cmd.ofMsg (LoadPage (Page.Portfolio (Design)))
+        | LoadSection ( SharedPortfolioGallery.DesignGallery ( { CurrentPieceIndex = 0 } ) ), _ ->
+           SharedWebAppModels.Portfolio model, Cmd.ofMsg ( LoadPage ( Page.Portfolio ( Design ) ) )
         | ArtGalleryMsg ArtGallery.Msg.BackToPortfolio, _ -> 
-            SharedWebAppModels.Portfolio model, Cmd.ofMsg (LoadPage (Page.Portfolio Landing))
+            SharedWebAppModels.Portfolio model, Cmd.ofMsg ( LoadPage ( Page.Portfolio Landing ) )
         // default case
         | msg, model ->
             let portfolioModel, com = Portfolio.update msg model
@@ -88,14 +90,14 @@ let update (msg: WebAppMsg) (model: SharedWebAppModels.Model): SharedWebAppModel
     | SwitchToOtherApp string, _ ->
         // handles page route for top level
         match string with
-        | "AboutSection" -> model, Cmd.ofMsg (LoadPage Page.About)
-        | "Portfolio" -> model, Cmd.ofMsg (LoadPage (Page.Portfolio(Landing)))
-        | "Contact" -> model, Cmd.ofMsg (LoadPage Page.Contact)
+        | "AboutSection" -> model, Cmd.ofMsg ( LoadPage Page.About )
+        | "Portfolio" -> model, Cmd.ofMsg ( LoadPage ( Page.Portfolio ( Landing ) ) )
+        | "Contact" -> model, Cmd.ofMsg ( LoadPage Page.Contact )
         | "Welcome"
         | _ ->
-            model, Cmd.ofMsg (LoadPage Page.Welcome)
+            model, Cmd.ofMsg ( LoadPage Page.Welcome )
     | LoadPage page, model ->
-        urlUpdate (Some page) model
+        urlUpdate ( Some page ) model
     | _ -> model, Cmd.none
 
 open Fable.React
@@ -129,11 +131,11 @@ let headerBlurSelector model =
         Container.Props [ ClassName "" ]
 
 // Web App Header Nav content
-let headerContent (model: SharedWebAppModels.Model) dispatch =
+let headerContent ( model: SharedWebAppModels.Model ) dispatch =
     Container.container [ headerBlurSelector model ] [
         Level.level [] [
             Level.item [] [
-                a [ OnClick(fun _ -> SwitchToOtherApp "Welcome" |> dispatch) ] [
+                a [ OnClick ( fun _ -> SwitchToOtherApp "Welcome" |> dispatch ) ] [
                     Level.item [] [ 
                         Image.image [ Image.Is128x128 ] [ img [ Src "./imgs/icons/Logo blue.png"; ] ]
                         p [ ClassName "headerTitle" ] [ str "Sean Wilken" ]
@@ -141,7 +143,7 @@ let headerContent (model: SharedWebAppModels.Model) dispatch =
                 ]
             ]
             Level.item [ ] [
-                Columns.columns [ Columns.Props [ Style[ FlexDirection "column"; Padding 10; FontFamily "Exo"; FontStyle "italic"; TextAlign TextAlignOptions.Center]; ] ] [ // STYLE THIS??
+                Columns.columns [ Columns.Props [ ClassName "headerNavColumns"; ] ] [
                     for contentArea in contentAreas do
                         let areaName = contentArea.Name
                         let currentContentSection = 
@@ -150,25 +152,23 @@ let headerContent (model: SharedWebAppModels.Model) dispatch =
                             | SharedWebAppModels.AboutSection _ -> "AboutSection"
                             | SharedWebAppModels.Portfolio _ -> "Portfolio"
                             | SharedWebAppModels.Contact -> "Contact"
-                        let areaStyle = if currentContentSection = areaName then [ Color "#69A69A"; FontWeight 600] else [ Color "#FF2843";] // is-normal-text vs is-danger class refactor
-                        a [ ClassName "headerNavLinks"; Style areaStyle; OnClick(fun _ -> SwitchToOtherApp areaName |> dispatch ) ] [
-                            str areaName
-                        ]
+                        let areaClassName = if currentContentSection = areaName then "selectedNavLink" else "navSectionLink";
+                        a [ ClassName areaClassName; OnClick( fun _ -> SwitchToOtherApp areaName |> dispatch ) ] [ str areaName ]
                 ]
             ]
         ]
     ]
 
-let view (model : SharedWebAppModels.Model) (dispatch : WebAppMsg -> unit) =
+let view ( model : SharedWebAppModels.Model ) ( dispatch : WebAppMsg -> unit ) =
     div [] [
         headerContent model dispatch
         Container.container [ Container.Props [ ClassName "mainContainer" ] ] [
             match model with
-            | SharedWebAppModels.AboutSection model -> AboutSection.view model (AboutMsg >> dispatch)
-            | SharedWebAppModels.Welcome -> Welcome.view (WelcomeMsg >> dispatch)
-            | SharedWebAppModels.Portfolio SharedPortfolioGallery.PortfolioGallery -> Portfolio.view SharedPortfolioGallery.PortfolioGallery (PortfolioMsg >> dispatch)
-            | SharedWebAppModels.Portfolio (SharedPortfolioGallery.DesignGallery model) -> Portfolio.view (SharedPortfolioGallery.DesignGallery model) (PortfolioMsg >> dispatch)
-            | SharedWebAppModels.Portfolio (SharedPortfolioGallery.CodeGallery model) -> Portfolio.view (SharedPortfolioGallery.CodeGallery model) (PortfolioMsg >> dispatch)
+            | SharedWebAppModels.AboutSection model -> AboutSection.view model ( AboutMsg >> dispatch )
+            | SharedWebAppModels.Welcome -> Welcome.view ( WelcomeMsg >> dispatch )
+            | SharedWebAppModels.Portfolio SharedPortfolioGallery.PortfolioGallery -> Portfolio.view SharedPortfolioGallery.PortfolioGallery ( PortfolioMsg >> dispatch )
+            | SharedWebAppModels.Portfolio ( SharedPortfolioGallery.DesignGallery model ) -> Portfolio.view ( SharedPortfolioGallery.DesignGallery model ) ( PortfolioMsg >> dispatch )
+            | SharedWebAppModels.Portfolio ( SharedPortfolioGallery.CodeGallery model ) -> Portfolio.view ( SharedPortfolioGallery.CodeGallery model ) ( PortfolioMsg >> dispatch )
             | SharedWebAppModels.Contact -> Contact.view
         ]
     ]

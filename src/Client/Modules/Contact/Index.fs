@@ -12,37 +12,37 @@ open TileSmash
 // Static Page:
 // does not depend on the dispatch loop, as currently there are no messages that would need to be submitted into it.
 let view =
-    Container.container [ Container.Props [ ClassName "" ] ] [
+    div [] [
         Level.level [] [
             Columns.columns [] [
                 Column.column [] [
                     Container.container [ Container.Props [ ClassName "contactContentCard" ] ] [
-                        div [ClassName "contentCardTextBackground"; Style [Padding 25] ] [
-                            h1 [] [ str "Sean Wilken"]
-                            p [ Style [Margin 10; FontSize 18;] ] [ str "Drop me a line with your questions or comments about the website or it's features. Feel free to also send a friendly hello. Just don't spam me."] // STYLE THIS??
+                        div [ ClassName "contentCardTextBackground" ] [
+                            h1 [] [ str "Sean Wilken" ]
+                            p [] [ str "Drop me a line with your questions or comments about the website or it's features. Feel free to also send a friendly hello. Just don't spam me." ]
                             a [ Href "mailto: sean.d.wilken@gmail.com" ] [
                                 Level.level [] [
                                     Level.item [] [ 
-                                        Image.image [ Image.Is64x64 ] [ img [ Src "./imgs/icons/Mail.png"; ] ] 
-                                        div [] [str "Sean.D.Wilken@GMail.com"]
+                                        Image.image [ Image.Is64x64 ] [ img [ Src "./imgs/icons/Mail.png" ] ] 
+                                        div [] [ str "Sean.D.Wilken@GMail.com" ]
                                     ]
                                 ]
                             ]
-                            Column.column [] [ Container.container [] [ Image.image [] [ img [ Src "./imgs/Misfortune.png"; ] ] ] ]
+                            Column.column [] [ Container.container [] [ Image.image [] [ img [ Src "./imgs/Misfortune.png" ] ] ] ]
                         ]
                     ]
                 ]
                 Column.column [] [ 
-                    Container.container [ Container.Props [ ClassName "contactContentCard"; Style [Height "100%"] ] ] [// fixes not being aligned properly
-                        div [ClassName "contentCardTextBackground"; Style [Padding 25] ] [
-                            h1 [] [str "Xero Effort"] 
-                            p [ Style [Margin 10; FontSize 18;] ] [ str "Coming very soon, to platforms near you."] // STYLE THIS??
-                            // p [ Style [Margin 10; FontSize 18;] ] [ str "Check out Xero Effort & remember:"]
-                            // p [ Style [Margin 10; FontSize 18;] ] [ str "Follow, Like & Share"]
-                            // a [ Href "https://www.instagram.com/xeroeffort/"; ] [ 
+                    Container.container [ Container.Props [ ClassName "contactContentCard" ] ] [
+                        div [ClassName "contentCardTextBackground" ] [
+                            h1 [] [ str "Xero Effort" ] 
+                            p [] [ str "Coming very soon, to platforms near you." ]
+                            // p [] [ str "Check out Xero Effort & remember:" ]
+                            // p [] [ str "Follow, Like & Share" ]
+                            // a [ Href "https://www.instagram.com/xeroeffort/" ] [ 
                             //     Level.level [] [
                             //         Level.item [] [
-                            //             Image.image [ Image.Is64x64 ] [ img [ Src "./imgs/icons/IG.png"; ] ]
+                            //             Image.image [ Image.Is64x64 ] [ img [ Src "./imgs/icons/IG.png" ] ]
                             //             div [] [ str "@XeroEffort" ]
                             //         ]
                             //     ]
@@ -50,12 +50,12 @@ let view =
                             a [ Href "mailto: xeroeffortclub@gmail.com" ] [ 
                                 Level.level [] [
                                     Level.item [] [
-                                        Image.image [Image.Is64x64] [ img [ Src "./imgs/icons/Mail.png"; ] ]
-                                        div [] [ str "XeroEffortClub@GMail.com"] 
+                                        Image.image [ Image.Is64x64 ] [ img [ Src "./imgs/icons/Mail.png" ] ]
+                                        div [] [ str "XeroEffortClub@GMail.com" ] 
                                     ]
                                 ]
                             ]
-                            Column.column [] [ Container.container [] [ Image.image [] [ img [ Src "./imgs/Out for Blood.png"; ] ] ] ]
+                            Column.column [] [ Container.container [] [ Image.image [] [ img [ Src "./imgs/Out for Blood.png" ] ] ] ]
                         ]
                     ]
                 ]

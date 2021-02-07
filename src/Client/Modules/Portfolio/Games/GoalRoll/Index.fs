@@ -22,28 +22,27 @@ type Msg =
     | CheckSolution
     | QuitGame
 
-
-let init(): SharedGoalRoll.Model * Cmd<Msg> =
+let init (): SharedGoalRoll.Model * Cmd<Msg> =
     SharedGoalRoll.initModel, Cmd.none
 
 // --------------------------------------------------------------
 //STATE LIFECYCLE
-let update (msg: Msg) (model: SharedGoalRoll.Model): SharedGoalRoll.Model * Cmd<Msg> =
+let update ( msg: Msg ) ( model: SharedGoalRoll.Model ): SharedGoalRoll.Model * Cmd<Msg> =
     match msg, model with
     | RollBall direction, model ->
         match direction with
         | Up ->
             let boardAfterRoll = rollBallInGridDirection model.CurrentGrid Up
-            {model with CurrentGrid = boardAfterRoll}, Cmd.ofMsg CheckSolution
+            { model with CurrentGrid = boardAfterRoll }, Cmd.ofMsg CheckSolution
         | Down ->
             let boardAfterRoll = rollBallInGridDirection model.CurrentGrid Down
-            {model with CurrentGrid = boardAfterRoll}, Cmd.ofMsg CheckSolution
+            { model with CurrentGrid = boardAfterRoll }, Cmd.ofMsg CheckSolution
         | Left ->
             let boardAfterRoll = rollBallInGridDirection model.CurrentGrid Left
-            {model with CurrentGrid = boardAfterRoll}, Cmd.ofMsg CheckSolution
+            { model with CurrentGrid = boardAfterRoll }, Cmd.ofMsg CheckSolution
         | Right ->
             let boardAfterRoll = rollBallInGridDirection model.CurrentGrid Right
-            {model with CurrentGrid = boardAfterRoll}, Cmd.ofMsg CheckSolution
+            { model with CurrentGrid = boardAfterRoll }, Cmd.ofMsg CheckSolution
     | LoadRound levelIndex, model ->
         let newRound = loadRound levelIndex
         let newRoundModel = { 
@@ -65,7 +64,7 @@ let update (msg: Msg) (model: SharedGoalRoll.Model): SharedGoalRoll.Model * Cmd<
     | CheckSolution, model -> 
         if getBallPositionIndex model.CurrentGrid = model.GoalPositionIndex
             then
-                {model with GameState = Won}, Cmd.none
+                { model with GameState = Won }, Cmd.none
             else
                 model, Cmd.none
     | QuitGame, model -> model, Cmd.ofMsg QuitGame
@@ -74,79 +73,55 @@ let update (msg: Msg) (model: SharedGoalRoll.Model): SharedGoalRoll.Model * Cmd<
 // GAME CONTROLS
 let levelSelector currentLevel allLevels dispatch =
     Level.item [ Level.Item.HasTextCentered; ] [
-        Level.item [] [ p [] [ str "Level Select:"] ]
+        Level.item [] [ p [] [ str "Level Select:" ] ]
         for level in allLevels do
             if level = currentLevel then 
-                Level.item [] [ p [] [ str(sprintf "Lvl %i" level)] ]
+                Level.item [] [ p [] [ str ( sprintf "Lvl %i" level ) ] ]
             else 
                 Level.item [] [ 
-                    a [OnClick(fun _ -> LoadRound level |> dispatch)] [str(sprintf "Lvl %i" level)]
+                    a [ OnClick ( fun _ -> LoadRound level |> dispatch ) ] [ str ( sprintf "Lvl %i" level ) ]
                 ]
     ]
 let goalRollHeaderControls currentLevelIndex availLevels dispatch =
-    Container.container [ Container.Props [ ClassName "gameGridControlBar"] ] [
+    Container.container [ Container.Props [ ClassName "gameGridControlBar" ] ] [
         Level.level [] [
             levelSelector currentLevelIndex availLevels dispatch
-            Level.item [] [ a [ OnClick(fun _ -> ResetRound |> dispatch ); ] [ str "Reset Round" ] ]
+            Level.item [] [ a [ OnClick ( fun _ -> ResetRound |> dispatch ); ] [ str "Reset Round" ] ]
             // Level.item [] [ a [ OnClick(fun _ -> RandRound |> dispatch ); ] [ str "Random Round" ] ]
             // Level.item [] [ a [ OnClick(fun _ -> RewindMove |> dispatch ); ] [ str "Undo Turn" ] ]
         ]
     ]
 // SHARABLE (?)
 // Given a list of laneObjects, return as row of tiles with object
-let goalRollRowCreator (rowPositions: LaneObject list) dispatch =
+let goalRollRowCreator ( rowPositions: LaneObject list ) dispatch =
     Level.level [] [
         Tile.parent [] [
             for positionObject in rowPositions do
                 match positionObject with
                 | Blocker -> 
-                    Tile.child [] [
-                        Box.box' [ Common.Props [ Style [Border "1px solid white";  Width 100; Height 100] ] ] [ Image.image [] [img [Src "./imgs/icons/Blocker.png"]] ] //NEW!!
-                    ]
+                    Tile.child [] [ Box.box' [ Props [ ClassName "blockerLaneObject" ] ] [ Image.image [] [ img [ Src "./imgs/icons/Blocker.png" ] ] ] ]
                 | Ball ->
-                    Tile.child [] [
-                        Box.box' [ Common.Props [ Style [Border "1px solid black"; Background "#555555"; Width 100; Height 100]]] [ Image.image [] [img [Src "./imgs/icons/Ball.png"]] ]
-                    ]
+                    Tile.child [] [ Box.box' [ Props [ ClassName "ballLaneObject" ] ] [ Image.image [] [ img [ Src "./imgs/icons/Ball.png" ] ] ] ]
                 | Goal ->
-                    Tile.child [] [
-                        Box.box' [Common.Props [ Style [Border "1px solid black";  Width 100; Height 100]]] [ Image.image [] [ img [Src "./imgs/icons/Flag.png"]] ] //NEW!!
-                    ]
+                    Tile.child [] [ Box.box' [ Props [ ClassName "genericLaneObject" ] ] [ Image.image [] [ img [ Src "./imgs/icons/Flag.png" ] ] ] ]
                 | Heart ->
-                    Tile.child [] [
-                        Box.box' [Common.Props [ Style [Border "1px solid black";  Width 100; Height 100]]] [ Image.image [] [ img [Src "./imgs/icons/Heart.png"]] ] //NEW!!
-                    ]
+                    Tile.child [] [ Box.box' [ Props [ ClassName "genericLaneObject" ] ] [ Image.image [] [ img [ Src "./imgs/icons/Heart.png"] ] ] ]
                 | LaneLock ->
-                    Tile.child [] [
-                        Box.box' [Common.Props [ Style [Border "1px solid black";  Width 100; Height 100]]] [ Image.image [] [ img [Src "./imgs/icons/Lock.png"]] ] //NEW!!
-                    ]
+                    Tile.child [] [ Box.box' [ Props [ ClassName "genericLaneObject" ] ] [ Image.image [] [ img [ Src "./imgs/icons/Lock.png"] ] ] ]
                 | LaneKey ->
-                    Tile.child [] [
-                        Box.box' [Common.Props [ Style [Border "1px solid black";  Width 100; Height 100]]] [ Image.image [] [ img [Src "./imgs/icons/Key.png"]] ] //NEW!!
-                    ]
+                    Tile.child [] [ Box.box' [ Props [ ClassName "genericLaneObject" ] ] [ Image.image [] [ img [ Src "./imgs/icons/Key.png"] ] ] ]
                 | Bomb ->
-                    Tile.child [] [
-                        Box.box' [Common.Props [ Style [Border "1px solid black";  Width 100; Height 100]]] [ Image.image [] [ img [Src "./imgs/icons/Bomb.png"]] ] //NEW!!
-                    ]
+                    Tile.child [] [ Box.box' [ Props [ ClassName "genericLaneObject" ] ] [ Image.image [] [ img [ Src "./imgs/icons/Bomb.png"] ] ] ]
                 | MoveArrow Up -> 
-                    Tile.child [] [ 
-                        Box.box' [Common.Props [ Style [Border "1px solid black"; Background "#FF2843"; Width 100; Height 100]; OnClick(fun _ -> RollBall Up |> dispatch );]] [ Image.image [] [img [Src "./imgs/icons/UpArrow.png"]] ] 
-                    ]
+                    Tile.child [] [ Box.box' [ Props [ ClassName "movementArrowLaneObject"; OnClick( fun _ -> RollBall Up |> dispatch ) ] ] [ Image.image [] [ img [ Src "./imgs/icons/UpArrow.png"] ] ] ]
                 | MoveArrow Down -> 
-                    Tile.child [] [ 
-                        Box.box' [Common.Props [ Style [Border "1px solid black"; Background "#FF2843"; Width 100; Height 100]; OnClick(fun _ -> RollBall Down |> dispatch );]] [ Image.image [] [img [Src "./imgs/icons/DownArrow.png"]] ] 
-                    ]
+                    Tile.child [] [ Box.box' [ Props [ ClassName "movementArrowLaneObject"; OnClick( fun _ -> RollBall Down |> dispatch ) ] ] [ Image.image [] [ img [ Src "./imgs/icons/DownArrow.png"] ] ] ]
                 | MoveArrow Left -> 
-                    Tile.child [] [ 
-                        Box.box' [Common.Props [ Style [Border "1px solid black"; Background "#FF2843"; Width 100; Height 100]; OnClick(fun _ -> RollBall Left |> dispatch );]] [ Image.image [] [img [Src "./imgs/icons/LeftArrow.png"]] ] 
-                    ]
+                    Tile.child [] [ Box.box' [ Props [ ClassName "movementArrowLaneObject"; OnClick( fun _ -> RollBall Left |> dispatch ) ] ] [ Image.image [] [ img [ Src "./imgs/icons/LeftArrow.png"] ] ] ]
                 | MoveArrow Right -> 
-                    Tile.child [] [ 
-                        Box.box' [ Common.Props [ Style [ Border "1px solid black"; Background "#FF2843"; Width 100; Height 100 ]; OnClick(fun _ -> RollBall Right |> dispatch ); ]] [ Image.image [] [img [Src "./imgs/icons/RightArrow.png"]] ] 
-                    ]
+                    Tile.child [] [ Box.box' [ Props [ ClassName "movementArrowLaneObject"; OnClick( fun _ -> RollBall Right |> dispatch ) ] ] [ Image.image [] [ img [ Src "./imgs/icons/RightArrow.png"] ] ] ]
                 | _ -> 
-                    Tile.child [] [
-                        Box.box' [ Common.Props [ Style [Border "1px solid black"; Width 100; Height 100] ] ] [] 
-                    ]
+                    Tile.child [] [ Box.box' [ Props [ ClassName "genericLaneObject" ] ] [] ]
             ]
     ]
 // SHARABLE (?)
@@ -164,7 +139,7 @@ let goalRollLevelCreator goalRollModel dispatch =
     let gameGrid = 
         if getBallPositionIndex positions <> goalRollModel.GoalPositionIndex
             then 
-                if (getGoalPositionIndex positions = -1) then gridWithGoal gridWithRightArrow goalRollModel.GoalPositionIndex
+                if ( getGoalPositionIndex positions = -1 ) then gridWithGoal gridWithRightArrow goalRollModel.GoalPositionIndex
                 else gridWithRightArrow
         else gridWithRightArrow
     // positions as rows
@@ -180,13 +155,13 @@ let view model dispatch =
         SharedModule.backToGallery QuitGame dispatch
         Container.container [ Container.Props [ ClassName "aboutContentCard" ] ] [
             Container.container [] [
-                h1 [] [ str "Goal Roll"]
-                p [] [ str "- Roll the ball to the goal, travels in straight lines and stops when it hits a wall or blocked tile."]
-                p [] [ str "- Travels in straight lines and stops when it hits a wall or blocked tile."]
-                p [] [ str "- Use the arrows next to the ball in order to roll it in the desired direction."]
+                h1 [] [ str "Goal Roll" ]
+                p [] [ str "- Roll the ball to the goal, travels in straight lines and stops when it hits a wall or blocked tile." ]
+                p [] [ str "- Travels in straight lines and stops when it hits a wall or blocked tile." ]
+                p [] [ str "- Use the arrows next to the ball in order to roll it in the desired direction." ]
             ]
         ]
-        goalRollHeaderControls model.LevelIndex [0..3] dispatch
+        goalRollHeaderControls model.LevelIndex [ 0..3 ] dispatch
         match model.GameState with
         | Playing ->
             goalRollLevelCreator model dispatch
@@ -196,7 +171,7 @@ let view model dispatch =
                 //replay this level
                 //load the (next||prev||rand) level
                 //share this level // share this game
-            div [ ClassName "levelCompletedCard" ] [str "Level Completed!!!"]
+            div [ ClassName "levelCompletedCard" ] [ str "Level Completed!!!" ]
     ]
                            
 // --------------------------------

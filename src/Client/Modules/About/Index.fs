@@ -27,6 +27,8 @@ type Msg =
     | NextSection
     | SwitchModal of int
 
+    // don't break them all down into one single group, browse through each point.
+
 let generalModalContent = {
     Title = "General"
     MainContent = [
@@ -64,7 +66,7 @@ let aboutModalContentSections = [ generalModalContent; professionalModalContent;
 
 // fulma timeline to walk through timeline of events
 let toggleModal model index =
-    let activeModal = if (index <> model.ActiveModalIndex) then { model with ActiveModalIndex = index } else model
+    let activeModal = if ( index <> model.ActiveModalIndex ) then { model with ActiveModalIndex = index } else model
     { activeModal with ModalIsActive = not model.ModalIsActive }
 
 let update msg model : Model * Cmd<Msg> =
@@ -81,27 +83,40 @@ let update msg model : Model * Cmd<Msg> =
 
 let genericModal model dispatch modalContent =
     Modal.modal [ Modal.IsActive model.ModalIsActive ] [ 
-        Modal.background [Props [ OnClick (fun _ -> ToggleModal model.ActiveModalIndex |> dispatch) ]] []
+        Modal.background [ Props [ OnClick ( fun _ -> ToggleModal model.ActiveModalIndex |> dispatch ) ] ] []
         Modal.content [] [
             Container.container [] [
                 Level.level [] [
                     Container.container [ Container.Props [ ClassName "aboutModalContentCard" ] ] [
                         Level.level [] [ Level.item [] [ h1 [] [ str modalContent.Title ] ] ]
-                        Level.level [ Level.Level.Props [ ClassName "contentCardTextBackground"] ] [
-                            // img?
+                        Level.level [ Level.Level.Props [ ClassName "contentCardTextBackground" ] ] [
                             for detail in modalContent.MainContent do
                                 Level.item [ ] [ p [] [ str detail ] ]
                             Level.level [] [
-                                a [] [ 
-                                    Level.item [ Level.Item.Props [ OnClick(fun _ -> (if (model.ActiveModalIndex = 0) then PreviousSection else SwitchModal (-1)) |> dispatch ) ] ] [ 
-                                        Image.image [Image.Is64x64] [ img [Src "./imgs/icons/LeftNavButton.png"] ]
-                                        str (modalContent.PreviousLabel);
-                                    ]
+                                a [] [
+                                    Level.item [ Level.Item.Props [ 
+                                        OnClick( fun _ ->
+                                            ( if ( model.ActiveModalIndex = 0 ) 
+                                                then PreviousSection 
+                                                else SwitchModal (-1) )
+                                            |> dispatch
+                                        ) ]
+                                    ] [ 
+                                        Image.image [ Image.Is64x64 ] [ img [ Src "./imgs/icons/LeftNavButton.png" ] ]
+                                        str ( modalContent.PreviousLabel );
+                                    ] 
                                 ]
                                 a [] [ 
-                                    Level.item [ Level.Item.Props [ OnClick(fun _ -> (if (model.ActiveModalIndex = aboutModalContentSections.Length - 1) then NextSection else SwitchModal (1)) |> dispatch) ] ] [ 
-                                        str (modalContent.NextLabel);  
-                                        Image.image [Image.Is64x64] [ img [Src "./imgs/icons/RightNavButton.png"] ] 
+                                    Level.item [ Level.Item.Props [ 
+                                            OnClick( fun _ -> 
+                                                ( if ( model.ActiveModalIndex = aboutModalContentSections.Length - 1 ) 
+                                                    then NextSection 
+                                                    else SwitchModal (1) )
+                                                |> dispatch 
+                                            ) ]
+                                    ] [ 
+                                        str ( modalContent.NextLabel );
+                                        Image.image [ Image.Is64x64 ] [ img [ Src "./imgs/icons/RightNavButton.png" ] ] 
                                     ] 
                                 ] 
                             ]
@@ -110,7 +125,7 @@ let genericModal model dispatch modalContent =
                 ]
             ]
         ]
-        Modal.close [ Modal.Close.Size IsLarge; Modal.Close.OnClick (fun _ -> ToggleModal model.ActiveModalIndex |> dispatch) ] [] 
+        Modal.close [ Modal.Close.Size IsLarge; Modal.Close.OnClick ( fun _ -> ToggleModal model.ActiveModalIndex |> dispatch ) ] []
     ]
 
 let mainAbout dispatch =
@@ -118,14 +133,20 @@ let mainAbout dispatch =
         Tile.parent [] [
             Level.level [] [
                 // ADD / UPDATE PIC
-                Tile.child [ ] [ Image.image [] [ img [Src "./imgs/Out for Blood.png"] ] ]
+                Tile.child [] [ Image.image [] [ img [ Src "./imgs/Out for Blood.png" ] ] ]
                 Tile.child [] [ 
                     Container.container [ Container.Props [ ClassName "aboutContentCard" ] ] [
-                        Level.level [ Level.Level.Props [ ClassName "contentCardTextBackground"] ] [
+                        Level.level [ Level.Level.Props [ ClassName "contentCardTextBackground" ] ] [
                             Level.item [] [
-                                Tile.child [ ] [
-                                    h1 [] [ str "General"]
-                                    p [] [ str "I wrote this website as a way to demonstrate some of my skills, processes, and personal traits / interests. As a mainly self-taught computer programmer, I am constantly looking for new and interesting aspects of technology. Check back frquently to see what's new, as I plan to update this with new features, games and content. I wrote all the code from a boilerplate, drew all the icons and designs seen across the website, and am hosting and running continuous deployments for development. Check out the portfolio section for some example demo's, explore some drawings or check out the source code that comprises the different sections and the website itself..." ]
+                                Tile.child [] [
+                                    h1 [] [ str "General" ]
+                                    p [] [ str """I wrote this website as a way to demonstrate some of my skills, processes, and personal traits / interests. 
+                                                  As a mainly self-taught computer programmer, I am constantly looking for new and interesting aspects of technology.
+                                                  Check back frquently to see what's new, as I plan to update this with new features, games and content. 
+                                                  I wrote all the code from a boilerplate, drew all the icons and designs seen across the website,
+                                                  and am hosting and running continuous deployments for development. 
+                                                  Check out the portfolio section for some example demo's, explore some drawings or check out the source code that 
+                                                  comprises the different sections and the website itself...""" ]
                                 ]
                             ]
                         ]
@@ -148,7 +169,9 @@ let secondaryAbout dispatch =
                             Level.item [] [
                                 Tile.child [ ] [
                                     h1 [] [ str "Professional"]
-                                    p [] [ str "I've been working as a software engineer for around 5 years. Through this time, I've worked as a full stack developer, tester, requirement gatherer, technical support assistance. I enjoy learning & discussing new languages, practices and design patterns, thinking critically and creatively to solve issues, etc.. blah blah." ]
+                                    p [] [ str """I've been working as a software engineer for around 5 years. Through this time, I've worked as a full stack developer,
+                                                  tester, requirement gatherer, technical support assistance. I enjoy learning & discussing new languages, practices and
+                                                  design patterns, thinking critically and creatively to solve issues, etc.. blah blah.""" ]
                                 ]
                             ]
                         ]
@@ -173,7 +196,7 @@ let tertiaryAbout dispatch =
                             Level.item [] [
                                 Tile.child [ ] [
                                     h1 [] [ str "Personal"]
-                                    p [] [ str "I'm a person just like you (unless you are a bot), who enjoys kicking back and relaxing. Check out some IRL shenanigans pics below." ]
+                                    p [] [ str """I'm a person just like you (unless you're a bot), who enjoys kicking back and relaxing. Check out some IRL shenanigans pics below.""" ]
                                 ]
                             ]
                         ]

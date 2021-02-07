@@ -7,9 +7,6 @@ open Fable.React.Props
 open Fulma
 
 open Shared
-open ArtGallery
-open CodeGallery
-
 
 // TODO: RESUME SECTION
 
@@ -21,19 +18,19 @@ type Msg =
 let init(): SharedPortfolioGallery.Model * Cmd<Msg> =
     SharedPortfolioGallery.PortfolioGallery, Cmd.none
 
-let update (msg: Msg) (model: SharedPortfolioGallery.Model): SharedPortfolioGallery.Model * Cmd<Msg> =
+let update ( msg: Msg ) ( model: SharedPortfolioGallery.Model ): SharedPortfolioGallery.Model * Cmd<Msg> =
     match msg, model with
     //PORTFOLIO GALLERY
     | LoadSection SharedPortfolioGallery.PortfolioGallery, _ ->
         SharedPortfolioGallery.PortfolioGallery, Cmd.none
     //ART GALLERY
-    | LoadSection (SharedPortfolioGallery.DesignGallery msg), _ ->
+    | LoadSection ( SharedPortfolioGallery.DesignGallery msg ), _ ->
         SharedPortfolioGallery.DesignGallery msg, Cmd.none
-    | ArtGalleryMsg msg, (SharedPortfolioGallery.DesignGallery model) -> 
+    | ArtGalleryMsg msg, ( SharedPortfolioGallery.DesignGallery model ) -> 
         let artGalleryModel, com = ArtGallery.update msg model
         SharedPortfolioGallery.DesignGallery artGalleryModel, Cmd.map ArtGalleryMsg com
     //CODE GALLERY
-    | LoadSection (SharedPortfolioGallery.CodeGallery msg), _ ->
+    | LoadSection ( SharedPortfolioGallery.CodeGallery msg ), _ ->
         SharedPortfolioGallery.CodeGallery msg, Cmd.none
     | CodeGalleryMsg msg, SharedPortfolioGallery.CodeGallery model ->
         let codeGalleryModel, com = CodeGallery.update msg model
@@ -42,7 +39,7 @@ let update (msg: Msg) (model: SharedPortfolioGallery.Model): SharedPortfolioGall
 
 // VIEW
 let PortfolioHeader =
-    Level.level [ Level.Level.Props [ClassName "portfolioContentCard"] ] [
+    Level.level [ Level.Level.Props [ ClassName "portfolioContentCard" ] ] [
         Level.item [] [
             Container.container [] [
                 h1 [] [ str "Portfolio" ]
@@ -52,12 +49,12 @@ let PortfolioHeader =
     ]
 
 let PortfolioSplitView dispatch =
-    div [ Style [ PaddingTop 25] ] [
+    div [ ClassName "portfolioSectionSelectionContainer" ] [
         Columns.columns [] [
             Column.column [] [
-                a [ OnClick(fun _ -> LoadSection (SharedPortfolioGallery.CodeGallery SharedCodeGallery.CodeGallery) |> dispatch ) ] [
-                Container.container [ Container.Props [ ClassName "portfolioCodeCard"]] [
-                        Tile.child [ Tile.Props [ClassName "contentCardTextBackground"] ] [ 
+                a [ OnClick ( fun _ -> LoadSection ( SharedPortfolioGallery.CodeGallery SharedCodeGallery.CodeGallery ) |> dispatch ) ] [
+                Container.container [ Container.Props [ ClassName "portfolioCodeCard" ] ] [
+                        Tile.child [ Tile.Props [ ClassName "contentCardTextBackground" ] ] [ 
                             h1 [] [ str "PLAY OR REVIEW CODE" ]
                             h2 [] [ str "CODE GALLERY" ]
                         ]
@@ -66,9 +63,9 @@ let PortfolioSplitView dispatch =
             ]
             // TODO PROFESSIONAL RESUME CONDENSED PDF / PAGE VERSION
             Column.column [] [
-                a [ OnClick(fun _ -> LoadSection (SharedPortfolioGallery.DesignGallery SharedDesignGallery.getInitialModel) |> dispatch ) ] [
-                Container.container [ Container.Props [ ClassName "portfolioDesignCard" ]] [
-                    Tile.child [ Tile.Props [ClassName "contentCardTextBackground"] ] [ 
+                a [ OnClick ( fun _ -> LoadSection ( SharedPortfolioGallery.DesignGallery SharedDesignGallery.getInitialModel ) |> dispatch ) ] [
+                Container.container [ Container.Props [ ClassName "portfolioDesignCard" ] ] [
+                    Tile.child [ Tile.Props [ ClassName "contentCardTextBackground" ] ] [ 
                             h1 [] [ str "CHECK OUT SOME DRAWINGS" ]
                             h2 [] [ str "DESIGN GALLERY" ]
                         ]
@@ -79,7 +76,7 @@ let PortfolioSplitView dispatch =
     ]
 
 let view model dispatch =
-    div [] [
+    div [] [//ClassName "portfolioSectionContainer" 
         match model with
         | SharedPortfolioGallery.PortfolioGallery ->
             div [] [

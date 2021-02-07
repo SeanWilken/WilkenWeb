@@ -6,21 +6,11 @@ open Fable.React
 open Fable.React.Props
 open Fulma
 
+// obsolete, use modal background / close button?
 let backToGallery dispatchMsg dispatch =
     Level.level [] [
-        Level.item [] [
-            a [ ClassName "backToGallery"; OnClick(fun _ -> dispatchMsg |> dispatch );  ] [ 
-                p [] [ str "Exit" ] 
-            ]
-        ]
+        Level.item [] [ a [ ClassName "backToGallery"; OnClick ( fun _ -> dispatchMsg |> dispatch ) ] [ p [] [ str "Exit" ] ] ]
     ]
-
-
-
-
-
-
-
 
 // let levelSelector  allLevels dispatch = //currentLevel not tracked?
 //     Level.item [ Level.Item.HasTextCentered; ] [

@@ -49,24 +49,26 @@ let update msg model =
 // if clicked, intercept that timeout & destroy the tile and spawn a new one, with a fresh countdown clock
 
 
-let goalRollRowCreator (rowPositions: LaneObject list) dispatch =
+// TODO: -- THIS SHOULD BE USING A SHARED GENERIC TILE GAME BOARD BUILDER, NEED TO IMPLEMENT IN SHARED!
+// STYLED WHEN REFACTOR ABOVE DONE?
+let goalRollRowCreator ( rowPositions: LaneObject list ) dispatch =
     Level.level [] [
         Tile.parent [] [
             for positionObject in rowPositions do
                 match positionObject with
                 | Blocker -> // TO BECOME BOMB -2 Health 
                     Tile.child [] [
-                        Box.box' [ Common.Props [ Style [Border "1px solid white"; Background "#000000"; Width 100; Height 100] ] ] [] // STYLE THIS??
+                        Box.box' [ Props [ Style [ Border "1px solid white"; Background "#000000"; Width 100; Height 100 ] ] ] []
                     ]
                 | Goal ->
                     // 3HP
                     // EZ: (3 missed intervals = -1 HP) MD: (2 missed intervals = -1 HP) HD: () XD: (1 miss = -3HP)
                     Tile.child [] [
-                        Box.box' [Common.Props [ Style [Border "1px solid black"; Background "#FF2843"; Width 100; Height 100]]] [ Image.image [] [ img [Src "./imgs/icons/Flag.png"]] ] // STYLE THIS??
+                        Box.box' [ Props [ Style [ Border "1px solid black"; Background "#FF2843"; Width 100; Height 100 ] ] ] [ Image.image [] [ img [ Src "./imgs/icons/Flag.png" ] ] ]
                     ]
                 | _ -> 
                     Tile.child [] [
-                        Box.box' [ Common.Props [ Style [Border "1px solid black"; Width 100; Height 100] ] ] [] // STYLE THIS??
+                        Box.box' [ Props [ Style [ Border "1px solid black"; Width 100; Height 100 ] ] ] []
                     ]
             ]
     ]
@@ -75,7 +77,7 @@ let goalRollRowCreator (rowPositions: LaneObject list) dispatch =
 let tileSmashHeader =
     Container.container [ Container.Props [ ClassName "aboutContentCard" ] ] [
         Container.container [] [
-            h1 [] [ str "Tile Smash"]
+            h1 [] [ str "Tile Smash" ]
             p [] [ str "- Survival Mode:" ]
             p [] [ str "- Smash the tile before it's timer runs out." ]
             p [] [ str "- Tile timer reaches 0 takes away 1 HP." ]
@@ -98,7 +100,7 @@ let view dispatch =
         SharedModule.backToGallery QuitGame dispatch
         tileSmashHeader
         // match model.GameState with
-        Container.container [Container.Props [ClassName "gameGridContainer"] ] [
-            tileSmashBoardView (SharedTileSmash.generateEmptyTileSmashGrid SharedTileSmash.gridDimension) dispatch
+        Container.container [ Container.Props [ ClassName "gameGridContainer" ] ] [
+            tileSmashBoardView ( SharedTileSmash.generateEmptyTileSmashGrid SharedTileSmash.gridDimension ) dispatch
         ]
     ]

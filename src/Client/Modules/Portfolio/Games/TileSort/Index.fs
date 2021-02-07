@@ -25,7 +25,7 @@ type Msg =
     | QuitGame // Quits back one level, exiting the game.
 //---------------------
 
-let init(): Shared.SharedTileSort.Model * Cmd<Msg> =
+let init (): Shared.SharedTileSort.Model * Cmd<Msg> =
     let initialDifficulty = Shared.SharedTileSort.Simple
     let initialRound = Shared.SharedTileSort.createNewRoundGameBoardBasedOnDifficulty initialDifficulty
     let model = {
@@ -37,7 +37,7 @@ let init(): Shared.SharedTileSort.Model * Cmd<Msg> =
     }
     model, Cmd.none
 //---------------------
-let update (msg: Msg) (model: Shared.SharedTileSort.Model): Shared.SharedTileSort.Model * Cmd<Msg> =
+let update ( msg: Msg ) ( model: Shared.SharedTileSort.Model ): Shared.SharedTileSort.Model * Cmd<Msg> =
     match msg with
     | NewRound ->
         let newRound = createNewRound model
@@ -48,8 +48,8 @@ let update (msg: Msg) (model: Shared.SharedTileSort.Model): Shared.SharedTileSor
         let gameTileValue = 
             match gameTile.Value with
             | Some i ->
-                let tilesAfterMove = canSwapSelectedTileWithBlank model.CurrentTiles (Some i) model.Difficulty
-                if(tilesAfterMove = model.CurrentTiles) then model, Cmd.ofMsg CheckSolution
+                let tilesAfterMove = canSwapSelectedTileWithBlank model.CurrentTiles ( Some i ) model.Difficulty
+                if( tilesAfterMove = model.CurrentTiles ) then model, Cmd.ofMsg CheckSolution
                 else { model with CurrentTiles = tilesAfterMove; Turns = (i) :: model.Turns }, Cmd.ofMsg CheckSolution
             | None ->
                 model, Cmd.none
@@ -65,7 +65,7 @@ let update (msg: Msg) (model: Shared.SharedTileSort.Model): Shared.SharedTileSor
         | true -> 
             model, Cmd.ofMsg Won
         | false -> model, Cmd.none
-    | Won -> {model with GameState = Shared.GridGame.Won}, Cmd.none // Should do more
+    | Won -> { model with GameState = Shared.GridGame.Won }, Cmd.none // Should do more
     | QuitGame -> model, Cmd.ofMsg QuitGame 
 
 open Fable.React
@@ -88,50 +88,47 @@ let decodeDifficultyByString string =
 let tileSortHeader =
     Container.container [ Container.Props [ ClassName "aboutContentCard" ] ] [
         Container.container [] [
-            h1 [] [ str "Tile Sort"]
+            h1 [] [ str "Tile Sort" ]
             p [] [ str "- Rearrange the tiles in correct ascending order, starting with the top left position being the lowest number." ]
-            p [] [ str "- Select one of the tiles adjacent to the empty space to slide that tile into the blank."]
+            p [] [ str "- Select one of the tiles adjacent to the empty space to slide that tile into the blank." ]
             p [] [ str "- The blank space must match the missing number." ]
-            // p [] [ str "- Select a difficulty: Simple = 3 x 3; Easy = 4 x 4; Medium = 5 x 5; Hard = 6 x 6."]
-            // p [] [ str "- Use the 'Undo Turn' button to rewind the previous action (back to the initial board)."]
-            // p [] [ str "- Use the 'New Round' button to generate a new board of the selected difficulty."]
-            // p [] [ str "- Use the 'Reset Round' button to set the board back to it's initial state."]
+            // p [] [ str "- Select a difficulty: Simple = 3 x 3; Easy = 4 x 4; Medium = 5 x 5; Hard = 6 x 6." ]
+            // p [] [ str "- Use the 'Undo Turn' button to rewind the previous action (back to the initial board)." ]
+            // p [] [ str "- Use the 'New Round' button to generate a new board of the selected difficulty." ]
+            // p [] [ str "- Use the 'Reset Round' button to set the board back to it's initial state." ]
         ]
     ]
 // DIFFICULTY SELECTOR CONTROLS
-let difficultySelector (currentDifficulty: TileSortDifficulty) dispatch =
+let difficultySelector ( currentDifficulty: TileSortDifficulty ) dispatch =
     Level.item [ Level.Item.HasTextCentered; ] [
         Level.item [] [ p [] [ str "Difficulty:"] ]
         for difficulty in tileDifficulties do
             let unionCaseDifficultyName = difficulty.Name
             let unionCaseDifficulty =  decodeDifficultyByString unionCaseDifficultyName
             if unionCaseDifficulty = currentDifficulty then 
-                Level.item [ Level.Item.HasTextCentered; ] [
-                    p [] [str unionCaseDifficultyName]
-                ]
+                Level.item [ Level.Item.HasTextCentered ] [ p [] [ str unionCaseDifficultyName ] ]
             else 
-                Level.item [ Level.Item.HasTextCentered; ] [
-                    a [ OnClick(fun _ -> UpdateDifficulty unionCaseDifficulty |> dispatch ) ] [ str unionCaseDifficultyName ]
-                ]
+                Level.item [ Level.Item.HasTextCentered ] [ a [ OnClick ( fun _ -> UpdateDifficulty unionCaseDifficulty |> dispatch ) ] [ str unionCaseDifficultyName ] ]
     ]
 // DIFFICULTY SELECTION & ROUND CONTROLS
 let tileSortHeaderControls difficulty dispatch =
     Container.container [ Container.Props [ ClassName "gameGridControlBar"] ] [
         Level.level [] [
             difficultySelector difficulty dispatch
-            Level.item [] [ a [ OnClick(fun _ -> NewRound |> dispatch ); ] [ str "New Round" ] ]
-            Level.item [] [ a [ OnClick(fun _ -> ResetRound |> dispatch ); ] [ str "Reset Round" ] ]
-            Level.item [] [ a [ OnClick(fun _ -> RewindMove |> dispatch ); ] [ str "Undo Turn" ] ]
+            Level.item [] [ a [ OnClick(fun _ -> NewRound |> dispatch ) ] [ str "New Round" ] ]
+            Level.item [] [ a [ OnClick(fun _ -> ResetRound |> dispatch ) ] [ str "Reset Round" ] ]
+            Level.item [] [ a [ OnClick(fun _ -> RewindMove |> dispatch ) ] [ str "Undo Turn" ] ]
         ]
     ]
 // TILE GRID ROW
-let generateTileGridRow (tileRow: GameTile list) (dispatch: Msg -> unit) =
+let generateTileGridRow ( tileRow: GameTile list ) ( dispatch: Msg -> unit ) =
     Tile.ancestor [] [ 
         for tile in tileRow do
-            let displayValue = convertValueToProperString (getValueOrZeroFromGameTile tile)
+            let displayValue = convertValueToProperString ( getValueOrZeroFromGameTile tile )
+            let tileClass = if ( displayValue <> "" ) then "valueTile" else "blankTile"
             Tile.parent [] [ 
-                Tile.child [] [ // STYLE BELOW
-                    Box.box' [Common.Props [ Style [ Outline None; FontFamily "Bungee"; FontSize 30; Color "#444444"; BackgroundColor (if displayValue <> "" then "#aaaaaa" else "rgba(0,0,0,0)"); BorderColor "#444444"; BorderWidth (if displayValue <> "" then 4 else 0); Width 100; Height 100]; OnClick(fun _ -> MoveTile tile |> dispatch )  ];  ] [str displayValue ] 
+                Tile.child [] [
+                    Box.box' [ Props [ ClassName tileClass; OnClick( fun _ -> MoveTile tile |> dispatch ) ]  ] [ str displayValue ] 
                 ] 
             ]
         ]
@@ -144,23 +141,18 @@ let gameGrid model dispatch =
     ]
 
 // TILE SORT GRID VIEW
-let view (model : Model) (dispatch : Msg -> unit) =
-    Container.container [] [
+let view ( model : Model ) ( dispatch : Msg -> unit ) =
+    div [] [
         SharedModule.backToGallery QuitGame dispatch
         tileSortHeader
         tileSortHeaderControls model.Difficulty dispatch
         match model.GameState with
         | Shared.GridGame.Won ->
-                div [ Style [Padding 15; Border "1px solid #000000"; FontSize 100; TextAlign TextAlignOptions.Center; Color "#FF2843"; FontFamily "Philosopher"] ] [str "Congrats, you win!!!"] // STYLE THIS??
+            div [ ClassName "levelCompletedCard"; ] [ str "Congrats, you win!!!" ] //Style [ Padding 15; Border "1px solid #000000"; FontSize 100; TextAlign TextAlignOptions.Center; Color "#FF2843"; FontFamily "Philosopher"]
         | Shared.GridGame.Playing ->
-            Container.container [ Container.Props [ ClassName "gameGridContainer" ] ] [
-                div [ Style [Margin 15]] [] // STYLE THIS?? WHY IS THIS NEEDED?????
-                gameGrid model dispatch
-            ]
+            Container.container [ Container.Props [ ClassName "gameGridContainer" ] ] [ gameGrid model dispatch ]
     ]
-
-
-
+    
 // TEST ABOVE FUNCTIONALITY AND LOGIC
 // GENERATE A DIFFICULTY HARD TILE LIST
 // let hardModeGameBoardPositions = generateGameBoardPositionsBasedOffDifficulty Hard
