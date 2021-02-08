@@ -26,7 +26,6 @@ type Msg =
     | PreviousSection
     | NextSection
     | SwitchModal of int
-
     // don't break them all down into one single group, browse through each point.
 
 let generalModalContent = {

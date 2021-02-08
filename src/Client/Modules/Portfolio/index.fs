@@ -39,37 +39,70 @@ let update ( msg: Msg ) ( model: SharedPortfolioGallery.Model ): SharedPortfolio
 
 // VIEW
 let PortfolioHeader =
-    Level.level [ Level.Level.Props [ ClassName "portfolioContentCard" ] ] [
-        Level.item [] [
-            Container.container [] [
-                h1 [] [ str "Portfolio" ]
-                p [] [ str "Select one of the below to delve deeper into the rabbit hole." ]
+    Tile.ancestor [] [
+        Tile.parent [] [
+            Tile.child [ Tile.Size Tile.Is12 ] [
+                Container.container [ Container.Props [ ClassName "portfolioContentCard" ] ] [
+                    div [ ClassName "contentCardTextBackground" ] [
+                        h1 [] [ str "Portfolio" ]
+                        p [] [ str "Select one of the below to delve deeper into the rabbit hole." ]
+                    ]
+                ]
             ]
         ]
     ]
 
 let PortfolioSplitView dispatch =
     div [ ClassName "portfolioSectionSelectionContainer" ] [
-        Columns.columns [] [
-            Column.column [] [
-                a [ OnClick ( fun _ -> LoadSection ( SharedPortfolioGallery.CodeGallery SharedCodeGallery.CodeGallery ) |> dispatch ) ] [
-                Container.container [ Container.Props [ ClassName "portfolioCodeCard" ] ] [
-                        Tile.child [ Tile.Props [ ClassName "contentCardTextBackground" ] ] [ 
-                            h1 [] [ str "PLAY OR REVIEW CODE" ]
-                            h2 [] [ str "CODE GALLERY" ]
+        Tile.ancestor [] [
+            Tile.parent [ Tile.Size Tile.Is6 ] [
+                Tile.child [] [
+                    // SMALL BLURB TO PAD CONTENT? SMALL WEBSITE DESCRIPTION, TOUR BUTTON?
+                    a [ OnClick ( fun _ -> LoadSection ( SharedPortfolioGallery.CodeGallery SharedCodeGallery.CodeGallery ) |> dispatch ) ] [
+                        div [ ClassName "portfolioCodeCard" ] [
+                            div [ ClassName "contentCardTextBackground" ] [
+                                h1 [] [ str "PLAY OR REVIEW CODE" ]
+                                h2 [] [ str "CODE GALLERY" ]
+                            ]
                         ]
                     ]
                 ]
+                // Tile.child [] [
+                //     Level.level [] [
+                //         Level.left [] [ 
+                //             a [ OnClick ( fun _ -> LoadSection ( SharedPortfolioGallery.CodeGallery SharedCodeGallery.CodeGallery ) |> dispatch ) ] [
+                //                 div [ ClassName "portfolioCodeCard" ] [
+                //                     div [ ClassName "contentCardTextBackground" ] [
+                //                         h1 [] [ str "PLAY OR REVIEW CODE" ]
+                //                         h2 [] [ str "CODE GALLERY" ]
+                //                     ]
+                //                 ]
+                //             ]
+                //         ]
+                //         Level.item [] []
+                //         Level.right [] [
+                //             a [ OnClick ( fun _ -> LoadSection ( SharedPortfolioGallery.DesignGallery SharedDesignGallery.getInitialModel ) |> dispatch ) ] [
+                //                 div [ ClassName "portfolioDesignCard" ] [
+                //                     div [ ClassName "contentCardTextBackground" ] [ 
+                //                             h1 [] [ str "CHECK OUT SOME DRAWINGS" ]
+                //                             h2 [] [ str "DESIGN GALLERY" ]
+                //                     ]
+                //                 ]
+                //             ]
+                //         ]
+                //     ]
+                // ]
             ]
-            // TODO PROFESSIONAL RESUME CONDENSED PDF / PAGE VERSION
-            Column.column [] [
-                a [ OnClick ( fun _ -> LoadSection ( SharedPortfolioGallery.DesignGallery SharedDesignGallery.getInitialModel ) |> dispatch ) ] [
-                Container.container [ Container.Props [ ClassName "portfolioDesignCard" ] ] [
-                    Tile.child [ Tile.Props [ ClassName "contentCardTextBackground" ] ] [ 
-                            h1 [] [ str "CHECK OUT SOME DRAWINGS" ]
-                            h2 [] [ str "DESIGN GALLERY" ]
-                        ]
-                    ]
+            Tile.parent [ Tile.Size Tile.Is6 ] [
+                Tile.child [] [
+                    a [ OnClick ( fun _ -> LoadSection ( SharedPortfolioGallery.DesignGallery SharedDesignGallery.getInitialModel ) |> dispatch ) ] [
+                        div [ ClassName "portfolioDesignCard" ] [
+                            div [ ClassName "contentCardTextBackground" ] [ 
+                                    h1 [] [ str "CHECK OUT SOME DRAWINGS" ]
+                                    h2 [] [ str "DESIGN GALLERY" ]
+                            ]
+                        ]       
+                    ]       
                 ]
             ]
         ]

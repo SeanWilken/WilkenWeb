@@ -90,7 +90,7 @@ html {
     // background-size: auto;
     background-size: cover;
     background-repeat: no-repeat;
-    padding: 20px;
+    padding: 10px;
 }
 // **********************
 // HEADER
@@ -171,7 +171,7 @@ html {
         font-family: "Ubuntu";
         font-size: 20px;
     }
-    columns {
+    .columns {
         flex-direction: column;
         display: flex;
         align-items: center;
@@ -351,19 +351,23 @@ html {
     background-position: center;
     border: 1px solid #000000;
     box-shadow: 15px 10px 10px black;
-    // padding: 150px;
     margin: 10px;
 }
 .portfolioCodeCard {
     @extend .portfolioSectionHoverSelection;
+    @extend .contentCard; // used for italics, REFACTOR THIS
     background-image: url("../public/imgs/unsplash/walkator-code-unsplash.jpg");
-    // width: auto;
-
+    min-height: 400px;
+    width: 100%;
+    height: 100%;
 }
 .portfolioDesignCard {
     @extend .portfolioSectionHoverSelection;
+    @extend .contentCard; // used for italics, REFACTOR THIS
     background-image: url("../public/imgs/unsplash/diego-ph-design-unsplash.jpg");
-    // width: auto;
+    min-height: 400px;
+    width: 100%;
+    height: 100%;
 }
 .backToGallery {
     padding: 15px;

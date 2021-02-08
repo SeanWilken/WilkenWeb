@@ -53,6 +53,11 @@ let update msg ( model : SharedDesignGallery.Model ) =
     | _ ->
         model, Cmd.none
 
+// HEADER CONTROLS FOR 
+    // LINK TO DESIGN ON I.G. - ALWAYS
+    // CHANGE VIEW -> T-SHIRT / LONG SLEEVE / SWEATSHIRT / ETC.... - IF DESIGN EXISTS ON MULTIPLE IMAGES ()
+    // LINK TO PRINTFUL STORE OF SELECTED PRODUCT  - IF DESIGN IS SALEABLE / SELECTED GARMENT VIEW
+
 // HELPER FUNCTION TO BREAKDOWN THE GALLERY TUPLE
 let getGalleryCardByIndex ( index: int ) =
     let piece, description = galleryPieces.Item ( index )
@@ -102,7 +107,7 @@ let galleryEntryCard piece description dispatch =
 
 let galleryModal ( model: SharedDesignGallery.Model ) dispatch =
     Modal.modal [ Modal.IsActive true ] [ 
-        Modal.background [ Props [ OnClick ( fun _ -> BackToPortfolio |> dispatch ) ] ] []
+        Modal.background [ Props [ OnClick ( fun _ -> BackToPortfolio |> dispatch ); ] ] []
         Modal.content [ Props [ClassName "modalContent"] ] [
             Level.level [] [
                 bigPrevious dispatch
@@ -116,7 +121,6 @@ let galleryModal ( model: SharedDesignGallery.Model ) dispatch =
         Modal.close [ Modal.Close.CustomClass "closeModal"; Modal.Close.Size IsLarge; Modal.Close.OnClick ( fun _ -> BackToPortfolio |> dispatch ) ] []
     ]
 
+// wrap in div to match other submodules, will have side effects as containers aren't styleless.
 let view ( model: SharedDesignGallery.Model ) dispatch =
-    Container.container [] [
-        galleryModal model dispatch
-    ]
+    Container.container [] [ galleryModal model dispatch ]
