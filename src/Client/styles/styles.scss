@@ -269,21 +269,20 @@ html {
 .welcomeContentCard {
     @extend .contentCard;
     background-image: url("../public/imgs/unsplash/moonFade.jpg");
-    background-size:cover;
+    background-size: cover;
     background-repeat: no-repeat;
-    // height: 100%;
 }
 .welcomeHeroImage {
     background: #dddddd;
     border: 1px solid #000000;
     box-shadow: 10px 10px 10px black;
+    margin: auto;
 }
 .welcomeNextSectionCard  {
-    @extend .hoverActionSectionCard;
-    background: #010E14;
+    @extend .aboutSectionHoverSelection;
+    background: rgba(0, 0, 0, .6);
     border: 1px solid #000000;
     box-shadow: 15px 10px 10px black;
-    background-image: url("../public/imgs/unsplash/moonFade.jpg");
     background-size:cover;
 }
 // **********************

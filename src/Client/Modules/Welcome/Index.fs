@@ -15,51 +15,46 @@ type Msg =
 let view dispatch =
     div [ ClassName "welcomeSectionContainer" ] [
         Tile.ancestor [] [
-            Tile.parent [] [ Tile.child [] [] ]
-            Tile.parent [ Tile.Size Tile.Is3 ] [
-                Tile.child [] [ Container.container [ Container.Props [ ClassName "welcomeHeroImage" ] ] [ Image.image [] [ img [ Src "./imgs/Out for Blood.png" ] ] ] ]
-            ]
+            Tile.parent [ Tile.Size Tile.Is2 ] []
             Tile.parent [ Tile.Size Tile.Is4 ] [
-                Columns.columns [ Columns.IsVCentered ] [
-                    Container.container [ Container.Props [ ClassName "welcomeContentCard" ] ] [
-                        Column.column [] [
-                            Tile.child [] [
-                                // TODO -- THIS LOOKS BAD WHEN ON SMALLER DEVICES
+                Columns.columns [ Columns.IsVCentered ] [ Tile.child [] [ 
+                    Container.container [ Container.Props [ ClassName "welcomeHeroImage" ] ] [ Image.image [] [ img [ Src "./imgs/Out for Blood.png" ] ] ] 
+                ] ]
+            ]
+            Tile.parent [ Tile.Size Tile.Is1 ] []
+            Tile.parent [ Tile.Size Tile.Is3 ] [
+                Columns.columns [ Columns.IsVCentered ] [ 
+                    Tile.child [] [
+                        Container.container [ Container.Props [ ClassName "welcomeContentCard" ] ] [
+                            Column.column [] [
                                 div [ ClassName "contentCardTextBackground" ] [
                                     h2 [] [ str "Greetings, web traveler." ] 
                                     h1 [] [ str "WELCOME" ] 
-                                    p [] [ str "My name is Sean and this is my personal website. Written, designed and hosted by yours truly. Continue on to check it out for yourself." ] 
-                                    // SMALL BLURB TO PAD CONTENT? SMALL WEBSITE DESCRIPTION, TOUR BUTTON?
-                                    Level.level [ Level.Level.Props [ ClassName "aboutSectionHoverSelection"] ] [
+                                    p [] [ str "My name is Sean and this is my personal website. Written, designed and hosted by yours truly. Check it out for yourself." ] 
+                                    Level.level [ Level.Level.Props [ ClassName "welcomeNextSectionCard"] ] [
                                         p [ OnClick (fun _ -> NextSection |> dispatch )] [ str "Learn More" ]
                                     ]
-                                    // old style, may want to use the style from this below the level for text swap on hover.
-                                    // a [ OnClick ( fun _ -> NextSection |> dispatch ) ] [
-                                    //     Container.container [Container.Props [ ClassName "welcomeNextSectionCard" ] ] [
-                                    //         h1 [] [ str "Learn more about this website and it's creator." ]
-                                    //         h2 [] [ str "Enter the About Section" ]
-                                    //     ]
-                                    // ]
                                 ]
-                            ]
+                            ] 
                         ]
                     ]
                 ]
             ]
-            Tile.parent [] [ Tile.child [] [] ]
+            Tile.parent [ Tile.Size Tile.Is1 ] []
         ]
-        Tile.ancestor [] [
-            Tile.parent [] [ 
-                Tile.child [] []
-                Tile.child [ Tile.Size Tile.Is3 ] [
-                    div [ ClassName "contentCardTextBackground" ] [
-                        // YOU LOOK A LITTLE LOST, WOULD YOU LIKE SOME HELP?
-                        Level.level [ Level.Level.Props [ ClassName "aboutSectionHoverSelection"] ] [
-                            p [ OnClick (fun _ -> NextSection |> dispatch )] [ str "Show me around!" ]
-                        ]
-                    ]
-                ] 
-                Tile.child [] []
-            ]
-        ]
+        // SMALL BLURB TO PAD CONTENT? SMALL WEBSITE DESCRIPTION, TOUR BUTTON?
+        // Tile.ancestor [] [
+        //     Tile.parent [] [ 
+        //         Tile.child [] []
+        //         Tile.child [ Tile.Size Tile.Is3 ] [
+        //             div [ ClassName "contentCardTextBackground" ] [
+        //                 // YOU LOOK A LITTLE LOST, WOULD YOU LIKE SOME HELP?
+        //                 Level.level [ Level.Level.Props [ ClassName "aboutSectionHoverSelection"] ] [
+        //                     p [ OnClick (fun _ -> NextSection |> dispatch )] [ str "Show me around!" ]
+        //                 ]
+        //             ]
+        //         ] 
+        //         Tile.child [] []
+        //     ]
+        // ]
     ]

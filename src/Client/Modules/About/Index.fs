@@ -217,7 +217,7 @@ let tertiaryAbout dispatch =
     ]
 
 let view model dispatch =
-    Container.container [ Container.Props [ ClassName "aboutSectionContainer" ] ] [
+    div [ ClassName "aboutSectionContainer" ] [
         mainAbout dispatch
         secondaryAbout dispatch
         tertiaryAbout dispatch
