@@ -12,6 +12,7 @@ type Msg =
     | NextSection
  
 // Requires dispatch as send Msg back to top level in order to go to the next page
+// fix mobile offset
 let view dispatch =
     div [ ClassName "welcomeSectionContainer" ] [
         Tile.ancestor [] [

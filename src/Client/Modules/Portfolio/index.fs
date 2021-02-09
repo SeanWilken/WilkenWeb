@@ -57,7 +57,6 @@ let PortfolioSplitView dispatch =
         Tile.ancestor [] [
             Tile.parent [ Tile.Size Tile.Is6 ] [
                 Tile.child [] [
-                    // SMALL BLURB TO PAD CONTENT? SMALL WEBSITE DESCRIPTION, TOUR BUTTON?
                     a [ OnClick ( fun _ -> LoadSection ( SharedPortfolioGallery.CodeGallery SharedCodeGallery.CodeGallery ) |> dispatch ) ] [
                         div [ ClassName "portfolioCodeCard" ] [
                             div [ ClassName "contentCardTextBackground" ] [
@@ -67,31 +66,6 @@ let PortfolioSplitView dispatch =
                         ]
                     ]
                 ]
-                // Tile.child [] [
-                //     Level.level [] [
-                //         Level.left [] [ 
-                //             a [ OnClick ( fun _ -> LoadSection ( SharedPortfolioGallery.CodeGallery SharedCodeGallery.CodeGallery ) |> dispatch ) ] [
-                //                 div [ ClassName "portfolioCodeCard" ] [
-                //                     div [ ClassName "contentCardTextBackground" ] [
-                //                         h1 [] [ str "PLAY OR REVIEW CODE" ]
-                //                         h2 [] [ str "CODE GALLERY" ]
-                //                     ]
-                //                 ]
-                //             ]
-                //         ]
-                //         Level.item [] []
-                //         Level.right [] [
-                //             a [ OnClick ( fun _ -> LoadSection ( SharedPortfolioGallery.DesignGallery SharedDesignGallery.getInitialModel ) |> dispatch ) ] [
-                //                 div [ ClassName "portfolioDesignCard" ] [
-                //                     div [ ClassName "contentCardTextBackground" ] [ 
-                //                             h1 [] [ str "CHECK OUT SOME DRAWINGS" ]
-                //                             h2 [] [ str "DESIGN GALLERY" ]
-                //                     ]
-                //                 ]
-                //             ]
-                //         ]
-                //     ]
-                // ]
             ]
             Tile.parent [ Tile.Size Tile.Is6 ] [
                 Tile.child [] [
@@ -109,7 +83,7 @@ let PortfolioSplitView dispatch =
     ]
 
 let view model dispatch =
-    div [] [//ClassName "portfolioSectionContainer" 
+    div [] [
         match model with
         | SharedPortfolioGallery.PortfolioGallery ->
             div [] [

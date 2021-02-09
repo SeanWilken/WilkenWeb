@@ -331,8 +331,6 @@ html {
 
 // **********************
 // PORTFOLIO SECTION CLASSES
-// .portfolioSectionContainer {
-// }
 .portfolioSectionSelectionContainer {
     padding-top: 25px;
 }
@@ -356,17 +354,13 @@ html {
     @extend .portfolioSectionHoverSelection;
     @extend .contentCard; // used for italics, REFACTOR THIS
     background-image: url("../public/imgs/unsplash/walkator-code-unsplash.jpg");
-    min-height: 400px;
-    width: 100%;
-    height: 100%;
+    padding: 100px;
 }
 .portfolioDesignCard {
     @extend .portfolioSectionHoverSelection;
     @extend .contentCard; // used for italics, REFACTOR THIS
     background-image: url("../public/imgs/unsplash/diego-ph-design-unsplash.jpg");
-    min-height: 400px;
-    width: 100%;
-    height: 100%;
+    padding: 100px;
 }
 .backToGallery {
     padding: 15px;
