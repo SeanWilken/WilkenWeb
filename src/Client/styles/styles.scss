@@ -196,14 +196,7 @@ html {
 .closeModal {
     background-color: #FF2843;
 }
-.sectionNavigationPreviousButton { 
-    padding: 50px;
-    background-color: rgba(0,0,0,.5);
-    &:hover {
-        font-size: 20px;
-    }
-}
-.sectionNavigationNextButton { 
+.bigSectionNavigationButton { 
     padding: 50px;
     background-color: rgba(0,0,0,.5);
     &:hover {
@@ -308,9 +301,15 @@ html {
 }
 .aboutModalContentCard {
     @extend .aboutContentCard;
-    .level-item {
+    .level-left, .level-right {
         @extend .contentCardTextBackground;
     }
+}
+.leftCol {
+    align-content: flex-start;
+}
+.rightCol {
+    align-content: flex-end;
 }
 .aboutSectionHoverSelection {
     @extend .contentCardTextBackground;

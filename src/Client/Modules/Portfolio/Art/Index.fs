@@ -63,35 +63,6 @@ let getGalleryCardByIndex ( index: int ) =
     let piece, description = galleryPieces.Item ( index )
     piece, description
 
-// GRAY OUT OR NON HOVER / SELECTABLE IF AT 0 OR MAX INDEX?
-let bigPrevious dispatch =
-    Level.left [] [
-        a [ OnClick ( fun _ -> SetCurrentPieceIndex (-1) |> dispatch ) ] [
-            Container.container [ Container.Props [ ClassName "sectionNavigationPreviousButton" ] ] [
-                Columns.columns [ Columns.Props [ ClassName "sectionNavButtonCols" ] ] [
-                        Column.column [] [ p [] [ str "P" ] ]
-                        Column.column [] [ p [] [ str "R" ] ]
-                        Column.column [] [ p [] [ str "E" ] ]
-                        Column.column [] [ p [] [ str "V" ] ]
-                ]
-            ]
-        ]
-    ]
-
-let bigNext dispatch =
-    Level.right [] [
-        a [ OnClick ( fun _ -> SetCurrentPieceIndex (1) |> dispatch ) ] [
-            Container.container [ Container.Props [ ClassName "sectionNavigationNextButton" ] ] [
-                Columns.columns [ Columns.Props [ ClassName "sectionNavButtonCols" ] ] [
-                    Column.column [] [ p [] [ str "N" ] ]
-                    Column.column [] [ p [] [ str "E" ] ]
-                    Column.column [] [ p [] [ str "X" ] ]
-                    Column.column [] [ p [] [ str "T" ] ]
-                ]
-            ]
-        ]
-    ]
-
 let galleryEntryCard piece description dispatch = 
     div [] [
         Container.container [ Container.Props [ ClassName "galleryImage" ] ] [
@@ -110,12 +81,12 @@ let galleryModal ( model: SharedDesignGallery.Model ) dispatch =
         Modal.background [ Props [ OnClick ( fun _ -> BackToPortfolio |> dispatch ); ] ] []
         Modal.content [ Props [ClassName "modalContent"] ] [
             Level.level [] [
-                bigPrevious dispatch
+                SharedModule.bigNavButton (SetCurrentPieceIndex (-1)) "PREV" dispatch
                 Level.item [] [
                     let piece, description = getGalleryCardByIndex model.CurrentPieceIndex
                     galleryEntryCard piece description dispatch
                 ]
-                bigNext dispatch
+                SharedModule.bigNavButton (SetCurrentPieceIndex (1)) "NEXT" dispatch
             ]
         ]
         Modal.close [ Modal.Close.CustomClass "closeModal"; Modal.Close.Size IsLarge; Modal.Close.OnClick ( fun _ -> BackToPortfolio |> dispatch ) ] []

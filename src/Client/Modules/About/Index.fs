@@ -16,8 +16,6 @@ open Shared.SharedAboutSection
     // TODO -> CONTENT SECTIONS -> {LARGE HERO STYLE TILE + QUICK DESCRIPT} -> CLICK TO MAKE HERO CONTENT WITH LONG DESCRIPTION / DETAILS
         // SKILLS & RESUME: Boiled down content sections into a professional resume
 
-    // Fix the modal content with better styling and details
-
     // HOW DO I DRIVE CONTINUOUS USAGE OF THE SITE TO PRGORESS THE USER EXPERIENCE
        // STYLE AND ANIMATION WISE, NEED A COHESIVE FLOW THROUGH THE SECTIONS OF THE WEBSITE, CURRENT IMPLEMENTATION IS FRAGMENTED IN NAVIGATION COMMANDS (WHERE AND HOW)
 
@@ -28,36 +26,43 @@ type Msg =
     | SwitchModal of int
     // don't break them all down into one single group, browse through each point.
 
+// ADD IMAGES AND THINGS TO MAKE THIS BE A GENERIC LAYOUT PASSED THE CONTENT MODAL / VIEW
+// Switched to single string for now, kind of liked how it looked as list iterated and broken
+// down into sentences / points. (MAYBE USE BULLET POINTS)
 let generalModalContent = {
     Title = "General"
-    MainContent = [
-        "I wrote this website as a way to demonstrate some of my skills, processes, and personal traits / interests. As a mainly self-taught computer programmer, I am constantly looking for new and interesting aspects of technology. Check back frquently to see what's new, as I plan to update this with new features, games and content."
-        "I wrote all the code from a boilerplate, drew all the icons and graphic designs seen across the website, and am hosting and running continuous deployments for development."
-        "Check out the portfolio section for some example demo's, explore some drawings or check out the source code that comprises the different sections and the website itself..."
-    ]
+    MainContent =
+        """I wrote this website as a way to demonstrate some of my skills, processes, and personal traits / interests. As a mainly self-taught computer programmer, I am constantly looking for new and interesting aspects of technology. Check back frquently to see what's new, as I plan to update this with new features, games and content.
+        I wrote all the code from a boilerplate, drew all the icons and graphic designs seen across the website, and am hosting and running continuous deployments for development.
+        Check out the portfolio section for some example demo's, explore some drawings or check out the source code that comprises the different sections and the website itself..."""
     PreviousLabel = "Welcome"
     NextLabel = "Professional"
 }
 let professionalModalContent = {
     Title = "Professional"
-    MainContent = [
-        "I wrote all the code from a SAFE Stack boilerplate, and am hosting and running continuous deployments for development. I've been working with programming languages for about 5 years. In that time, I've been a: full-stack developer, tester, help-desk / support, requirement gatherer, custom integration specialist and a lot more.."
-        "I've worked: with mid and small team sizes, working well with others or alone, with custom solutions, open source projects, many late nights tinkering, fixing bugs, deploying new code and putting out the fires, with clients to come up with solutions for problems and bottlenecks being faced. Source requirements, come up with timelines, architecture and logical solutions for such work and implemented the final custom solutions that get deployed into production environments."
-        "I've built things like custom data processors, designed custom themes, upgraded existing projects, created new features, implemented highly requested features and QoL updates, changed the buttons color, and much more!"
-        "I enjoy learning new technologies, paradigms, techniques, and solutions to problems, including those outside my domain and interests."
-    ]
+    MainContent =
+        // I've worked: with mid and small team sizes, working well with others or alone, with custom solutions, open source projects, many late nights tinkering, 
+        // fixing bugs, deploying new code and putting out the fires, with clients to come up with solutions for problems and bottlenecks being faced. 
+        // Source requirements, come up with timelines, architecture and logical solutions for such work and implemented the final custom solutions that get deployed 
+        // into production environments.
+        """I've been working with programming languages for about 5 years. In that time, I've been a: full-stack developer, tester, help-desk / support, requirement gatherer, custom integration specialist and a lot more..
+        I've professionally developed, implemented and maintained things like custom data processors / data integrations / themes / websites / projects & solutions, and created many more personal hobby projects (such as this site, Unity projects, etc..) and scripts."""
     PreviousLabel = "General"
     NextLabel = "Personal"
 }
 let personalModalContent = {
     Title = "Personal"
-    MainContent = [
-        "I enjoy living life in the momement, learning and experiencing new things and being creative. Check out some of my drawings & let me know what you think."
-        "I'm a laid back individual who doesn't mind getting his hands dirty or facing challenges."
-        "I can go off the rails a bit and my imagination tends to run wild when giving the liberty to do so, but also a highly motivated and hard working individual."
-        "Fun fact: I've sailed the carribean sea back to the states on a boat that was fixed up by myself, two relatives and a bunch of misfits we met in our travels!"
-    ]
+    MainContent =
+        """I'm pretty laid back and enjoy living life in the momement, learning and experiencing new things, overcoming challenges and being creative. 
+        Check out some of my drawings & let me know what you think. Fun fact: I've sailed the carribean sea back to the states on a boat that was fixed up by myself, two relatives and a bunch of misfits we met in our travels!"""
     PreviousLabel = "Professional"
+    NextLabel = "Portfolio"
+}
+let websiteModalContent = {
+    Title = "The Site Stack"
+    MainContent =
+        """I wrote all the code from a SAFE Stack boilerplate, and am hosting and running continuous deployments for development. .Link to SAFE Stack about."""
+    PreviousLabel = "Personal"
     NextLabel = "Portfolio"
 }
 
@@ -80,51 +85,40 @@ let update msg model : Model * Cmd<Msg> =
         | _ -> model, Cmd.none
     | _ -> model, Cmd.none
 
-let genericModal model dispatch modalContent =
-    Modal.modal [ Modal.IsActive model.ModalIsActive ] [ 
-        Modal.background [ Props [ OnClick ( fun _ -> ToggleModal model.ActiveModalIndex |> dispatch ) ] ] []
-        Modal.content [] [
-            Container.container [] [
-                Level.level [] [
-                    Container.container [ Container.Props [ ClassName "aboutModalContentCard" ] ] [
-                        Level.level [] [ Level.item [] [ h1 [] [ str modalContent.Title ] ] ]
-                        Level.level [ Level.Level.Props [ ClassName "contentCardTextBackground" ] ] [
-                            for detail in modalContent.MainContent do
-                                Level.item [ ] [ p [] [ str detail ] ]
-                            Level.level [] [
-                                a [] [
-                                    Level.item [ Level.Item.Props [ 
-                                        OnClick( fun _ ->
-                                            ( if ( model.ActiveModalIndex = 0 ) 
-                                                then PreviousSection 
-                                                else SwitchModal (-1) )
-                                            |> dispatch
-                                        ) ]
-                                    ] [ 
-                                        Image.image [ Image.Is64x64 ] [ img [ Src "./imgs/icons/LeftNavButton.png" ] ]
-                                        str ( modalContent.PreviousLabel );
-                                    ] 
-                                ]
-                                a [] [ 
-                                    Level.item [ Level.Item.Props [ 
-                                            OnClick( fun _ -> 
-                                                ( if ( model.ActiveModalIndex = aboutModalContentSections.Length - 1 ) 
-                                                    then NextSection 
-                                                    else SwitchModal (1) )
-                                                |> dispatch 
-                                            ) ]
-                                    ] [ 
-                                        str ( modalContent.NextLabel );
-                                        Image.image [ Image.Is64x64 ] [ img [ Src "./imgs/icons/RightNavButton.png" ] ] 
-                                    ] 
-                                ] 
-                            ]
-                        ]
-                    ]
+let aboutModalCard modalContent = 
+    div [ ClassName "aboutModalContentCard" ] [
+        Level.level [] [
+            div [ ClassName "contentCardTextBackground" ] [
+                Tile.child [ Tile.IsVertical ] [
+                    Container.container [ Container.Props [ ClassName "" ] ] [ h1 [] [ str modalContent.Title ] ]
+                    Container.container [ Container.Props [ ClassName "" ] ] [ p [] [ str modalContent.MainContent ] ]
                 ]
             ]
         ]
-        Modal.close [ Modal.Close.Size IsLarge; Modal.Close.OnClick ( fun _ -> ToggleModal model.ActiveModalIndex |> dispatch ) ] []
+    ]
+
+let aboutModal model dispatch modalContent =
+    Modal.modal [ Modal.IsActive model.ModalIsActive ] [ 
+        Modal.background [ Props [ OnClick ( fun _ -> ToggleModal model.ActiveModalIndex |> dispatch ) ] ] []
+        Modal.content [ Props [ClassName "modalContent"] ] [
+                Columns.columns [ Columns.IsVCentered ] [
+                    // Images?
+                    Column.column [ Column.Props [ ClassName "leftCol" ] ] [
+                        let navFunc = ( if ( model.ActiveModalIndex = 0 ) then PreviousSection else SwitchModal (-1) )
+                        // change text if navigating to new submodule?
+                        SharedModule.bigNavButton navFunc "PREV" dispatch
+                    ]
+                    Column.column [] [
+                        aboutModalCard modalContent
+                    ]
+                    Column.column [Column.Props [ ClassName "rightCol" ]] [
+                        let navFunc = ( if ( model.ActiveModalIndex = aboutModalContentSections.Length - 1 ) then NextSection else SwitchModal (1) )
+                        // change text if navigating to new submodule?
+                        SharedModule.bigNavButton navFunc "NEXT" dispatch
+                    ]
+                ] 
+        ]
+        Modal.close [ Modal.Close.CustomClass "closeModal"; Modal.Close.Size IsLarge; Modal.Close.OnClick ( fun _ -> ToggleModal model.ActiveModalIndex |> dispatch ) ] []
     ]
 
 let mainAbout dispatch =
@@ -221,5 +215,5 @@ let view model dispatch =
         mainAbout dispatch
         secondaryAbout dispatch
         tertiaryAbout dispatch
-        genericModal (model) (dispatch) (aboutModalContentSections.Item(model.ActiveModalIndex))
+        aboutModal (model) (dispatch) (aboutModalContentSections.Item(model.ActiveModalIndex))
     ]

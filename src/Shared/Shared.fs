@@ -816,9 +816,11 @@ module SharedAboutSection =
             ModalIsActive : bool
         }
 
+    // add images
+    // revert back to string list for bullet points?
     type ModalContent = {
         Title: string
-        MainContent: string list
+        MainContent: string //list
         PreviousLabel: string
         NextLabel: string
     }

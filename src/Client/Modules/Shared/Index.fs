@@ -12,6 +12,17 @@ let backToGallery dispatchMsg dispatch =
         Level.item [] [ a [ ClassName "backToGallery"; OnClick ( fun _ -> dispatchMsg |> dispatch ) ] [ p [] [ str "Exit" ] ] ]
     ]
 
+// GRAY OUT OR NON HOVER / SELECTABLE IF AT 0 OR MAX INDEX?
+let bigNavButton clickFunc (name: string) dispatch =
+    a [ OnClick ( fun _ -> clickFunc |> dispatch ) ] [
+        Container.container [ Container.Props [ ClassName "bigSectionNavigationButton" ] ] [
+            Columns.columns [ Columns.Props [ ClassName "sectionNavButtonCols" ] ] [
+                for char in name do
+                    Column.column [] [ p [] [ str (string (char)) ] ]
+            ]
+        ]
+    ]
+
 // let levelSelector  allLevels dispatch = //currentLevel not tracked?
 //     Level.item [ Level.Item.HasTextCentered; ] [
 //         Level.item [] [ p [] [ str "Difficulty:"] ]
