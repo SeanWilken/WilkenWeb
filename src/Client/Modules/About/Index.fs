@@ -126,7 +126,7 @@ let mainAbout dispatch =
         Tile.parent [] [
             Level.level [] [
                 // ADD / UPDATE PIC
-                Tile.child [] [ Image.image [] [ img [ Src "./imgs/Out for Blood.png" ] ] ]
+                Tile.child [Tile.Size Tile.Is5] [ Image.image [] [ img [ Src "./imgs/Out for Blood.png" ] ] ]
                 Tile.child [] [ 
                     Container.container [ Container.Props [ ClassName "aboutContentCard" ] ] [
                         Level.level [ Level.Level.Props [ ClassName "contentCardTextBackground" ] ] [
@@ -174,7 +174,7 @@ let secondaryAbout dispatch =
                     ]
                 ]
                 // ADD / UPDATE PIC
-                Tile.child [] [ Image.image [ ] [ img [Src "./imgs/Misfortune.png"] ] ]
+                Tile.child [Tile.Size Tile.Is5] [ Image.image [ ] [ img [Src "./imgs/Misfortune.png"] ] ]
             ]
         ]
     ]

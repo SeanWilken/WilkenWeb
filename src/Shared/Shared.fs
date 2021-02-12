@@ -11,7 +11,6 @@ module GridGame =
         | Down
         | Left
         | Right
-
     // Object that can be in any given space
     // THIS SHOULD BE MADE GENERIC WHERE THE SUB IMPLEMENTS
     type LaneObject =
@@ -25,12 +24,10 @@ module GridGame =
         | LaneKey
         | MoveArrow of MovementDirection
         | ValueTile of int option
-
     // List of LaneObjects that occupy a Grid Position
     type GridBoard = {
         GridPositions: LaneObject list
     }
-
     // Represents a given game state
     type RoundState =
         | Playing
@@ -42,7 +39,6 @@ module GridGame =
         match index with
         | Some i -> i
         | _ -> -1
-
     // returns true or false based on if the lookupObject is at the gridPositionIndex
     let checkGridPositionForObject positions (gridPositionIndex: int) objToFind =
         positions.GridPositions.Item(gridPositionIndex) = objToFind
@@ -63,7 +59,6 @@ module GridGame =
                     else positions.GridPositions.Item(i)
             ]
         {GridPositions = newGrid}
-
     // GRID POSITION REPRESENTATION
     // GridPositions Represented in column groups
     let getPositionsAsColumns (positions: GridBoard) gridDimension =
@@ -76,7 +71,6 @@ module GridGame =
                         }
                 })
         })
-
     // GridPositions Represented in row groups
     let getPositionsAsRows (positions: GridBoard) gridDimension =
         Seq.toList (seq { 
@@ -105,15 +99,12 @@ module SharedGoalRoll =
         }
 
     let levelCeiling = 3
-
     let getBallPositionIndex (gameGridPositions: GridBoard) =
         getObjectPositionIndex gameGridPositions Ball
         |> unwrapIndex
-
     let getGoalPositionIndex (gameGridPositions: GridBoard) =
         getObjectPositionIndex gameGridPositions Goal
         |> unwrapIndex
-
     let getBallRollPositionIndex ballPosition direction =
         match direction with
         | Up -> (ballPosition - 8)
@@ -266,7 +257,6 @@ module SharedGoalRoll =
             Level3
         | _ ->
             Level0
-
     // initial model, no message or command
     let initModel =
         let round = loadRound 1;
@@ -283,28 +273,27 @@ module SharedGoalRoll =
 // module SharedPivotPoints = 
 // TODO
 
-module SharedTileSmash =
+module SharedTileTap =
 
     open GridGame
 
 
     type Model = {
-        TileSmashGridBoard: GridBoard
+        TileTapGridBoard: GridBoard
         HitPoints: int
         TilesSmashed: int
         }
 
     let levelCeiling = 1
     let gridDimension = 8
-    let generateEmptyTileSmashGrid gridDimension =
+    let generateEmptyTileTapGrid gridDimension =
         { GridPositions = [
                 for i in 0 .. ((gridDimension * gridDimension) - 1) do
                     Blank
             ]
         }
-
     let initModel = {
-        TileSmashGridBoard = generateEmptyTileSmashGrid gridDimension
+        TileTapGridBoard = generateEmptyTileTapGrid gridDimension
         HitPoints = 3
         TilesSmashed = 0
     }
@@ -349,7 +338,6 @@ module SharedTileSort =
     // selects one tile randomly from a given list
     let selectRandomTile (assignedTiles: GameTile list) = assignedTiles.[randomIndex(assignedTiles.Length)]
     //---------------------
-
     // INITIAL GAMEBOARD FUNCTIONS
     // Step 1: Create a list of values, to be used as the tile values.
     // Returns list of int to be used as the Tile values
@@ -390,9 +378,7 @@ module SharedTileSort =
         let newRoundTilePositions = generateGameBoardPositionsBasedOffDifficulty difficulty
         let randomizedNewRoundTilePositions = createRandomGameTiles unassignedTiles newRoundTilePositions
         {GameTiles = randomBlankPosition randomizedNewRoundTilePositions}
-
     //---------------------
-
     // GAME BOARD LOGIC
     // get the tile index from the containing list. // RETURNS AN INDEX???
     // returns index of Value positon within list of tiles, if it exists
@@ -426,17 +412,14 @@ module SharedTileSort =
                 })
         })
     //---------------------
-
     let getValueOrZeroFromGameTile gameTile =
         match gameTile.Value with
         | Some i -> i
         | None -> 0
-
     let convertValueToProperString tileValue =
         match tileValue with
         | 0 -> ""
         | _ -> string tileValue
-
     let checkTileGroupForSelected tiles selectedTile =
         tiles
         |> List.map (fun tileGroup ->
@@ -766,13 +749,13 @@ module SharedTileSort =
 module SharedCodeGallery =
     
     open SharedGoalRoll
-    open SharedTileSmash
+    open SharedTileTap
     open SharedTileSort
 
     type Model =
         | CodeGallery
         | GoalRoll of SharedGoalRoll.Model
-        | TileSmash of SharedTileSmash.Model
+        | TileTap of SharedTileTap.Model
         | TileSort of SharedTileSort.Model
         //COMMENTED CODE - VIEW CODE BUTTON TO DROP DOWN LIKE GITHUB / FIDDLES
         // | WebAppExample // THIS SITE 
@@ -786,7 +769,6 @@ module SharedCodeGallery =
         // CODE {Productivity / Social (IG+reddit)} // SAFE CHAT
 
     let getInitialModel = CodeGallery
-
 
 module SharedDesignGallery =
 
@@ -810,12 +792,10 @@ module SharedPortfolioGallery =
 
 module SharedAboutSection =
 
-    type Model =
-        {
-            ActiveModalIndex : int
-            ModalIsActive : bool
-        }
-
+    type Model = {
+        ActiveModalIndex : int
+        ModalIsActive : bool
+    }
     // add images
     // revert back to string list for bullet points?
     type ModalContent = {
@@ -843,7 +823,6 @@ module SharedWebAppModels =
 module Route =
     let builder typeName methodName =
         sprintf "/api/%s/%s" typeName methodName
-
 
 type IPageApi =
     {

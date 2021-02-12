@@ -10,7 +10,7 @@ open Elmish.Navigation
 type CodeSection =
     | Landing
     | GoalRoll
-    | TileSmash
+    | TileTap
     | TileSort
 
 type PortfolioSection =
@@ -37,7 +37,7 @@ let toPath =
         match code with
         | GoalRoll ->
             sprintf "/portfolio-goalRoll" 
-        | TileSmash ->
+        | TileTap ->
             sprintf "/portfolio-tileSmash" 
         | TileSort ->
             sprintf "/portfolio-tileSort"
@@ -61,7 +61,7 @@ let pageParser : Parser< Page -> Page,_ > =
             map ( Page.Portfolio Design ) ( s "portfolio-design" )
             map ( Page.Portfolio ( Code ( CodeSection.GoalRoll ) ) ) ( s "portfolio-goalRoll" )
             map ( Page.Portfolio ( Code ( CodeSection.TileSort ) ) ) ( s "portfolio-tileSort" )
-            map ( Page.Portfolio ( Code ( CodeSection.TileSmash ) ) ) ( s "portfolio-tileSmash" )
+            map ( Page.Portfolio ( Code ( CodeSection.TileTap ) ) ) ( s "portfolio-tileSmash" )
             map Page.Contact ( s "contact" )
         ]
 
@@ -79,8 +79,8 @@ let urlUpdate ( result: Page option ) ( model: SharedWebAppModels.Model ) =
         SharedWebAppModels.Portfolio ( SharedPortfolioGallery.CodeGallery ( SharedCodeGallery.GoalRoll SharedGoalRoll.initModel ) ), Navigation.newUrl ( toPath ( Some ( Portfolio ( Code ( CodeSection.GoalRoll ) ) ) ) )
     | Some ( Page.Portfolio ( Code ( CodeSection.TileSort ) ) ) ->
         SharedWebAppModels.Portfolio (SharedPortfolioGallery.CodeGallery ( SharedCodeGallery.TileSort SharedTileSort.initModel ) ), Navigation.newUrl ( toPath ( Some ( Portfolio ( Code ( CodeSection.TileSort ) ) ) ) )
-    | Some ( Page.Portfolio ( Code ( CodeSection.TileSmash ) ) ) ->
-        SharedWebAppModels.Portfolio ( SharedPortfolioGallery.CodeGallery ( SharedCodeGallery.TileSmash SharedTileSmash.initModel ) ), Navigation.newUrl ( toPath ( Some ( Portfolio ( Code ( CodeSection.TileSmash ) ) ) ) )
+    | Some ( Page.Portfolio ( Code ( CodeSection.TileTap ) ) ) ->
+        SharedWebAppModels.Portfolio ( SharedPortfolioGallery.CodeGallery ( SharedCodeGallery.TileTap SharedTileTap.initModel ) ), Navigation.newUrl ( toPath ( Some ( Portfolio ( Code ( CodeSection.TileTap ) ) ) ) )
     | Some ( Page.Portfolio Design ) ->
         SharedWebAppModels.Portfolio ( SharedPortfolioGallery.DesignGallery SharedDesignGallery.getInitialModel ), Navigation.newUrl ( toPath ( Some ( Portfolio Design ) ) )
     | Some ( Page.Portfolio _ ) ->

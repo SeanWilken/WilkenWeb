@@ -13,10 +13,8 @@ open Shared
 // GALLERY POSTCARD APP -> SHARE THIS SITE (POSTCARD FROM THE INTERWEBS)
 // RELATED TAGS BROWSER:
     // OTHER IMAGES ALSO FLAGGED FOR SAME STYLE / THEME; SELF DRIVE-RECOMENDATIONS
-// PREVIOUS / NEXT BUTTONS FOR BROWSER:
-    // OTHER IMAGES ALSO FLAGGED FOR SAME STYLE / THEME; SELF DRIVE-RECOMENDATIONS
 // POSTCARD SENDER, SEND A TEMPLATE OF THE GALLERY ART WITH CUSTOM TEXT OR IMAGE AND EMAIL TO A FRIEND
-    // SHARE THIS SITE SEND DIGITAL BUSINESS CARD / POSTCARD
+    // SHARE THIS SITE / PRODUCT / IMAGE
 
 // name, description tuple for gallery pieces.
 // unable to read out folder file contents, System.IO not compatible with Fable
@@ -54,7 +52,6 @@ let update msg ( model : SharedDesignGallery.Model ) =
         model, Cmd.none
 
 // HEADER CONTROLS FOR 
-    // LINK TO DESIGN ON I.G. - ALWAYS
     // CHANGE VIEW -> T-SHIRT / LONG SLEEVE / SWEATSHIRT / ETC.... - IF DESIGN EXISTS ON MULTIPLE IMAGES ()
     // LINK TO PRINTFUL STORE OF SELECTED PRODUCT  - IF DESIGN IS SALEABLE / SELECTED GARMENT VIEW
 
@@ -78,7 +75,7 @@ let galleryEntryCard piece description dispatch =
 
 let galleryModal ( model: SharedDesignGallery.Model ) dispatch =
     Modal.modal [ Modal.IsActive true ] [ 
-        Modal.background [ Props [ OnClick ( fun _ -> BackToPortfolio |> dispatch ); ] ] []
+        Modal.background [] []
         Modal.content [ Props [ClassName "modalContent"] ] [
             Level.level [] [
                 SharedModule.bigNavButton (SetCurrentPieceIndex (-1)) "PREV" dispatch
@@ -88,8 +85,9 @@ let galleryModal ( model: SharedDesignGallery.Model ) dispatch =
                 ]
                 SharedModule.bigNavButton (SetCurrentPieceIndex (1)) "NEXT" dispatch
             ]
+            a [ ClassName "likeOnInsta" ] [ a [ Href "https://www.instagram.com/xeroeffort/" ] [ Image.image [ Image.Is64x64 ] [ img [ Src "./imgs/icons/IG.png" ] ]; p [] [ str "Follow" ] ] ]
+            a [ ClassName "closeModal"; OnClick ( fun _ -> BackToPortfolio |> dispatch ) ] [ Image.image [ Image.Is64x64 ] [ img [ Src "./imgs/icons/X-it.png" ] ] ]
         ]
-        Modal.close [ Modal.Close.CustomClass "closeModal"; Modal.Close.Size IsLarge; Modal.Close.OnClick ( fun _ -> BackToPortfolio |> dispatch ) ] []
     ]
 
 // wrap in div to match other submodules, will have side effects as containers aren't styleless.

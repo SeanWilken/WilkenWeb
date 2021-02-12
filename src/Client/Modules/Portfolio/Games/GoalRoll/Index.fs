@@ -155,7 +155,19 @@ let view model dispatch =
         SharedModule.backToGallery QuitGame dispatch
         Container.container [ Container.Props [ ClassName "aboutContentCard" ] ] [
             Container.container [] [
-                h1 [] [ str "Goal Roll" ]
+                Columns.columns [ Columns.IsVCentered ] [
+                    Column.column [] [
+                        a [ Href "https://raw.githubusercontent.com/SeanWilken/WilkenWeb/master/src/Shared/Shared.fs" ] [ 
+                            h2 [] [ str "Shared Raw Code" ]
+                        ]
+                    ]
+                    Column.column [] [ h1 [] [ str "Goal Roll" ] ]
+                    Column.column [] [ 
+                        a [ Href "https://raw.githubusercontent.com/SeanWilken/WilkenWeb/master/src/Client/Modules/Portfolio/Games/GoalRoll/Index.fs" ] [ 
+                            h2 [] [ str "Client Raw Code" ]
+                        ]
+                    ]
+                ]
                 p [] [ str "- Roll the ball to the goal, travels in straight lines and stops when it hits a wall or blocked tile." ]
                 p [] [ str "- Travels in straight lines and stops when it hits a wall or blocked tile." ]
                 p [] [ str "- Use the arrows next to the ball in order to roll it in the desired direction." ]

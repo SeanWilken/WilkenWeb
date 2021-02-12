@@ -87,7 +87,6 @@
 // }
 html {
     background-image: url("../public/imgs/unsplash/space.jpg");
-    // background-size: auto;
     background-size: cover;
     background-repeat: no-repeat;
     padding: 10px;
@@ -111,7 +110,6 @@ html {
 .headerNavLinks {
     font-size: 20px;
     padding: 5px;
-    // extend the hover doesn't work because not extended from that class (that selector isn't receiving hover)
 }
 .navSectionLink {
     @extend .headerNavLinks;
@@ -171,12 +169,6 @@ html {
         font-family: "Ubuntu";
         font-size: 20px;
     }
-    .columns {
-        flex-direction: column;
-        display: flex;
-        align-items: center;
-        padding: 10px;
-    }
 }
 .contentCardTextBackground {
     background-color: rgba(0, 0, 0, .6);
@@ -195,17 +187,20 @@ html {
     z-index: inherit;
 }
 .closeModal {
-    background-color: #FF2843;
+    position: fixed;
+    right: 25px;
+    top: 25px;
+}
+.likeOnInsta {
+    position: fixed;
+    bottom: 25px;
+    left: 25px;
+    p {
+        color: #FF2843; 
+    }
 }
 .bigSectionNavigationButton { 
     padding: 50px;
-    background-color: rgba(0,0,0,.5);
-    &:hover {
-        font-size: 20px;
-    }
-}
-.sectionNavigationBackButton { 
-    padding: 25px;
     background-color: rgba(0,0,0,.5);
     &:hover {
         font-size: 20px;
@@ -298,6 +293,9 @@ html {
     align-content: center;
     .container {
         @extend .contentCardTextBackground;
+    }
+    h2 {
+        color:#FF2843;
     }
 }
 .aboutModalContentCard {
@@ -554,5 +552,11 @@ html {
     background-size: cover;
     background-position: center;
     height: 100%;
+    .columns {
+        flex-direction: column;
+        display: flex;
+        align-items: center;
+        padding: 10px;
+    }
 }
 // **********************

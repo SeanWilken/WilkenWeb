@@ -13,7 +13,7 @@
         <Compile Include="Modules\Portfolio\Games\GoalRoll\Index.fs" />
         <Compile Include="Modules\Portfolio\Games\PivotPoints\Index.fs" />
         <Compile Include="Modules\Portfolio\Games\TileSort\Index.fs" />
-        <Compile Include="Modules\Portfolio\Games\TileSmash\Index.fs" />
+        <Compile Include="Modules\Portfolio\Games\TileTap\Index.fs" />
         <Compile Include="Modules\Portfolio\Games\Index.fs" />
         <Compile Include="Modules\Portfolio\Art\Index.fs" />
         <Compile Include="Modules\Portfolio\index.fs" />

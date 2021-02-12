@@ -6,8 +6,6 @@ open Fable.React
 open Fable.React.Props
 open Fulma
 
-open TileSmash
-
 // CONTACT: -> CONTENT -> {GMAIL / LINKEDIN / (IG / FACEBOOK / TWITTER / ETC..?)}
 // Static Page:
 // does not depend on the dispatch loop, as currently there are no messages that would need to be submitted into it.
@@ -28,7 +26,7 @@ let view =
                                         Column.column [] [ 
                                             p [] [ str """Say hello or drop me a line with your questions or comments
                                                          about the website and it's features. Or for any other reason 
-                                                         there might be... Just don't spam me.""" ]                                  
+                                                         there might be... Whatever it is, just please DO NOT spam me.""" ]                                 
                                         ]
                                         Column.column [] [
                                             a [ Href "mailto: sean.d.wilken@gmail.com" ] [
@@ -60,7 +58,7 @@ let view =
                                                 ]
                                             ]
                                         ] ]
-                                        Column.column [] [ p [] [ str "Coming very soon..." ] ]
+                                        Column.column [] [ p [] [ str "Coming very soon to social platforms near you..." ] ]
                                         // Column.column [] [ p [] [ str "Follow, Like & Share - Xero Effort" ] ]
                                         // Column.column [] [ a [ Href "https://www.instagram.com/xeroeffort/" ] [ 
                                         //     Level.level [] [

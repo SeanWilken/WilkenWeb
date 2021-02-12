@@ -88,7 +88,19 @@ let decodeDifficultyByString string =
 let tileSortHeader =
     Container.container [ Container.Props [ ClassName "aboutContentCard" ] ] [
         Container.container [] [
-            h1 [] [ str "Tile Sort" ]
+            Columns.columns [ Columns.IsVCentered ] [
+                Column.column [] [
+                    a [ Href "https://raw.githubusercontent.com/SeanWilken/WilkenWeb/master/src/Shared/Shared.fs" ] [ 
+                        h2 [] [ str "Shared Code" ]
+                    ]
+                ]
+                Column.column [] [ h1 [] [ str "Tile Sort" ] ]
+                Column.column [] [ 
+                    a [ Href "https://raw.githubusercontent.com/SeanWilken/WilkenWeb/master/src/Client/Modules/Portfolio/Games/TileSort/Index.fs" ] [ 
+                        h2 [] [ str "Client Code" ]
+                    ]
+                ]
+            ]
             p [] [ str "- Rearrange the tiles in correct ascending order, starting with the top left position being the lowest number." ]
             p [] [ str "- Select one of the tiles adjacent to the empty space to slide that tile into the blank." ]
             p [] [ str "- The blank space must match the missing number." ]

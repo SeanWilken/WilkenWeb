@@ -12,7 +12,7 @@ type Msg =
     | BackToPortfolio
     | LoadSection of SharedCodeGallery.Model
     | GoalRollMsg of GoalRoll.Msg
-    | TileSmashMsg of TileSmash.Msg
+    | TileTapMsg of TileTap.Msg
     | TileSortMsg of TileSort.Msg
 
 
@@ -35,15 +35,15 @@ let update (msg: Msg) (model: SharedCodeGallery.Model): SharedCodeGallery.Model 
         let goalRollModel, com = GoalRoll.update msg model
         SharedCodeGallery.GoalRoll goalRollModel, Cmd.map GoalRollMsg com
     // TILE SMASH
-    | LoadSection (SharedCodeGallery.TileSmash msg), _ ->
-        let tileSmashModel, com = TileSmash.init()
-        // let tileSmashModel, com = TileSmash.init()
-        SharedCodeGallery.TileSmash tileSmashModel, Cmd.none
-    | TileSmashMsg TileSmash.Msg.QuitGame, SharedCodeGallery.TileSmash model ->
+    | LoadSection (SharedCodeGallery.TileTap msg), _ ->
+        let tileSmashModel, com = TileTap.init()
+        // let tileSmashModel, com = TileTap.init()
+        SharedCodeGallery.TileTap tileSmashModel, Cmd.none
+    | TileTapMsg TileTap.Msg.QuitGame, SharedCodeGallery.TileTap model ->
         SharedCodeGallery.CodeGallery, Cmd.none
-    // | TileSmashMsg msg, TileSmash model ->
-    //     let tileSmashModel, com = TileSmash.update msg model
-    //     TileSmash tileSmashModel, Cmd.map TileSmashMsg com
+    // | TileTapMsg msg, TileTap model ->
+    //     let tileSmashModel, com = TileTap.update msg model
+    //     TileTap tileSmashModel, Cmd.map TileTapMsg com
     // TILE SORT
     | LoadSection (SharedCodeGallery.TileSort msg), _ ->
         let tileSortModel, com = TileSort.init()
@@ -116,14 +116,14 @@ let CodeGalleryGoalRoll dispatch =
 
 // TODO
 // NEW WIP, JUST HOPPED IN
-let CodeGalleryTileSmash dispatch =
+let CodeGalleryTileTap dispatch =
     Container.container [ Container.Props [ ClassName "paddedContainer"] ] [
         Columns.columns [ Columns.IsCentered ] [
             Column.column [Column.Width (Screen.All, Column.Is8)] [
-                a [ OnClick(fun _ -> LoadSection (SharedCodeGallery.TileSmash SharedTileSmash.initModel) |> dispatch ) ] [
+                a [ OnClick(fun _ -> LoadSection (SharedCodeGallery.TileTap SharedTileTap.initModel) |> dispatch ) ] [
                     div [ ClassName "selectionTile"] [
-                        h1 [] [ str "Tile Smash" ]
-                        p [] [ str "Smash as many tiles as you can while avoiding bombs." ] 
+                        h1 [] [ str "Tile Tap" ]
+                        p [] [ str "Tap to smash as many tiles as you can while avoiding bombs." ] 
                     ]
                 ]
             ]
@@ -139,12 +139,12 @@ let view model dispatch =
                 CodeGalleryHeader
                 CodeGalleryTileSort dispatch
                 CodeGalleryGoalRoll dispatch
-                CodeGalleryTileSmash dispatch
+                CodeGalleryTileTap dispatch
             ]
         | SharedCodeGallery.GoalRoll model ->
             GoalRoll.view model (GoalRollMsg >> dispatch)
         | SharedCodeGallery.TileSort model ->
             TileSort.view model (TileSortMsg >> dispatch)
-        | SharedCodeGallery.TileSmash model ->
-            TileSmash.view (TileSmashMsg >> dispatch) ////model 
+        | SharedCodeGallery.TileTap model ->
+            TileTap.view (TileTapMsg >> dispatch) ////model 
     ]
