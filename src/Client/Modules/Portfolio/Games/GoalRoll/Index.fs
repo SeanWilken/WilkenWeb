@@ -152,7 +152,7 @@ let goalRollLevelCreator goalRollModel dispatch =
 // Main view function
 let view model dispatch =
     Container.container [] [
-        SharedModule.backToGallery QuitGame dispatch
+        SharedViewModule.backToGallery QuitGame dispatch
         Container.container [ Container.Props [ ClassName "aboutContentCard" ] ] [
             Container.container [] [
                 Columns.columns [ Columns.IsVCentered ] [

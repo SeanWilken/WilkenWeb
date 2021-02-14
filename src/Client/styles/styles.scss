@@ -182,7 +182,31 @@ html {
 .paddedContainer {
     padding: 50px; 
 }
-.modalContent {
+// better style the modal
+.modalTitle {
+    position: fixed;
+    top: 50px;
+    left: 75px;
+    font-family: "Ubuntu";
+    font-size: 75px;
+    color: #69A69A;
+}
+.modalLeft {
+    @extend .contentCard;
+    margin: 10px;
+    padding: 10px;
+    background-size: cover;
+    background-position: center;
+    background-image: url("../public/imgs/unsplash/spaceSunset.jpg");
+    align-content: center;
+    .container {
+        @extend .contentCardTextBackground;
+    }
+    h2 {
+        color:#FF2843;
+    }
+}
+.modalContent { 
     width: 100%;
     z-index: inherit;
 }
@@ -506,10 +530,6 @@ html {
 
 }
 // .blockerLaneObject {
-
-// }
-// .blockerLaneObject {
-
 // }
 
 // **********************

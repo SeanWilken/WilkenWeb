@@ -106,7 +106,7 @@ let aboutModal model dispatch modalContent =
                     Column.column [ Column.Props [ ClassName "leftCol" ] ] [
                         let navFunc = ( if ( model.ActiveModalIndex = 0 ) then PreviousSection else SwitchModal (-1) )
                         // change text if navigating to new submodule?
-                        SharedModule.bigNavButton navFunc "PREV" dispatch
+                        SharedViewModule.bigNavButton navFunc "PREV" dispatch
                     ]
                     Column.column [] [
                         aboutModalCard modalContent
@@ -114,7 +114,7 @@ let aboutModal model dispatch modalContent =
                     Column.column [Column.Props [ ClassName "rightCol" ]] [
                         let navFunc = ( if ( model.ActiveModalIndex = aboutModalContentSections.Length - 1 ) then NextSection else SwitchModal (1) )
                         // change text if navigating to new submodule?
-                        SharedModule.bigNavButton navFunc "NEXT" dispatch
+                        SharedViewModule.bigNavButton navFunc "NEXT" dispatch
                     ]
                 ] 
         ]

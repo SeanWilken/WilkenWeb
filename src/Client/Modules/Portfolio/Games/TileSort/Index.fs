@@ -155,7 +155,7 @@ let gameGrid model dispatch =
 // TILE SORT GRID VIEW
 let view ( model : Model ) ( dispatch : Msg -> unit ) =
     div [] [
-        SharedModule.backToGallery QuitGame dispatch
+        SharedViewModule.backToGallery QuitGame dispatch
         tileSortHeader
         tileSortHeaderControls model.Difficulty dispatch
         match model.GameState with

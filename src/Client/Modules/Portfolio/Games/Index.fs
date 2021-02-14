@@ -135,7 +135,7 @@ let view model dispatch =
         match model with
         | SharedCodeGallery.CodeGallery ->
             Container.container [] [
-                SharedModule.backToGallery BackToPortfolio dispatch
+                SharedViewModule.backToGallery BackToPortfolio dispatch
                 CodeGalleryHeader
                 CodeGalleryTileSort dispatch
                 CodeGalleryGoalRoll dispatch
