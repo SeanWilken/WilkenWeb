@@ -70,29 +70,37 @@ let update ( msg: Msg ) ( model: SharedGoalRoll.Model ): SharedGoalRoll.Model * 
     | QuitGame, model -> model, Cmd.ofMsg QuitGame
 
 // -------- GOAL ROLL VIEW --------
-// GAME CONTROLS
-let levelSelector currentLevel allLevels dispatch =
-    Level.item [ Level.Item.HasTextCentered; ] [
-        Level.item [] [ p [] [ str "Level Select:" ] ]
-        for level in allLevels do
-            if level = currentLevel then 
-                Level.item [] [ p [] [ str ( sprintf "Lvl %i" level ) ] ]
-            else 
-                Level.item [] [ 
-                    a [ OnClick ( fun _ -> LoadRound level |> dispatch ) ] [ str ( sprintf "Lvl %i" level ) ]
-                ]
-    ]
-let goalRollHeaderControls currentLevelIndex availLevels dispatch =
-    Container.container [ Container.Props [ ClassName "gameGridControlBar" ] ] [
-        Level.level [] [
-            levelSelector currentLevelIndex availLevels dispatch
-            Level.item [] [ a [ OnClick ( fun _ -> ResetRound |> dispatch ); ] [ str "Reset Round" ] ]
-            // Level.item [] [ a [ OnClick(fun _ -> RandRound |> dispatch ); ] [ str "Random Round" ] ]
-            // Level.item [] [ a [ OnClick(fun _ -> RewindMove |> dispatch ); ] [ str "Undo Turn" ] ]
-        ]
-    ]
-// SHARABLE (?)
-// Given a list of laneObjects, return as row of tiles with object
+
+// content descriptions
+let goalRollDescriptions = [
+    "- Use the arrows next to the ball in order to roll it in the desired direction."
+    "- Travels in straight lines and stops when it hits a wall or blocked tile."
+    "- Have the ball stop on the goal to win."
+]
+// external links
+let sourceCodeLinks = [
+    "Shared", "https://raw.githubusercontent.com/SeanWilken/WilkenWeb/master/src/Shared/Shared.fs"
+    "Client", "https://raw.githubusercontent.com/SeanWilken/WilkenWeb/master/src/Client/Modules/Portfolio/Games/GoalRoll/Index.fs"
+]
+// content selection controls
+let gameControls = [ 
+    "Reset Round", ResetRound
+    "Level 0", LoadRound 0
+    "Level 1", LoadRound 1
+    "Level 2", LoadRound 2
+    "Level 3", LoadRound 3
+]
+
+//header
+let goalRollHeader dispatch =
+    SharedViewModule.sharedModalHeaderControls "Goal Roll" QuitGame dispatch
+
+// left content
+let goalRollLeftModal =
+    SharedViewModule.sharedModalLeft goalRollDescriptions sourceCodeLinks
+
+// main content
+// // Assign positions to view elements
 let goalRollRowCreator ( rowPositions: LaneObject list ) dispatch =
     Level.level [] [
         Tile.parent [] [
@@ -124,7 +132,6 @@ let goalRollRowCreator ( rowPositions: LaneObject list ) dispatch =
                     Tile.child [] [ Box.box' [ Props [ ClassName "genericLaneObject" ] ] [] ]
             ]
     ]
-// SHARABLE (?)
 // // Given a Goal Roll Level, create the Game Board via rows
 let goalRollLevelCreator goalRollModel dispatch =
     let positions = goalRollModel.CurrentGrid
@@ -143,47 +150,20 @@ let goalRollLevelCreator goalRollModel dispatch =
                 else gridWithRightArrow
         else gridWithRightArrow
     // positions as rows
-    // BAKE GRID DIMENSION INTO MODEL IF VAR, FUNC IF STATIC, SIZE???
     let gridRows = getPositionsAsRows gameGrid 8
-    Container.container [ Container.Props [ ClassName "gameGridContainer" ] ] [
-        for row in gridRows do
-            goalRollRowCreator row dispatch
-    ]
-// Main view function
+    Container.container [] [ for row in gridRows do goalRollRowCreator row dispatch ]
+// modal content container
+let goalRollModalContent model dispatch =
+    match model.GameState with 
+    | Playing -> goalRollLevelCreator model dispatch
+    | Won -> div [ ClassName "levelCompletedCard" ] [ str "Level Completed!!!" ]
+
+// right content controls
+let goalRollModalRight dispatch =
+    (SharedViewModule.sharedModalRight gameControls dispatch)
+
+// main view
 let view model dispatch =
-    Container.container [] [
-        SharedViewModule.backToGallery QuitGame dispatch
-        Container.container [ Container.Props [ ClassName "aboutContentCard" ] ] [
-            Container.container [] [
-                Columns.columns [ Columns.IsVCentered ] [
-                    Column.column [] [
-                        a [ Href "https://raw.githubusercontent.com/SeanWilken/WilkenWeb/master/src/Shared/Shared.fs" ] [ 
-                            h2 [] [ str "Shared Raw Code" ]
-                        ]
-                    ]
-                    Column.column [] [ h1 [] [ str "Goal Roll" ] ]
-                    Column.column [] [ 
-                        a [ Href "https://raw.githubusercontent.com/SeanWilken/WilkenWeb/master/src/Client/Modules/Portfolio/Games/GoalRoll/Index.fs" ] [ 
-                            h2 [] [ str "Client Raw Code" ]
-                        ]
-                    ]
-                ]
-                p [] [ str "- Roll the ball to the goal, travels in straight lines and stops when it hits a wall or blocked tile." ]
-                p [] [ str "- Travels in straight lines and stops when it hits a wall or blocked tile." ]
-                p [] [ str "- Use the arrows next to the ball in order to roll it in the desired direction." ]
-            ]
-        ]
-        goalRollHeaderControls model.LevelIndex [ 0..3 ] dispatch
-        match model.GameState with
-        | Playing ->
-            goalRollLevelCreator model dispatch
-        | Won ->
-            // Should be mroe exciting
-            // Have options to 
-                //replay this level
-                //load the (next||prev||rand) level
-                //share this level // share this game
-            div [ ClassName "levelCompletedCard" ] [ str "Level Completed!!!" ]
-    ]
+    SharedViewModule.sharedModal ( goalRollHeader dispatch ) ( goalRollLeftModal ) ( goalRollModalContent model dispatch ) ( goalRollModalRight dispatch )
                            
 // --------------------------------

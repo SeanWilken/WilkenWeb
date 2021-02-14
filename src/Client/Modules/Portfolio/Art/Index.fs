@@ -85,7 +85,7 @@ let galleryModal ( model: SharedDesignGallery.Model ) dispatch =
                 ]
                 SharedViewModule.bigNavButton (SetCurrentPieceIndex (1)) "NEXT" dispatch
             ]
-            a [ ClassName "likeOnInsta" ] [ a [ Href "https://www.instagram.com/xeroeffort/" ] [ Image.image [ Image.Is64x64 ] [ img [ Src "./imgs/icons/IG.png" ] ]; p [] [ str "Follow" ] ] ]
+            a [ ClassName "likeOnInsta" ] [ a [ Href "https://www.instagram.com/xeroeffort/" ] [ Image.image [ Image.Is64x64 ] [ img [ Src "./imgs/icons/IG.png" ] ]; p [] [ str "Instagram" ] ] ]
             a [ ClassName "closeModal"; OnClick ( fun _ -> BackToPortfolio |> dispatch ) ] [ Image.image [ Image.Is64x64 ] [ img [ Src "./imgs/icons/X-it.png" ] ] ]
         ]
     ]

@@ -5,8 +5,7 @@ open Elmish
 // open Shared
 open Shared.SharedTileSort
 
-// CURRENTLY BROKEN, NEEDS TO HAVE SHARED LOGIC REVIEWED, AS I TRIED TO UPDATE TO USE GRIDGAME AND BROKE STUFF
-
+// CURRENTLY BROKEN WHEN USING SHARED, AS I TRIED TO UPDATE TO USE GRIDGAME AND BROKE STUFF
 // TODO:
     //IMPLEMENT:
         //Move Count Display
@@ -84,86 +83,140 @@ let decodeDifficultyByString string =
     | "Hard" -> Hard
     | _ -> Simple
 
-// TILE SORT CONTROLS HEADER
-let tileSortHeader =
-    Container.container [ Container.Props [ ClassName "aboutContentCard" ] ] [
-        Container.container [] [
-            Columns.columns [ Columns.IsVCentered ] [
-                Column.column [] [
-                    a [ Href "https://raw.githubusercontent.com/SeanWilken/WilkenWeb/master/src/Shared/Shared.fs" ] [ 
-                        h2 [] [ str "Shared Code" ]
-                    ]
-                ]
-                Column.column [] [ h1 [] [ str "Tile Sort" ] ]
-                Column.column [] [ 
-                    a [ Href "https://raw.githubusercontent.com/SeanWilken/WilkenWeb/master/src/Client/Modules/Portfolio/Games/TileSort/Index.fs" ] [ 
-                        h2 [] [ str "Client Code" ]
-                    ]
-                ]
-            ]
-            p [] [ str "- Rearrange the tiles in correct ascending order, starting with the top left position being the lowest number." ]
-            p [] [ str "- Select one of the tiles adjacent to the empty space to slide that tile into the blank." ]
-            p [] [ str "- The blank space must match the missing number." ]
-            // p [] [ str "- Select a difficulty: Simple = 3 x 3; Easy = 4 x 4; Medium = 5 x 5; Hard = 6 x 6." ]
-            // p [] [ str "- Use the 'Undo Turn' button to rewind the previous action (back to the initial board)." ]
-            // p [] [ str "- Use the 'New Round' button to generate a new board of the selected difficulty." ]
-            // p [] [ str "- Use the 'Reset Round' button to set the board back to it's initial state." ]
-        ]
-    ]
-// DIFFICULTY SELECTOR CONTROLS
-let difficultySelector ( currentDifficulty: TileSortDifficulty ) dispatch =
-    Level.item [ Level.Item.HasTextCentered; ] [
-        Level.item [] [ p [] [ str "Difficulty:"] ]
-        for difficulty in tileDifficulties do
-            let unionCaseDifficultyName = difficulty.Name
-            let unionCaseDifficulty =  decodeDifficultyByString unionCaseDifficultyName
-            if unionCaseDifficulty = currentDifficulty then 
-                Level.item [ Level.Item.HasTextCentered ] [ p [] [ str unionCaseDifficultyName ] ]
-            else 
-                Level.item [ Level.Item.HasTextCentered ] [ a [ OnClick ( fun _ -> UpdateDifficulty unionCaseDifficulty |> dispatch ) ] [ str unionCaseDifficultyName ] ]
-    ]
-// DIFFICULTY SELECTION & ROUND CONTROLS
-let tileSortHeaderControls difficulty dispatch =
-    Container.container [ Container.Props [ ClassName "gameGridControlBar"] ] [
-        Level.level [] [
-            difficultySelector difficulty dispatch
-            Level.item [] [ a [ OnClick(fun _ -> NewRound |> dispatch ) ] [ str "New Round" ] ]
-            Level.item [] [ a [ OnClick(fun _ -> ResetRound |> dispatch ) ] [ str "Reset Round" ] ]
-            Level.item [] [ a [ OnClick(fun _ -> RewindMove |> dispatch ) ] [ str "Undo Turn" ] ]
-        ]
-    ]
-// TILE GRID ROW
-let generateTileGridRow ( tileRow: GameTile list ) ( dispatch: Msg -> unit ) =
-    Tile.ancestor [] [ 
+// VIEW
+
+let tileSortDescriptions = [ 
+    "- Rearrange the tiles in correct ascending order, starting with the top left position being the lowest number."
+    "- Select one of the tiles adjacent to the empty space to slide that tile into the blank."
+    "- The blank space must match the missing number." 
+]
+let sourceCodeLinks = [
+    "Shared", "https://raw.githubusercontent.com/SeanWilken/WilkenWeb/master/src/Shared/Shared.fs"
+    "Client", "https://raw.githubusercontent.com/SeanWilken/WilkenWeb/master/src/Client/Modules/Portfolio/Games/TileSort/Index.fs"
+]
+let gameControls = [
+    "New Round", NewRound
+    "Reset Round", ResetRound
+    "Undo Move", RewindMove
+    "3 x 3", UpdateDifficulty Simple
+    "4 x 4", UpdateDifficulty Easy
+    "5 x 5", UpdateDifficulty Medium
+    "6 x 6", UpdateDifficulty Hard
+]
+
+//header
+let tileSortHeader dispatch =
+    SharedViewModule.sharedModalHeaderControls "Tile Sort" QuitGame dispatch
+
+// left content
+let tileSortLeftModal =
+    SharedViewModule.sharedModalLeft tileSortDescriptions sourceCodeLinks
+
+// main content
+let tileSortRowCreator ( tileRow: GameTile list ) ( dispatch: Msg -> unit ) =
+    Tile.parent [] [
         for tile in tileRow do
             let displayValue = convertValueToProperString ( getValueOrZeroFromGameTile tile )
             let tileClass = if ( displayValue <> "" ) then "valueTile" else "blankTile"
-            Tile.parent [] [ 
-                Tile.child [] [
-                    Box.box' [ Props [ ClassName tileClass; OnClick( fun _ -> MoveTile tile |> dispatch ) ]  ] [ str displayValue ] 
-                ] 
-            ]
-        ]
-
-let gameGrid model dispatch =
+            Column.column [] [ Tile.child [] [ Box.box' [ Props [ ClassName tileClass; OnClick( fun _ -> MoveTile tile |> dispatch ) ]  ] [ str displayValue ] ] ]
+    ]
+let tileSortGameBoard model dispatch =
     let tileRows = Shared.SharedTileSort.getTilesAsRows model.CurrentTiles model.Difficulty
-    Container.container [ Container.Props [  ] ] [
-        for row in tileRows do
-            generateTileGridRow row dispatch
-    ]
+    Container.container [ Container.CustomClass "tileSortCenter" ] [ for row in tileRows do tileSortRowCreator row dispatch ]
+// modal content container
+let tileSortModalContent model dispatch =
+    match model.GameState with 
+    | Shared.GridGame.Won -> div [ ClassName "levelCompletedCard"; ] [ str "Congrats, you win!!!" ]
+    | Shared.GridGame.Playing -> tileSortGameBoard model dispatch
+// right content controls
+let tileSortModalRight dispatch =
+    (SharedViewModule.sharedModalRight gameControls dispatch)
+// main view
+let view model dispatch =
+    SharedViewModule.sharedModal ( tileSortHeader dispatch ) ( tileSortLeftModal ) ( tileSortModalContent model dispatch ) ( tileSortModalRight dispatch )
 
-// TILE SORT GRID VIEW
-let view ( model : Model ) ( dispatch : Msg -> unit ) =
-    div [] [
-        SharedViewModule.backToGallery QuitGame dispatch
-        tileSortHeader
-        tileSortHeaderControls model.Difficulty dispatch
-        match model.GameState with
-        | Shared.GridGame.Won ->
-            div [ ClassName "levelCompletedCard"; ] [ str "Congrats, you win!!!" ] //Style [ Padding 15; Border "1px solid #000000"; FontSize 100; TextAlign TextAlignOptions.Center; Color "#FF2843"; FontFamily "Philosopher"]
-        | Shared.GridGame.Playing ->
-            Container.container [ Container.Props [ ClassName "gameGridContainer" ] ] [ gameGrid model dispatch ]
-    ]
+// OLD STYLE OF CONTENT CARDS
+// MOVE TO ANOTHER SECTION, SWITCH VIEW TYPE?
+    // MODAL?
+    // CONTENT CARDS?
+// TILE SORT CONTROLS HEADER
+// let tileSortHeader =
+//     Container.container [ Container.Props [ ClassName "aboutContentCard" ] ] [
+//         Container.container [] [
+//             Columns.columns [ Columns.IsVCentered ] [
+//                 Column.column [] [
+//                     a [ Href "https://raw.githubusercontent.com/SeanWilken/WilkenWeb/master/src/Shared/Shared.fs" ] [ 
+//                         h2 [] [ str "Shared Code" ]
+//                     ]
+//                 ]
+//                 Column.column [] [ h1 [] [ str "Tile Sort" ] ]
+//                 Column.column [] [ 
+//                     a [ Href "https://raw.githubusercontent.com/SeanWilken/WilkenWeb/master/src/Client/Modules/Portfolio/Games/TileSort/Index.fs" ] [ 
+//                         h2 [] [ str "Client Code" ]
+//                     ]
+//                 ]
+//             ]
+//             p [] [ str "- Rearrange the tiles in correct ascending order, starting with the top left position being the lowest number." ]
+//             p [] [ str "- Select one of the tiles adjacent to the empty space to slide that tile into the blank." ]
+//             p [] [ str "- The blank space must match the missing number." ]
+//             // p [] [ str "- Select a difficulty: Simple = 3 x 3; Easy = 4 x 4; Medium = 5 x 5; Hard = 6 x 6." ]
+//             // p [] [ str "- Use the 'Undo Turn' button to rewind the previous action (back to the initial board)." ]
+//             // p [] [ str "- Use the 'New Round' button to generate a new board of the selected difficulty." ]
+//             // p [] [ str "- Use the 'Reset Round' button to set the board back to it's initial state." ]
+//         ]
+//     ]
+// // DIFFICULTY SELECTOR CONTROLS
+// let difficultySelector ( currentDifficulty: TileSortDifficulty ) dispatch =
+//     Level.item [ Level.Item.HasTextCentered; ] [
+//         Level.item [] [ p [] [ str "Difficulty:"] ]
+//         for difficulty in tileDifficulties do
+//             let unionCaseDifficultyName = difficulty.Name
+//             let unionCaseDifficulty =  decodeDifficultyByString unionCaseDifficultyName
+//             if unionCaseDifficulty = currentDifficulty then 
+//                 Level.item [ Level.Item.HasTextCentered ] [ p [] [ str unionCaseDifficultyName ] ]
+//             else 
+//                 Level.item [ Level.Item.HasTextCentered ] [ a [ OnClick ( fun _ -> UpdateDifficulty unionCaseDifficulty |> dispatch ) ] [ str unionCaseDifficultyName ] ]
+//     ]
+// // DIFFICULTY SELECTION & ROUND CONTROLS
+// let tileSortHeaderControls difficulty dispatch =
+//     Container.container [ Container.Props [ ClassName "gameGridControlBar"] ] [
+//         Level.level [] [
+//             difficultySelector difficulty dispatch
+//             Level.item [] [ a [ OnClick(fun _ -> NewRound |> dispatch ) ] [ str "New Round" ] ]
+//             Level.item [] [ a [ OnClick(fun _ -> ResetRound |> dispatch ) ] [ str "Reset Round" ] ]
+//             Level.item [] [ a [ OnClick(fun _ -> RewindMove |> dispatch ) ] [ str "Undo Turn" ] ]
+//         ]
+//     ]
+// // TILE GRID ROW
+// let generateTileGridRow ( tileRow: GameTile list ) ( dispatch: Msg -> unit ) =
+//     Tile.ancestor [] [ 
+//         for tile in tileRow do
+//             let displayValue = convertValueToProperString ( getValueOrZeroFromGameTile tile )
+//             let tileClass = if ( displayValue <> "" ) then "valueTile" else "blankTile"
+//             Tile.parent [] [ 
+//                 Tile.child [] [
+//                     Box.box' [ Props [ ClassName tileClass; OnClick( fun _ -> MoveTile tile |> dispatch ) ]  ] [ str displayValue ] 
+//                 ] 
+//             ]
+//         ]
+// let gameGrid model dispatch =
+//     let tileRows = Shared.SharedTileSort.getTilesAsRows model.CurrentTiles model.Difficulty
+//     Container.container [ Container.Props [  ] ] [
+//         for row in tileRows do
+//             generateTileGridRow row dispatch
+//     ]
+// // TILE SORT GRID VIEW
+// let view ( model : Model ) ( dispatch : Msg -> unit ) =
+//     div [] [
+//         SharedViewModule.backToGallery QuitGame dispatch
+//         tileSortHeader
+//         tileSortHeaderControls model.Difficulty dispatch
+//         match model.GameState with
+//         | Shared.GridGame.Won ->
+//             div [ ClassName "levelCompletedCard"; ] [ str "Congrats, you win!!!" ] //Style [ Padding 15; Border "1px solid #000000"; FontSize 100; TextAlign TextAlignOptions.Center; Color "#FF2843"; FontFamily "Philosopher"]
+//         | Shared.GridGame.Playing ->
+//             Container.container [ Container.Props [ ClassName "gameGridContainer" ] ] [ gameGrid model dispatch ]
+//     ]
     
 // TEST ABOVE FUNCTIONALITY AND LOGIC
 // GENERATE A DIFFICULTY HARD TILE LIST

@@ -9,16 +9,6 @@ open Fable.React
 open Fable.React.Props
 open Fulma
 
-type Msg =
-    | QuitGame
-
-let init(): SharedTileTap.Model * Cmd<Msg> =
-    SharedTileTap.initModel, Cmd.none
-let update msg model =
-    match msg with
-    | QuitGame ->
-        model, Cmd.ofMsg QuitGame
-
 // Time drives main game state, as things happen in intervals contained within the main loop
     // tile expire -> scales with time remaining
     // smaller game grid, doesn't work well on 1080 (ALSO OTHER SECTIONS REVIEW)
@@ -38,9 +28,32 @@ let update msg model =
 // sleep function on spawn with timeout value for expiration
 // explode if timeoutValue reached
 // if clicked, intercept that timeout & destroy the tile and spawn a new one, with a fresh countdown clock
-
 // TODO: -- THIS SHOULD BE USING A SHARED GENERIC TILE GAME BOARD BUILDER, NEED TO IMPLEMENT IN SHARED!
 // STYLED WHEN REFACTOR ABOVE DONE?
+
+type Msg =
+    | QuitGame
+
+let tileTapDescriptions = [
+    "Survival Mode:"
+    "- Smash the tile before time runs out."
+    "- Tile timer reaches 0 takes away 1 HP."
+    "- Smash a Heart to gain 1 HP."
+    "- Smashing bombs takes away 2 HP."
+]
+let sourceCodeLinks = [
+    "Shared", "https://raw.githubusercontent.com/SeanWilken/WilkenWeb/master/src/Shared/Shared.fs"
+    "Client", "https://raw.githubusercontent.com/SeanWilken/WilkenWeb/master/src/Client/Modules/Portfolio/Games/TileTap/Index.fs"
+]
+let gameControls = [ "Quit Game", QuitGame ]
+
+let init(): SharedTileTap.Model * Cmd<Msg> =
+    SharedTileTap.initModel, Cmd.none
+let update msg model =
+    match msg with
+    | QuitGame ->
+        model, Cmd.ofMsg QuitGame
+
 let tileTapRowCreator ( rowPositions: LaneObject list ) dispatch =
     Level.level [] [
         Tile.parent [] [
@@ -53,20 +66,6 @@ let tileTapRowCreator ( rowPositions: LaneObject list ) dispatch =
                 // 3HP // EZ: (3 missed intervals = -1 HP) MD: (2 missed intervals = -1 HP) HD: () XD: (1 miss = -3HP)
             ]
     ]
-
-let tileTapDescriptions = [
-    "Survival Mode:"
-    "- Smash the tile before time runs out."
-    "- Tile timer reaches 0 takes away 1 HP."
-    "- Smash a Heart to gain 1 HP."
-    "- Smashing bombs takes away 2 HP."
-]
-
-let soureCodeLinks = [
-    "Shared", "https://raw.githubusercontent.com/SeanWilken/WilkenWeb/master/src/Shared/Shared.fs"
-    "Client", "https://raw.githubusercontent.com/SeanWilken/WilkenWeb/master/src/Client/Modules/Portfolio/Games/TileTap/Index.fs"
-]
-
 // function to place a new flag or mark as missed if not smashed in the time alotted (have tile scroll color as interval reaches end)
 let tileTapBoardView gridPositions dispatch =
     let board = GridGame.getPositionsAsRows gridPositions 8
@@ -76,10 +75,13 @@ let tileTapHeader dispatch =
     SharedViewModule.sharedModalHeaderControls "Tile Tap" QuitGame dispatch
 
 let tileTapLeftModal =
-    SharedViewModule.sharedModalLeft tileTapDescriptions soureCodeLinks
+    SharedViewModule.sharedModalLeft tileTapDescriptions sourceCodeLinks
 
 let tileTapModalContent dispatch =
     tileTapBoardView ( SharedTileTap.generateEmptyTileTapGrid SharedTileTap.gridDimension ) dispatch
 
+let tileTapModalRight dispatch =
+    (SharedViewModule.sharedModalRight gameControls dispatch)
+
 let view dispatch =
-    SharedViewModule.sharedModal ( tileTapHeader dispatch ) ( tileTapLeftModal ) ( tileTapModalContent dispatch ) ( tileTapLeftModal ) //this should be right....
+    SharedViewModule.sharedModal ( tileTapHeader dispatch ) ( tileTapLeftModal ) ( tileTapModalContent dispatch ) ( tileTapModalRight dispatch )
