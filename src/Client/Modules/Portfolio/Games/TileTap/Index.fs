@@ -42,8 +42,9 @@ let tileTapDescriptions = [
     "- Smashing bombs takes away 2 HP."
 ]
 let sourceCodeLinks = [
-    "Shared", "https://raw.githubusercontent.com/SeanWilken/WilkenWeb/master/src/Shared/Shared.fs"
-    "Client", "https://raw.githubusercontent.com/SeanWilken/WilkenWeb/master/src/Client/Modules/Portfolio/Games/TileTap/Index.fs"
+    "Shared Model", "https://raw.githubusercontent.com/SeanWilken/WilkenWeb/master/src/Shared/Shared.fs"
+    "Shared View", "https://raw.githubusercontent.com/SeanWilken/WilkenWeb/master/src/Client/Modules/Shared/Index.fs"
+    "Client Logic", "https://raw.githubusercontent.com/SeanWilken/WilkenWeb/master/src/Client/Modules/Portfolio/Games/TileTap/Index.fs"
 ]
 let gameControls = [ "Quit Game", QuitGame ]
 
@@ -81,7 +82,7 @@ let tileTapModalContent dispatch =
     tileTapBoardView ( SharedTileTap.generateEmptyTileTapGrid SharedTileTap.gridDimension ) dispatch
 
 let tileTapModalRight dispatch =
-    (SharedViewModule.sharedModalRight gameControls dispatch)
+    ( SharedViewModule.sharedModalRight gameControls dispatch )
 
-let view dispatch =
+let view model dispatch =
     SharedViewModule.sharedModal ( tileTapHeader dispatch ) ( tileTapLeftModal ) ( tileTapModalContent dispatch ) ( tileTapModalRight dispatch )

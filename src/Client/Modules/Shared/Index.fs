@@ -28,12 +28,12 @@ let backToGallery dispatchMsg dispatch =
 
 
 // GRAY OUT OR NON HOVER / SELECTABLE IF AT 0 OR MAX INDEX?
-let bigNavButton clickFunc (name: string) dispatch =
+let bigNavButton clickFunc ( name: string ) dispatch =
     a [ OnClick ( fun _ -> clickFunc |> dispatch ) ] [
         Container.container [ Container.Props [ ClassName "bigSectionNavigationButton" ] ] [
             Columns.columns [ Columns.Props [ ClassName "sectionNavButtonCols" ] ] [
                 for char in name do
-                    Column.column [] [ p [] [ str (string (char)) ] ]
+                    Column.column [] [ p [] [ str ( string ( char ) ) ] ]
             ]
         ]
     ]
@@ -45,16 +45,16 @@ let bigNavButton clickFunc (name: string) dispatch =
 
 // WIP, NEED TO RETHINK AND FIGURE OUT HOW I WANT TO PASS CALLS, TITLES, DATA TO THESE
 // ugly throwing it at the wall
-let checkHeaderString (headerString : string) =
-    if headerString.Contains(".jpg") 
-        then Column.column [] [ Image.image [Image.Is64x64] [ img [Src ( sprintf "./imgs/products/%s" headerString ) ] ] ]
+let checkHeaderString ( headerString : string ) =
+    if headerString.Contains( ".jpg" ) 
+        then Column.column [] [ Image.image [ Image.Is64x64 ] [ img [ Src ( sprintf "./imgs/products/%s" headerString ) ] ] ]
         else Column.column [] [ h1 [] [ str headerString ] ]
 // OTHER BUTTONS IN HEADERS IS WIP
 
 
 
 let sharedModalHeaderControls modalTitle closeMsg dispatch = //stringList
-    Tile.parent [Tile.Size Tile.Is12] [ 
+    Tile.parent [ Tile.Size Tile.Is12 ] [ 
         Tile.child [] [ 
             Level.level [] [
                 Level.left [] [ h1 [ ClassName "modalTitle" ] [ str modalTitle ] ]
@@ -69,8 +69,8 @@ let sharedModalHeaderControls modalTitle closeMsg dispatch = //stringList
 // REFACTOR GIT CONTROLS INTO LINK CONTAINER -> WORKS WITH MULTIPLE SELECTION OPTIONS
 // SHOULD RUN VERTICALLY DOWN, NOT HORIZONTALLY ACROSS
 let sourceCodeRawGitControls soureCodeLinks =
-    div [ClassName "contentCardTextBackground"] [
-        p [] [ str "Source Code"]
+    div [ ClassName "contentCardTextBackground" ] [
+        p [] [ str "Source Code" ]
         Columns.columns [ Columns.IsVCentered ] [
             for sourceCodeTitle, sourceCodeLink in soureCodeLinks do
                 Column.column [] [ a [ Href sourceCodeLink ] [ h2 [] [ str sourceCodeTitle ] ] ]
@@ -81,7 +81,7 @@ let sharedModalLeft descriptionList (linkList: (string * string) list ) =
         Columns.columns [ Columns.IsVCentered ] [ 
             Column.column [] [ 
                 Tile.child [] [ 
-                    div [ClassName "modalLeft"] [
+                    div [ ClassName "modalLeft" ] [
                         Container.container [] [
                             for description in descriptionList do p [] [ str description ]
                             if linkList.Length > 0 then sourceCodeRawGitControls linkList
@@ -96,7 +96,7 @@ let sharedModalLeft descriptionList (linkList: (string * string) list ) =
 
 // MAIN MODAL CONTENT
 let modalContent content =
-    Tile.parent [Tile.Size Tile.Is6] [ Level.level [ Level.Level.CustomClass "modalContent" ] [ Level.item [] [ Tile.child [] [ content ] ] ] ]
+    Tile.parent [ Tile.Size Tile.Is6 ] [ Level.level [ Level.Level.CustomClass "modalContent" ] [ Level.item [] [ Tile.child [] [ content ] ] ] ]
 // END -------------------
 
 // MODAL RIGHT
@@ -131,7 +131,7 @@ let modalContent content =
 
 let modalRightControls controlActions dispatch =
     Container.container [] [
-        for actionLabel, actionMsg in controlActions do div [ ClassName "mainContainer"] [ a [ OnClick ( fun _ -> actionMsg |> dispatch ); ] [ str actionLabel ] ] ]
+        for actionLabel, actionMsg in controlActions do div [ ClassName "mainContainer" ] [ a [ OnClick ( fun _ -> actionMsg |> dispatch ); ] [ str actionLabel ] ] ]
 // END -------------------
 
 // MODAL CONTENT RIGHT
@@ -140,7 +140,7 @@ let sharedModalRight actionList dispatch =
         Columns.columns [ Columns.IsVCentered ] [ 
             Column.column [] [ 
                 Tile.child [] [ 
-                    div [ClassName "modalLeft"] [
+                    div [ ClassName "modalLeft" ] [
                         Container.container [] [
                             modalRightControls actionList dispatch
                         ]

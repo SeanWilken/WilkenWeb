@@ -32,8 +32,8 @@ let view dispatch =
                                     h2 [] [ str "Greetings, web traveler." ] 
                                     h1 [] [ str "WELCOME" ] 
                                     p [] [ str "My name is Sean and this is my personal website. Written, designed and hosted by yours truly. Check it out for yourself." ] 
-                                    Level.level [ Level.Level.Props [ ClassName "welcomeNextSectionCard"] ] [
-                                        p [ OnClick (fun _ -> NextSection |> dispatch )] [ str "Learn More" ]
+                                    Level.level [ Level.Level.Props [ ClassName "welcomeNextSectionCard" ] ] [
+                                        p [ OnClick ( fun _ -> NextSection |> dispatch ) ] [ str "Learn More" ]
                                     ]
                                 ]
                             ] 

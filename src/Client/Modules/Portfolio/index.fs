@@ -91,7 +91,7 @@ let view model dispatch =
                 PortfolioSplitView dispatch
             ]
         | SharedPortfolioGallery.DesignGallery model ->
-            ArtGallery.view model (ArtGalleryMsg >> dispatch)
+            ArtGallery.view model ( ArtGalleryMsg >> dispatch )
         | SharedPortfolioGallery.CodeGallery model ->
-            CodeGallery.view model (CodeGalleryMsg >> dispatch)
+            CodeGallery.view model ( CodeGalleryMsg >> dispatch )
     ]

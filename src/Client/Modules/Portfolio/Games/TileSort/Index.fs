@@ -91,8 +91,9 @@ let tileSortDescriptions = [
     "- The blank space must match the missing number." 
 ]
 let sourceCodeLinks = [
-    "Shared", "https://raw.githubusercontent.com/SeanWilken/WilkenWeb/master/src/Shared/Shared.fs"
-    "Client", "https://raw.githubusercontent.com/SeanWilken/WilkenWeb/master/src/Client/Modules/Portfolio/Games/TileSort/Index.fs"
+    "Shared Model", "https://raw.githubusercontent.com/SeanWilken/WilkenWeb/master/src/Shared/Shared.fs"
+    "Shared View", "https://raw.githubusercontent.com/SeanWilken/WilkenWeb/master/src/Client/Modules/Shared/Index.fs"
+    "Client Logic", "https://raw.githubusercontent.com/SeanWilken/WilkenWeb/master/src/Client/Modules/Portfolio/Games/TileSort/Index.fs"
 ]
 let gameControls = [
     "New Round", NewRound
@@ -126,11 +127,11 @@ let tileSortGameBoard model dispatch =
 // modal content container
 let tileSortModalContent model dispatch =
     match model.GameState with 
-    | Shared.GridGame.Won -> div [ ClassName "levelCompletedCard"; ] [ str "Congrats, you win!!!" ]
+    | Shared.GridGame.Won -> div [ ClassName "levelCompletedCard" ] [ str "Congrats, you win!!!" ]
     | Shared.GridGame.Playing -> tileSortGameBoard model dispatch
 // right content controls
 let tileSortModalRight dispatch =
-    (SharedViewModule.sharedModalRight gameControls dispatch)
+    ( SharedViewModule.sharedModalRight gameControls dispatch )
 // main view
 let view model dispatch =
     SharedViewModule.sharedModal ( tileSortHeader dispatch ) ( tileSortLeftModal ) ( tileSortModalContent model dispatch ) ( tileSortModalRight dispatch )

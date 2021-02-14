@@ -14,6 +14,7 @@ open System.Collections.Generic
 // ---------TODO---------
     // - MovementMade (Undo Move)
     // - Roll Ball when next to flag (lvl3)
+    // shared view
 
 type Msg =
     | ResetRound
@@ -22,11 +23,102 @@ type Msg =
     | CheckSolution
     | QuitGame
 
-let init (): SharedGoalRoll.Model * Cmd<Msg> =
-    SharedGoalRoll.initModel, Cmd.none
+let levelCeiling = 3
+let getBallRollPositionIndex ballPosition direction =
+    match direction with
+    | Up -> (ballPosition - 8)
+    | Down -> (ballPosition + 8)
+    | Left -> (ballPosition - 1)
+    | Right -> (ballPosition + 1)
+let getNormalizedArrowPosition normalizedBallPosition direction =
+    match direction with
+    | Up -> (normalizedBallPosition - 8)
+    | Down -> (normalizedBallPosition + 8)
+    | _ -> (normalizedBallPosition % 8)
+let checkNormalizedArrowPosition normalizedArrowPosition direction =
+    match direction with
+    | Up -> normalizedArrowPosition > 0
+    | Down -> normalizedArrowPosition <= 64
+    | Left -> normalizedArrowPosition <> 1
+    | Right -> normalizedArrowPosition <> 0
+let gridWithoutMoveArrows positions =
+    let thing = List.map (fun x -> match x with | MoveArrow _ -> Blank | _ -> x ) positions.GridPositions
+    { GridPositions = thing }
+let gridWithGoal positions goalPosition =
+    updatePositionWithObject positions Goal goalPosition
+let gridWithMovementArrow positions direction =
+    let ballPositionIndex = SharedGoalRoll.getBallPositionIndex positions
+    let normalizedBallPositionIndex = ballPositionIndex + 1
+    let normalizedArrowPositionIndex = getNormalizedArrowPosition normalizedBallPositionIndex direction
+    let validArrowPosition = checkNormalizedArrowPosition normalizedArrowPositionIndex direction
+    if validArrowPosition
+        then 
+            let thing = getBallRollPositionIndex ballPositionIndex direction
+            if (checkGridPositionForObject positions thing Blank)
+                then updatePositionWithObject positions (MoveArrow direction) thing
+                else positions
+        else positions
+
+// this should really check for some kind of rollable bit to indicate can roll through / over 
+let checkDirectionForRollable positions arrowlessGrid ballRollPositionIndex ballPositionIndex direction =
+    if (checkGridPositionForObject arrowlessGrid ballRollPositionIndex Blank) || (checkGridPositionForObject arrowlessGrid ballRollPositionIndex Goal)
+        then 
+            let ballToBlankGrid = updatePositionWithObject (arrowlessGrid) Blank (ballPositionIndex)
+            let ballRolledGrid = updatePositionWithObject ballToBlankGrid Ball ballRollPositionIndex
+            ballRolledGrid
+        else positions
+
+// refactor please
+let rec rollBallInGridDirection positions direction =
+    let arrowlessGrid = gridWithoutMoveArrows positions
+    let ballPositionIndex = SharedGoalRoll.getBallPositionIndex arrowlessGrid
+    if ballPositionIndex = -1
+        then positions
+        else
+            match direction with
+            | Up ->
+                let ballRollUpPositionIndex = getBallRollPositionIndex ballPositionIndex Up
+                if (ballRollUpPositionIndex >= 0)
+                    then 
+                        let grid = checkDirectionForRollable positions arrowlessGrid ballRollUpPositionIndex ballPositionIndex direction
+                        if grid = positions
+                            then positions
+                            else rollBallInGridDirection grid direction
+                    else positions
+            | Down ->
+                let ballRollDownPositionIndex = getBallRollPositionIndex ballPositionIndex Down
+                if (ballRollDownPositionIndex <= 63)
+                    then 
+                        let grid = checkDirectionForRollable positions arrowlessGrid ballRollDownPositionIndex ballPositionIndex direction
+                        if grid = positions 
+                            then positions
+                            else rollBallInGridDirection grid direction
+                    else positions
+            | Right ->
+                let ballRollRightPositionIndex = getBallRollPositionIndex ballPositionIndex Right
+                if (((ballRollRightPositionIndex) % 8) <> 0)
+                    then 
+                        let grid = checkDirectionForRollable positions arrowlessGrid ballRollRightPositionIndex ballPositionIndex direction
+                        if grid = positions 
+                            then positions 
+                            else rollBallInGridDirection grid direction
+                    else positions
+            | Left ->
+                let ballRollLeftPositionIndex = getBallRollPositionIndex ballPositionIndex Left
+                if (((ballRollLeftPositionIndex + 1) % 8) >= 1)
+                    then 
+                        let grid = checkDirectionForRollable positions arrowlessGrid ballRollLeftPositionIndex ballPositionIndex direction
+                        if grid = positions 
+                            then positions 
+                            else rollBallInGridDirection grid direction
+                    else positions
 
 // --------------------------------------------------------------
 //STATE LIFECYCLE
+
+let init (): SharedGoalRoll.Model * Cmd<Msg> =
+    SharedGoalRoll.initModel, Cmd.none
+
 let update ( msg: Msg ) ( model: SharedGoalRoll.Model ): SharedGoalRoll.Model * Cmd<Msg> =
     match msg, model with
     | RollBall direction, model ->
@@ -44,25 +136,25 @@ let update ( msg: Msg ) ( model: SharedGoalRoll.Model ): SharedGoalRoll.Model * 
             let boardAfterRoll = rollBallInGridDirection model.CurrentGrid Right
             { model with CurrentGrid = boardAfterRoll }, Cmd.ofMsg CheckSolution
     | LoadRound levelIndex, model ->
-        let newRound = loadRound levelIndex
-        let newRoundModel = { 
-            LevelIndex = levelIndex;
-            InitialGrid = newRound;
-            CurrentGrid = newRound;
-            BallPositionIndex = getBallPositionIndex newRound;
-            GoalPositionIndex = getGoalPositionIndex newRound;
-            GameState = Playing;
+        let newRound = SharedGoalRoll.loadRound levelIndex
+        let newRoundModel : SharedGoalRoll.Model = { 
+            LevelIndex = levelIndex
+            InitialGrid = newRound
+            CurrentGrid = newRound
+            BallPositionIndex = SharedGoalRoll.getBallPositionIndex newRound
+            GoalPositionIndex = SharedGoalRoll.getGoalPositionIndex newRound
+            GameState = Playing
         }
         newRoundModel, Cmd.none
     | ResetRound, model ->
         let resetRound = model.InitialGrid
         { model with 
             CurrentGrid = resetRound;
-            BallPositionIndex = getBallPositionIndex resetRound;
-            GameState = Playing;
+            BallPositionIndex = SharedGoalRoll.getBallPositionIndex resetRound
+            GameState = Playing
         }, Cmd.none 
     | CheckSolution, model -> 
-        if getBallPositionIndex model.CurrentGrid = model.GoalPositionIndex
+        if SharedGoalRoll.getBallPositionIndex model.CurrentGrid = model.GoalPositionIndex
             then
                 { model with GameState = Won }, Cmd.none
             else
@@ -75,12 +167,14 @@ let update ( msg: Msg ) ( model: SharedGoalRoll.Model ): SharedGoalRoll.Model * 
 let goalRollDescriptions = [
     "- Use the arrows next to the ball in order to roll it in the desired direction."
     "- Travels in straight lines and stops when it hits a wall or blocked tile."
+    "- There must be space for the movement arrow in order to roll."
     "- Have the ball stop on the goal to win."
 ]
 // external links
 let sourceCodeLinks = [
-    "Shared", "https://raw.githubusercontent.com/SeanWilken/WilkenWeb/master/src/Shared/Shared.fs"
-    "Client", "https://raw.githubusercontent.com/SeanWilken/WilkenWeb/master/src/Client/Modules/Portfolio/Games/GoalRoll/Index.fs"
+    "Shared Model", "https://raw.githubusercontent.com/SeanWilken/WilkenWeb/master/src/Shared/Shared.fs"
+    "Shared View", "https://raw.githubusercontent.com/SeanWilken/WilkenWeb/master/src/Client/Modules/Shared/Index.fs"
+    "Client Logic", "https://raw.githubusercontent.com/SeanWilken/WilkenWeb/master/src/Client/Modules/Portfolio/Games/GoalRoll/Index.fs"
 ]
 // content selection controls
 let gameControls = [ 
@@ -133,8 +227,9 @@ let goalRollRowCreator ( rowPositions: LaneObject list ) dispatch =
             ]
     ]
 // // Given a Goal Roll Level, create the Game Board via rows
-let goalRollLevelCreator goalRollModel dispatch =
+let goalRollLevelCreator ( goalRollModel : SharedGoalRoll.Model) dispatch =
     let positions = goalRollModel.CurrentGrid
+    // rule or exception? can't roll something without space leading to initiate the roll
     // this also needs to handle if the flag is in an arrows position?
     // VERTICAL MOVEMENTS
     let gridWithUpArrow = gridWithMovementArrow positions Up
@@ -144,26 +239,26 @@ let goalRollLevelCreator goalRollModel dispatch =
     let gridWithRightArrow = gridWithMovementArrow gridWithLeftArrow Right
     // MAKE SURE GOAL IS PLACED IF ROLLED OVER // UGLY, REWORK
     let gameGrid = 
-        if getBallPositionIndex positions <> goalRollModel.GoalPositionIndex
+        if SharedGoalRoll.getBallPositionIndex positions <> goalRollModel.GoalPositionIndex
             then 
-                if ( getGoalPositionIndex positions = -1 ) then gridWithGoal gridWithRightArrow goalRollModel.GoalPositionIndex
+                if ( SharedGoalRoll.getGoalPositionIndex positions = -1 ) then gridWithGoal gridWithRightArrow goalRollModel.GoalPositionIndex
                 else gridWithRightArrow
         else gridWithRightArrow
     // positions as rows
     let gridRows = getPositionsAsRows gameGrid 8
     Container.container [] [ for row in gridRows do goalRollRowCreator row dispatch ]
 // modal content container
-let goalRollModalContent model dispatch =
+let goalRollModalContent ( model : SharedGoalRoll.Model ) dispatch =
     match model.GameState with 
     | Playing -> goalRollLevelCreator model dispatch
     | Won -> div [ ClassName "levelCompletedCard" ] [ str "Level Completed!!!" ]
 
 // right content controls
 let goalRollModalRight dispatch =
-    (SharedViewModule.sharedModalRight gameControls dispatch)
+    ( SharedViewModule.sharedModalRight gameControls dispatch )
 
 // main view
-let view model dispatch =
+let view ( model : SharedGoalRoll.Model ) dispatch =
     SharedViewModule.sharedModal ( goalRollHeader dispatch ) ( goalRollLeftModal ) ( goalRollModalContent model dispatch ) ( goalRollModalRight dispatch )
                            
 // --------------------------------

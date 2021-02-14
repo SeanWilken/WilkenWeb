@@ -97,6 +97,7 @@ let aboutModalCard modalContent =
         ]
     ]
 
+// ALSO USE SHARED MODAL?
 let aboutModal model dispatch modalContent =
     Modal.modal [ Modal.IsActive model.ModalIsActive ] [ 
         Modal.background [ Props [ OnClick ( fun _ -> ToggleModal model.ActiveModalIndex |> dispatch ) ] ] []
@@ -111,7 +112,7 @@ let aboutModal model dispatch modalContent =
                     Column.column [] [
                         aboutModalCard modalContent
                     ]
-                    Column.column [Column.Props [ ClassName "rightCol" ]] [
+                    Column.column [ Column.Props [ ClassName "rightCol" ] ] [
                         let navFunc = ( if ( model.ActiveModalIndex = aboutModalContentSections.Length - 1 ) then NextSection else SwitchModal (1) )
                         // change text if navigating to new submodule?
                         SharedViewModule.bigNavButton navFunc "NEXT" dispatch
@@ -126,7 +127,7 @@ let mainAbout dispatch =
         Tile.parent [] [
             Level.level [] [
                 // ADD / UPDATE PIC
-                Tile.child [Tile.Size Tile.Is5] [ Image.image [] [ img [ Src "./imgs/Out for Blood.png" ] ] ]
+                Tile.child [ Tile.Size Tile.Is5 ] [ Image.image [] [ img [ Src "./imgs/Out for Blood.png" ] ] ]
                 Tile.child [] [ 
                     Container.container [ Container.Props [ ClassName "aboutContentCard" ] ] [
                         Level.level [ Level.Level.Props [ ClassName "contentCardTextBackground" ] ] [
@@ -143,8 +144,8 @@ let mainAbout dispatch =
                                 ]
                             ]
                         ]
-                        Level.level [ Level.Level.Props [ ClassName "aboutSectionHoverSelection"] ] [
-                            p [ OnClick (fun _ -> ToggleModal 0 |> dispatch )] [ str "Read More" ]
+                        Level.level [ Level.Level.Props [ ClassName "aboutSectionHoverSelection" ] ] [
+                            p [ OnClick (fun _ -> ToggleModal 0 |> dispatch ) ] [ str "Read More" ]
                         ]
                     ]
                 ]
@@ -158,23 +159,23 @@ let secondaryAbout dispatch =
             Level.level [] [
                 Tile.child [] [ 
                     Container.container [ Container.Props [ ClassName "aboutContentCard" ] ] [
-                        Level.level [ Level.Level.Props [ ClassName "contentCardTextBackground"] ] [
+                        Level.level [ Level.Level.Props [ ClassName "contentCardTextBackground" ] ] [
                             Level.item [] [
                                 Tile.child [ ] [
-                                    h1 [] [ str "Professional"]
+                                    h1 [] [ str "Professional" ]
                                     p [] [ str """I've been working as a software engineer for around 5 years. Through this time, I've worked as a full stack developer,
                                                   tester, requirement gatherer, technical support assistance. I enjoy learning & discussing new languages, practices and
                                                   design patterns, thinking critically and creatively to solve issues, etc.. blah blah.""" ]
                                 ]
                             ]
                         ]
-                        Level.level [ Level.Level.Props [ ClassName "aboutSectionHoverSelection"] ] [
-                            p [ OnClick (fun _ -> ToggleModal 1 |> dispatch ) ] [ str "Read More" ]
+                        Level.level [ Level.Level.Props [ ClassName "aboutSectionHoverSelection" ] ] [
+                            p [ OnClick ( fun _ -> ToggleModal 1 |> dispatch ) ] [ str "Read More" ]
                         ]
                     ]
                 ]
                 // ADD / UPDATE PIC
-                Tile.child [Tile.Size Tile.Is5] [ Image.image [ ] [ img [Src "./imgs/Misfortune.png"] ] ]
+                Tile.child [ Tile.Size Tile.Is5 ] [ Image.image [ ] [ img [Src "./imgs/Misfortune.png" ] ] ]
             ]
         ]
     ]
@@ -185,24 +186,24 @@ let tertiaryAbout dispatch =
             Level.level [] [
                 Tile.child [] [ 
                     Container.container [ Container.Props [ ClassName "aboutContentCard" ] ] [
-                        Level.level [ Level.Level.Props [ ClassName "contentCardTextBackground"] ] [
+                        Level.level [ Level.Level.Props [ ClassName "contentCardTextBackground" ] ] [
                             Level.item [] [
                                 Tile.child [ ] [
-                                    h1 [] [ str "Personal"]
+                                    h1 [] [ str "Personal" ]
                                     p [] [ str """I'm a person just like you (unless you're a bot), who enjoys kicking back and relaxing. Check out some IRL shenanigans pics below.""" ]
                                 ]
                             ]
                         ]
-                        Level.level [ Level.Level.Props [ ClassName "aboutSectionHoverSelection"] ] [
-                            p [ OnClick (fun _ -> ToggleModal 2 |> dispatch )] [ str "Read More" ]
+                        Level.level [ Level.Level.Props [ ClassName "aboutSectionHoverSelection" ] ] [
+                            p [ OnClick ( fun _ -> ToggleModal 2 |> dispatch ) ] [ str "Read More" ]
                         ]
                     ]
                     Container.container [ Container.Props [ ClassName "paddedContainer" ] ] [
                         Columns.columns [] [
                             // ADD / UPDATE LIFE PICS
-                            Image.image [] [ img [Src "./imgs/Bowing Bubbles.png"] ]
-                            Image.image [] [ img [Src "./imgs/Backstabber.png"] ]
-                            Image.image [] [ img [Src "./imgs/Misfortune.png"] ]
+                            Image.image [] [ img [ Src "./imgs/Bowing Bubbles.png" ] ]
+                            Image.image [] [ img [ Src "./imgs/Backstabber.png" ] ]
+                            Image.image [] [ img [ Src "./imgs/Misfortune.png" ] ]
                         ]
                     ]
                 ]
@@ -215,5 +216,5 @@ let view model dispatch =
         mainAbout dispatch
         secondaryAbout dispatch
         tertiaryAbout dispatch
-        aboutModal (model) (dispatch) (aboutModalContentSections.Item(model.ActiveModalIndex))
+        aboutModal ( model ) ( dispatch ) ( aboutModalContentSections.Item( model.ActiveModalIndex ) )
     ]

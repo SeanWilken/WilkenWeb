@@ -60,7 +60,7 @@ let getGalleryCardByIndex ( index: int ) =
     let piece, description = galleryPieces.Item ( index )
     piece, description
 
-let galleryEntryCard piece description dispatch = 
+let galleryEntryCard piece description =
     div [] [
         Container.container [ Container.Props [ ClassName "galleryImage" ] ] [
             Image.image [] [ img [ Src ( "./imgs/" + piece + ".png" ) ] ]
@@ -81,7 +81,7 @@ let galleryModal ( model: SharedDesignGallery.Model ) dispatch =
                 SharedViewModule.bigNavButton (SetCurrentPieceIndex (-1)) "PREV" dispatch
                 Level.item [] [
                     let piece, description = getGalleryCardByIndex model.CurrentPieceIndex
-                    galleryEntryCard piece description dispatch
+                    galleryEntryCard piece description
                 ]
                 SharedViewModule.bigNavButton (SetCurrentPieceIndex (1)) "NEXT" dispatch
             ]

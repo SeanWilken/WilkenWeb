@@ -98,103 +98,15 @@ module SharedGoalRoll =
             // MovementsMade: MovementDirection list
         }
 
-    let levelCeiling = 3
+    // --------------------------------------
+    // SHARABLE (IF REFACTOR AND LEVELS MADE MORE GENERIC FOR LOAD)
     let getBallPositionIndex (gameGridPositions: GridBoard) =
         getObjectPositionIndex gameGridPositions Ball
         |> unwrapIndex
+
     let getGoalPositionIndex (gameGridPositions: GridBoard) =
         getObjectPositionIndex gameGridPositions Goal
         |> unwrapIndex
-    let getBallRollPositionIndex ballPosition direction =
-        match direction with
-        | Up -> (ballPosition - 8)
-        | Down -> (ballPosition + 8)
-        | Left -> (ballPosition - 1)
-        | Right -> (ballPosition + 1)
-    let getNormalizedArrowPosition normalizedBallPosition direction =
-        match direction with
-        | Up -> (normalizedBallPosition - 8)
-        | Down -> (normalizedBallPosition + 8)
-        | _ -> (normalizedBallPosition % 8)
-    let checkNormalizedArrowPosition normalizedArrowPosition direction =
-        match direction with
-        | Up -> normalizedArrowPosition > 0
-        | Down -> normalizedArrowPosition <= 64
-        | Left -> normalizedArrowPosition <> 1
-        | Right -> normalizedArrowPosition <> 0
-    let gridWithoutMoveArrows positions =
-        let thing = List.map (fun x -> match x with | MoveArrow _ -> Blank | _ -> x ) positions.GridPositions
-        { GridPositions = thing }
-    let gridWithGoal positions goalPosition =
-        updatePositionWithObject positions Goal goalPosition
-    let gridWithMovementArrow positions direction =
-        let ballPositionIndex = getBallPositionIndex positions
-        let normalizedBallPositionIndex = ballPositionIndex + 1
-        let normalizedArrowPositionIndex = getNormalizedArrowPosition normalizedBallPositionIndex direction
-        let validArrowPosition = checkNormalizedArrowPosition normalizedArrowPositionIndex direction
-        if validArrowPosition
-            then 
-                let thing = getBallRollPositionIndex ballPositionIndex direction
-                if (checkGridPositionForObject positions thing Blank)
-                    then updatePositionWithObject positions (MoveArrow direction) thing
-                    else positions
-            else positions
-    // refactor please
-    let rec rollBallInGridDirection positions direction =
-        let arrowlessGrid = gridWithoutMoveArrows positions
-        let ballPositionIndex = getBallPositionIndex arrowlessGrid
-        if ballPositionIndex = -1
-            then
-                positions
-            else
-                match direction with
-                | Up ->
-                    let ballRollUpPositionIndex = getBallRollPositionIndex ballPositionIndex Up
-                    if (ballRollUpPositionIndex >= 0)
-                        then
-                            if (checkGridPositionForObject arrowlessGrid ballRollUpPositionIndex Blank) || (checkGridPositionForObject arrowlessGrid ballRollUpPositionIndex Goal)
-                                then 
-                                    let ballToBlankGrid = updatePositionWithObject (arrowlessGrid) Blank (ballPositionIndex)
-                                    let ballRolledGrid = updatePositionWithObject ballToBlankGrid Ball ballRollUpPositionIndex
-                                    rollBallInGridDirection ballRolledGrid direction
-                                else positions
-                        else positions
-                | Down ->
-                    let ballRollDownPositionIndex = getBallRollPositionIndex ballPositionIndex Down
-                    if (ballRollDownPositionIndex <= 63)
-                        then 
-                            if (checkGridPositionForObject arrowlessGrid ballRollDownPositionIndex Blank) || (checkGridPositionForObject arrowlessGrid ballRollDownPositionIndex Goal)
-                                then
-                                    let ballToBlankGrid = updatePositionWithObject (arrowlessGrid) Blank (ballPositionIndex)
-                                    let ballRolledGrid = updatePositionWithObject ballToBlankGrid Ball ballRollDownPositionIndex
-                                    rollBallInGridDirection ballRolledGrid direction
-                                else positions
-                        else positions
-                | Right ->
-                    let ballRollRightPositionIndex = getBallRollPositionIndex ballPositionIndex Right
-                    if (((ballRollRightPositionIndex) % 8) <> 0)
-                        then 
-                            if (checkGridPositionForObject arrowlessGrid ballRollRightPositionIndex Blank) || (checkGridPositionForObject arrowlessGrid ballRollRightPositionIndex Goal)
-                                then
-                                    let ballToBlankGrid = updatePositionWithObject (arrowlessGrid) Blank (ballPositionIndex)
-                                    let ballRolledGrid = updatePositionWithObject ballToBlankGrid Ball ballRollRightPositionIndex
-                                    rollBallInGridDirection ballRolledGrid direction
-                                else positions
-                        else positions
-                | Left ->
-                    let ballRollLeftPositionIndex = getBallRollPositionIndex ballPositionIndex Left
-                    if (((ballRollLeftPositionIndex + 1) % 8) >= 1)
-                        then 
-                            if (checkGridPositionForObject arrowlessGrid ballRollLeftPositionIndex Blank) || (checkGridPositionForObject arrowlessGrid ballRollLeftPositionIndex Goal)
-                                then 
-                                    let ballToBlankGrid = updatePositionWithObject (arrowlessGrid) Blank (ballPositionIndex)
-                                    let ballRolledGrid = updatePositionWithObject ballToBlankGrid Ball ballRollLeftPositionIndex
-                                    rollBallInGridDirection ballRolledGrid direction
-                                else positions
-                        else positions
-
-    // --------------------------------------
-    // SHARABLE (IF REFACTOR AND LEVELS MADE MORE GENERIC FOR LOAD)
 
     // ------------------------
     // LEVEL CREATION DOMAIN, PLEASE RELOCATE ME, UNSURE OF POSITION
@@ -257,6 +169,7 @@ module SharedGoalRoll =
             Level3
         | _ ->
             Level0
+
     // initial model, no message or command
     let initModel =
         let round = loadRound 1;
@@ -276,7 +189,6 @@ module SharedGoalRoll =
 module SharedTileTap =
 
     open GridGame
-
 
     type Model = {
         TileTapGridBoard: GridBoard
@@ -379,6 +291,11 @@ module SharedTileSort =
         let randomizedNewRoundTilePositions = createRandomGameTiles unassignedTiles newRoundTilePositions
         {GameTiles = randomBlankPosition randomizedNewRoundTilePositions}
     //---------------------
+
+
+
+
+    
     // GAME BOARD LOGIC
     // get the tile index from the containing list. // RETURNS AN INDEX???
     // returns index of Value positon within list of tiles, if it exists

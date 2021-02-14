@@ -74,7 +74,7 @@ let urlUpdate ( result: Page option ) ( model: SharedWebAppModels.Model ) =
     | Some Page.About ->
         SharedWebAppModels.AboutSection SharedAboutSection.getInitialModel, Navigation.newUrl ( toPath ( Some About ) )
     | Some ( Page.Portfolio ( Code ( CodeSection.Landing ) ) ) ->
-        SharedWebAppModels.Portfolio (SharedPortfolioGallery.CodeGallery SharedCodeGallery.CodeGallery), Navigation.newUrl (toPath (Some (Portfolio (Code (CodeSection.Landing)))))
+        SharedWebAppModels.Portfolio ( SharedPortfolioGallery.CodeGallery SharedCodeGallery.CodeGallery ), Navigation.newUrl ( toPath ( Some ( Portfolio ( Code ( CodeSection.Landing ) ) ) ) )
     | Some ( Page.Portfolio ( Code ( CodeSection.GoalRoll ) ) ) ->
         SharedWebAppModels.Portfolio ( SharedPortfolioGallery.CodeGallery ( SharedCodeGallery.GoalRoll SharedGoalRoll.initModel ) ), Navigation.newUrl ( toPath ( Some ( Portfolio ( Code ( CodeSection.GoalRoll ) ) ) ) )
     | Some ( Page.Portfolio ( Code ( CodeSection.TileSort ) ) ) ->
