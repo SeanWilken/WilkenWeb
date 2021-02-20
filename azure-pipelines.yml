@@ -27,6 +27,9 @@ steps:
     version: 3.1.300
     installationPath: $(Agent.ToolsDirectory)/dotnet
     
+- task: NodeTool@0 
+  inputs:
+    versionSpec: '6.10.3' # replace this value with the version that you need for your project
 
 - task: NuGetToolInstaller@1
 
