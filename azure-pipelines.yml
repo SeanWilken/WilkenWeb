@@ -36,7 +36,7 @@ steps:
     dotnet tool install -g paket
 
 - powershell: |
-    cd ..
+    # cd ..
     dotnet tool restore
 
 - task: NuGetToolInstaller@1
