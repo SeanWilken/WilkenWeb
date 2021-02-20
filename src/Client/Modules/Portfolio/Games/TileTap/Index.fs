@@ -9,6 +9,39 @@ open Fable.React
 open Fable.React.Props
 open Fulma
 
+type Msg =
+    | LogInterval
+    | QuitGame
+
+// let simpleSecondTimer stringLog =
+//     Async.Sleep 5000
+//     printfn stringLog
+
+
+let init(): SharedTileTap.Model * Cmd<Msg> =
+    SharedTileTap.initModel, Cmd.none
+let update msg model =
+    match msg with
+    | LogInterval -> 
+        printfn "waiting 2 sec"
+        // simpleSecondTimer "waited"
+        model, Cmd.none
+    | QuitGame ->
+        model, Cmd.ofMsg QuitGame
+
+// Game starts
+    // Spawns object(s) - timer starts
+
+        // Tap object before timer, kill that objects timer, increment score, spawn new tile
+        // Tile times out - decrement score / time, spawn new tile
+
+        // health or time runs out
+            // end game, show user their score.
+
+// function that acts as the countdown
+    //
+
+
 // Time drives main game state, as things happen in intervals contained within the main loop
     // tile expire -> scales with time remaining
     // smaller game grid, doesn't work well on 1080 (ALSO OTHER SECTIONS REVIEW)
@@ -28,11 +61,9 @@ open Fulma
 // sleep function on spawn with timeout value for expiration
 // explode if timeoutValue reached
 // if clicked, intercept that timeout & destroy the tile and spawn a new one, with a fresh countdown clock
+
 // TODO: -- THIS SHOULD BE USING A SHARED GENERIC TILE GAME BOARD BUILDER, NEED TO IMPLEMENT IN SHARED!
 // STYLED WHEN REFACTOR ABOVE DONE?
-
-type Msg =
-    | QuitGame
 
 let tileTapDescriptions = [
     "Survival Mode:"
@@ -42,18 +73,11 @@ let tileTapDescriptions = [
     "- Smashing bombs takes away 2 HP."
 ]
 let sourceCodeLinks = [
-    "Shared Model", "https://raw.githubusercontent.com/SeanWilken/WilkenWeb/master/src/Shared/Shared.fs"
-    "Shared View", "https://raw.githubusercontent.com/SeanWilken/WilkenWeb/master/src/Client/Modules/Shared/Index.fs"
-    "Client Logic", "https://raw.githubusercontent.com/SeanWilken/WilkenWeb/master/src/Client/Modules/Portfolio/Games/TileTap/Index.fs"
+    "Model", "https://raw.githubusercontent.com/SeanWilken/WilkenWeb/master/src/Shared/Shared.fs"
+    "View", "https://raw.githubusercontent.com/SeanWilken/WilkenWeb/master/src/Client/Modules/Shared/Index.fs"
+    "Logic", "https://raw.githubusercontent.com/SeanWilken/WilkenWeb/master/src/Client/Modules/Portfolio/Games/TileTap/Index.fs"
 ]
-let gameControls = [ "Quit Game", QuitGame ]
-
-let init(): SharedTileTap.Model * Cmd<Msg> =
-    SharedTileTap.initModel, Cmd.none
-let update msg model =
-    match msg with
-    | QuitGame ->
-        model, Cmd.ofMsg QuitGame
+let gameControls = [ "Quit Game", QuitGame; ]//"Timer Start", LogInterval ]
 
 let tileTapRowCreator ( rowPositions: LaneObject list ) dispatch =
     Level.level [] [

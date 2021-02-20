@@ -40,9 +40,9 @@ let update ( msg: Msg ) ( model: SharedCodeGallery.Model ): SharedCodeGallery.Mo
         SharedCodeGallery.TileTap tileSmashModel, Cmd.none
     | TileTapMsg TileTap.Msg.QuitGame, SharedCodeGallery.TileTap model ->
         SharedCodeGallery.CodeGallery, Cmd.none
-    // | TileTapMsg msg, TileTap model ->
-    //     let tileSmashModel, com = TileTap.update msg model
-    //     TileTap tileSmashModel, Cmd.map TileTapMsg com
+    | TileTapMsg msg, SharedCodeGallery.TileTap model ->
+        let tileSmashModel, com = TileTap.update msg model
+        SharedCodeGallery.TileTap tileSmashModel, Cmd.map TileTapMsg com
     // TILE SORT
     | LoadSection ( SharedCodeGallery.TileSort msg ), _ ->
         let tileSortModel, com = TileSort.init()
@@ -142,8 +142,13 @@ let view model dispatch =
             ]
         | SharedCodeGallery.GoalRoll model ->
             GoalRoll.view model ( GoalRollMsg >> dispatch )
+            // GoalRoll.goalRollCardView model ( GoalRollMsg >> dispatch )
         | SharedCodeGallery.TileSort model ->
-            TileSort.view model ( TileSortMsg >> dispatch )
+            match model.ContentView with
+            | SharedTileSort.ViewStyle.Card ->
+                TileSort.tileSortCardView model (TileSortMsg >> dispatch )
+            | SharedTileSort.ViewStyle.Modal ->
+                TileSort.view model ( TileSortMsg >> dispatch )
         | SharedCodeGallery.TileTap model ->
             TileTap.view ( model ) ( TileTapMsg >> dispatch )
     ]

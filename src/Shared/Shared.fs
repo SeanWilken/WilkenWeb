@@ -231,6 +231,10 @@ module SharedTileSort =
     type TileSortBoard = {
         GameTiles: GameTile list // all tiles
     }
+    type ViewStyle =
+        | Modal
+        | Card
+
     //
     type Model = {
         Difficulty: TileSortDifficulty // default at initial
@@ -238,6 +242,7 @@ module SharedTileSort =
         CurrentTiles: TileSortBoard // changing list of game tiles to represent moves
         Turns: int list // list of moves made for rewind / total number of moves to solve.
         GameState: GridGame.RoundState // determines whether the puzzle has been solved or in progress
+        ContentView: ViewStyle
     }
 
     let levelCeiling = 3
@@ -450,6 +455,7 @@ module SharedTileSort =
             InitialTiles = initialRound
             Turns = []
             GameState = Playing
+            ContentView = Modal // NEW WIP EWW
         }
 
         // REFACTOR TO USE GENERIC GRID GAME, BROKE LOGIC BY MOVING FROM LIST OF GAMETILES AS WAS WRITTEN AROUND THAT

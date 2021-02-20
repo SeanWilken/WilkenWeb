@@ -22,6 +22,7 @@ type Msg =
     | CheckSolution // Run the current board through the win validation check logic
     | Won // Board is in the winning configuration
     | QuitGame // Quits back one level, exiting the game.
+    | ChangeView // NEW WIP EWW
 //---------------------
 
 let init (): Shared.SharedTileSort.Model * Cmd<Msg> =
@@ -33,6 +34,7 @@ let init (): Shared.SharedTileSort.Model * Cmd<Msg> =
         InitialTiles = initialRound
         Turns = []
         GameState = Shared.GridGame.Playing
+        ContentView = Modal // NEW WIP EWW
     }
     model, Cmd.none
 //---------------------
@@ -59,6 +61,12 @@ let update ( msg: Msg ) ( model: Shared.SharedTileSort.Model ): Shared.SharedTil
         let newDiff = changeDifficulty difficulty model
         let newRound = createNewRound newDiff
         newRound, Cmd.none
+    | ChangeView -> // NEW WIP EWW
+        let swappedViewModel = 
+            if model.ContentView = Modal 
+                then { model with ContentView = Card } 
+                else { model with ContentView = Modal }
+        swappedViewModel, Cmd.none
     | CheckSolution ->
         match winValidator model.CurrentTiles with
         | true -> 
@@ -91,11 +99,13 @@ let tileSortDescriptions = [
     "- The blank space must match the missing number." 
 ]
 let sourceCodeLinks = [
-    "Shared Model", "https://raw.githubusercontent.com/SeanWilken/WilkenWeb/master/src/Shared/Shared.fs"
-    "Shared View", "https://raw.githubusercontent.com/SeanWilken/WilkenWeb/master/src/Client/Modules/Shared/Index.fs"
-    "Client Logic", "https://raw.githubusercontent.com/SeanWilken/WilkenWeb/master/src/Client/Modules/Portfolio/Games/TileSort/Index.fs"
+    "Model", "https://raw.githubusercontent.com/SeanWilken/WilkenWeb/master/src/Shared/Shared.fs"
+    "View", "https://raw.githubusercontent.com/SeanWilken/WilkenWeb/master/src/Client/Modules/Shared/Index.fs"
+    "Logic", "https://raw.githubusercontent.com/SeanWilken/WilkenWeb/master/src/Client/Modules/Portfolio/Games/TileSort/Index.fs"
 ]
 let gameControls = [
+    // QUIT GAME NEEDS TO BE ON CARD VIEW?
+    // "Quit Game", QuitGame
     "New Round", NewRound
     "Reset Round", ResetRound
     "Undo Move", RewindMove
@@ -103,6 +113,7 @@ let gameControls = [
     "4 x 4", UpdateDifficulty Easy
     "5 x 5", UpdateDifficulty Medium
     "6 x 6", UpdateDifficulty Hard
+    "Toggle View", ChangeView
 ]
 
 //header
@@ -131,15 +142,33 @@ let tileSortModalContent model dispatch =
     | Shared.GridGame.Playing -> tileSortGameBoard model dispatch
 // right content controls
 let tileSortModalRight dispatch =
-    ( SharedViewModule.sharedModalRight gameControls dispatch )
+    SharedViewModule.sharedModalRight gameControls dispatch
+
 // main view
 let view model dispatch =
     SharedViewModule.sharedModal ( tileSortHeader dispatch ) ( tileSortLeftModal ) ( tileSortModalContent model dispatch ) ( tileSortModalRight dispatch )
 
+
+
+
+
+// card style
+let tileSortHeaderCard =
+    SharedViewModule.contentHeaderCard "Tile Sort" sourceCodeLinks tileSortDescriptions
+
+let tileSortContentHeaderControls dispatch =
+    SharedViewModule.contentHeaderControls gameControls dispatch
+
+let tileSortCardView model dispatch =
+    SharedViewModule.sharedContentCardView ( tileSortHeaderCard ) ( tileSortContentHeaderControls dispatch ) ( tileSortModalContent model dispatch ) ( dispatch )
+
+
 // OLD STYLE OF CONTENT CARDS
+// make generic also
 // MOVE TO ANOTHER SECTION, SWITCH VIEW TYPE?
     // MODAL?
     // CONTENT CARDS?
+
 // TILE SORT CONTROLS HEADER
 // let tileSortHeader =
 //     Container.container [ Container.Props [ ClassName "aboutContentCard" ] ] [
@@ -178,6 +207,7 @@ let view model dispatch =
 //             else 
 //                 Level.item [ Level.Item.HasTextCentered ] [ a [ OnClick ( fun _ -> UpdateDifficulty unionCaseDifficulty |> dispatch ) ] [ str unionCaseDifficultyName ] ]
 //     ]
+
 // // DIFFICULTY SELECTION & ROUND CONTROLS
 // let tileSortHeaderControls difficulty dispatch =
 //     Container.container [ Container.Props [ ClassName "gameGridControlBar"] ] [
@@ -188,6 +218,7 @@ let view model dispatch =
 //             Level.item [] [ a [ OnClick(fun _ -> RewindMove |> dispatch ) ] [ str "Undo Turn" ] ]
 //         ]
 //     ]
+
 // // TILE GRID ROW
 // let generateTileGridRow ( tileRow: GameTile list ) ( dispatch: Msg -> unit ) =
 //     Tile.ancestor [] [ 
@@ -206,6 +237,7 @@ let view model dispatch =
 //         for row in tileRows do
 //             generateTileGridRow row dispatch
 //     ]
+
 // // TILE SORT GRID VIEW
 // let view ( model : Model ) ( dispatch : Msg -> unit ) =
 //     div [] [

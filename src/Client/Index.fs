@@ -137,7 +137,7 @@ let headerContent ( model: SharedWebAppModels.Model ) dispatch =
             Level.item [] [
                 a [ OnClick ( fun _ -> SwitchToOtherApp "Welcome" |> dispatch ) ] [
                     Level.item [] [ 
-                        Image.image [ Image.Is128x128 ] [ img [ Src "./imgs/icons/Logo blue.png"; ] ]
+                        Image.image [ Image.Is64x64 ] [ img [ Src "./imgs/icons/Flat logo backless.png"; ] ]
                         p [ ClassName "headerTitle" ] [ str "Sean Wilken" ]
                     ]
                 ]

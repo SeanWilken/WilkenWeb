@@ -172,12 +172,13 @@ let goalRollDescriptions = [
 ]
 // external links
 let sourceCodeLinks = [
-    "Shared Model", "https://raw.githubusercontent.com/SeanWilken/WilkenWeb/master/src/Shared/Shared.fs"
-    "Shared View", "https://raw.githubusercontent.com/SeanWilken/WilkenWeb/master/src/Client/Modules/Shared/Index.fs"
-    "Client Logic", "https://raw.githubusercontent.com/SeanWilken/WilkenWeb/master/src/Client/Modules/Portfolio/Games/GoalRoll/Index.fs"
+    "Model", "https://raw.githubusercontent.com/SeanWilken/WilkenWeb/master/src/Shared/Shared.fs"
+    "View", "https://raw.githubusercontent.com/SeanWilken/WilkenWeb/master/src/Client/Modules/Shared/Index.fs"
+    "Client", "https://raw.githubusercontent.com/SeanWilken/WilkenWeb/master/src/Client/Modules/Portfolio/Games/GoalRoll/Index.fs"
 ]
 // content selection controls
-let gameControls = [ 
+let gameControls = [
+    // "Quit Game", QuitGame
     "Reset Round", ResetRound
     "Level 0", LoadRound 0
     "Level 1", LoadRound 1
@@ -249,16 +250,26 @@ let goalRollLevelCreator ( goalRollModel : SharedGoalRoll.Model) dispatch =
     Container.container [] [ for row in gridRows do goalRollRowCreator row dispatch ]
 // modal content container
 let goalRollModalContent ( model : SharedGoalRoll.Model ) dispatch =
-    match model.GameState with 
-    | Playing -> goalRollLevelCreator model dispatch
-    | Won -> div [ ClassName "levelCompletedCard" ] [ str "Level Completed!!!" ]
-
+    SharedViewModule.modalContent (
+        match model.GameState with 
+        | Playing -> goalRollLevelCreator model dispatch
+        | Won -> div [ ClassName "levelCompletedCard" ] [ str "Level Completed!!!" ]
+    )
 // right content controls
 let goalRollModalRight dispatch =
     ( SharedViewModule.sharedModalRight gameControls dispatch )
-
 // main view
 let view ( model : SharedGoalRoll.Model ) dispatch =
     SharedViewModule.sharedModal ( goalRollHeader dispatch ) ( goalRollLeftModal ) ( goalRollModalContent model dispatch ) ( goalRollModalRight dispatch )
                            
 // --------------------------------
+
+// card style
+let goalRollHeaderCard =
+    SharedViewModule.contentHeaderCard "Goal Roll" sourceCodeLinks goalRollDescriptions
+
+let goalRollContentHeaderControls dispatch =
+    SharedViewModule.contentHeaderControls gameControls dispatch
+
+let goalRollCardView model dispatch =
+    SharedViewModule.sharedContentCardView ( goalRollHeaderCard ) ( goalRollContentHeaderControls dispatch ) ( goalRollModalContent model dispatch ) ( dispatch )
