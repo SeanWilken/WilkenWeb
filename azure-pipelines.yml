@@ -23,9 +23,10 @@ steps:
 
 - task: UseDotNet@2
   inputs:
-    version: '3.1.300'
-    includePreviewVersions: true # Required for preview versions
-    packageType: runtime
+    packageType: sdk
+    version: 3.1.300
+    installationPath: $(Agent.ToolsDirectory)/dotnet
+    
 
 - task: NuGetToolInstaller@1
 
