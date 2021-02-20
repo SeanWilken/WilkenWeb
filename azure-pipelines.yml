@@ -29,7 +29,7 @@ steps:
     
 - task: NodeTool@0 
   inputs:
-    versionSpec: '6.10.3' # replace this value with the version that you need for your project
+    versionSpec: '6.10.3'
 
 - powershell: |
     cd ..
@@ -44,8 +44,9 @@ steps:
   inputs:
     restoreSolution: '$(solution)'
 
-- powershell: |
-    dotnet fake build --target run
+# not actually trying to run a local deployment of the code
+# - powershell: |
+#     dotnet fake build --target run
 
 # - task: VSBuild@1
 #   inputs:
