@@ -36,7 +36,6 @@ steps:
     dotnet tool install -g paket
 
 - powershell: |
-    cd ..
     dotnet tool restore
 
 - task: NuGetToolInstaller@1
@@ -46,7 +45,6 @@ steps:
     restoreSolution: '$(solution)'
 
 - powershell: |
-    cd ..
     dotnet fake build --target run
 
 # - task: VSBuild@1
