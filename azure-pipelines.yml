@@ -31,6 +31,10 @@ steps:
   inputs:
     versionSpec: '6.10.3' # replace this value with the version that you need for your project
 
+- powershell: |
+    cd ..
+    dotnet tool install -g paket
+
 - task: NuGetToolInstaller@1
 
 - task: NuGetCommand@2
