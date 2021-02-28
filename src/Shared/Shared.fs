@@ -11,6 +11,15 @@ module GridGame =
         | Down
         | Left
         | Right
+    type TapTileValue =
+        | Minor
+        | Modest
+        | Major
+    type TapTile = {
+        TapPosition: int
+        LifeTime: int
+        Value: TapTileValue
+    }
     // Object that can be in any given space
     // THIS SHOULD BE MADE GENERIC WHERE THE SUB IMPLEMENTS
     type LaneObject =
@@ -24,12 +33,14 @@ module GridGame =
         | LaneKey
         | MoveArrow of MovementDirection
         | ValueTile of int option
+        | TapTile of TapTile
     // List of LaneObjects that occupy a Grid Position
     type GridBoard = {
         GridPositions: LaneObject list
     }
     // Represents a given game state
     type RoundState =
+        | Paused
         | Playing
         | Won
 
@@ -192,9 +203,23 @@ module SharedTileTap =
 
     type Model = {
         TileTapGridBoard: GridBoard
-        HitPoints: int
+        TilesSpawned: int
+        LastSpawnInterval: int
+        TilesMissed: int
         TilesSmashed: int
-        }
+        GameState: RoundState
+    }
+
+    let randTapTileValue =
+        let tileVal = Random().Next(3)
+        match tileVal with
+        | 2 ->
+            Modest
+        | 3 ->
+            Major
+        | _ ->
+            Minor
+        
 
     let levelCeiling = 1
     let gridDimension = 8
@@ -206,10 +231,41 @@ module SharedTileTap =
         }
     let initModel = {
         TileTapGridBoard = generateEmptyTileTapGrid gridDimension
-        HitPoints = 3
+        LastSpawnInterval = 2 // magic number to make a tile spawn
+        TilesSpawned = 0
+        TilesMissed = 0
         TilesSmashed = 0
+        GameState = Paused
     }
 
+    let activeTilePositionsFromBoard gridBoard =
+        gridBoard.GridPositions
+        |> List.map ( fun x -> 
+            match x with 
+            | TapTile x -> x.TapPosition
+            | _ -> 0
+        ) |> List.filter (fun x -> x <> 0)
+
+    let tickActiveTiles gridBoard =
+        { GridPositions =
+            gridBoard.GridPositions
+            |> List.map ( fun x -> 
+                match x with 
+                | TapTile x -> TapTile ( { x with LifeTime = x.LifeTime + 1 } )
+                | _ -> Blank
+            ) 
+        }
+    
+    // let activeTilesFromBoard gridBoard =
+    //     { GridPositions =
+    //         gridBoard.GridPositions
+    //         |> List.map ( fun x -> 
+    //             match x with 
+    //             | TapTile x -> TapTile ( x )
+    //             | _ -> Blank
+    //         ) 
+    //     }
+     
 module SharedTileSort =
 
     open GridGame

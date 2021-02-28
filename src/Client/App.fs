@@ -17,5 +17,6 @@ Program.mkProgram Index.init Index.update Index.view
 #if DEBUG
 |> Program.withDebugger
 #endif
+// |> Program.withSubscription TileTap.subscribe
 |> Program.toNavigable PageRouter.urlParser PageRouter.urlUpdate
 |> Program.run
