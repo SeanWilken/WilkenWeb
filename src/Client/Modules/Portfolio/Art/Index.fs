@@ -10,6 +10,65 @@ open Fulma
 
 open Shared
 
+
+(*
+
+t shirts  = 20
+3/4 || long sleeve 25
+sweatshirt = ??
+hats // backpack // mug // else...??
+
+// mimic to some degree style of printful store (clone that essentially, with wrapper API to place orders)
+let gridProductCard heroImage productSwatches productInfo =
+    div [] [
+        // will be next or back a picture (if there is more than one picture, if only one alternate picture then flip icon {like the one used for front / back facing camera swap})
+        div [] []
+        Image.image [] [ img [Src = ""] ]
+        div [] [ str "" ]
+        div [] [ str "" ]
+        div [] [ str "" ]
+    ]
+// mimic amazon style list
+let listProductCard heroImage productSwatches productInfo =
+    div [] [
+        // will be next or back a picture (if there is more than one picture, if only one alternate picture then flip icon {like the one used for front / back facing camera swap})
+        div [] []
+        Image.image [] [ img [ Src = "" ] ]
+        div [] [ str "" ]
+        div [] [ str "" ]
+        div [] [ str "" ]
+    ]
+
+// mockup of products
+    // finalize designs
+        // download generated mock ups
+
+// ProductImages -- The image(s) for the product record.
+|| string list --> [ "path/to/img.ext"; "path/to/img.ext"; ... ]
+    // HERO IMAGE || Index: [0] 
+        || The first element in the product image list will be used as the 'HERO IMAGE' for the product.
+        || If there are no elements, the default store logo will be used.
+    // ALT VIEWS || Index: [1..n] 
+        || Any additional images contained within the product image list will be used as alternate views. 
+        || If there is only one additional image, the icon for chaning the view should be 'Flip' style.
+        || All additional images will be shown in order of assigned index from it's defined record.
+
+// Needs to have higher level of separation in order to have the Option title, along with the list of it's options.
+
+// ProductOptions -- A distinct and required selection of an option to choose between variants.
+|| string list --> [ "OptionA"; "OptionB"; ... ] --> || Indexes: [0..n]
+    // Color
+    // Size
+    // Etc....
+        // If there is only one option, it will be considered a default and non-selectable option.
+        // Otherwise, the options will be listed for user's selection.
+
+// ProductDetails -- Describe the intent, build or purpose of a product.
+|| string list --> [ "DescriptivePointA"; "DescriptivePointB"; ... ]
+
+*)
+
+
 // GALLERY POSTCARD APP -> SHARE THIS SITE (POSTCARD FROM THE INTERWEBS)
 // RELATED TAGS BROWSER:
     // OTHER IMAGES ALSO FLAGGED FOR SAME STYLE / THEME; SELF DRIVE-RECOMENDATIONS

@@ -203,6 +203,7 @@ module SharedTileTap =
 
     type Model = {
         TileTapGridBoard: GridBoard
+        GameClock: int
         TilesSpawned: int
         LastSpawnInterval: int
         TilesMissed: int
@@ -210,12 +211,12 @@ module SharedTileTap =
         GameState: float
     }
 
-    let randTapTileValue =
-        let tileVal = Random().Next(3)
-        match tileVal with
-        | 2 ->
+    let randTapTileValue seed =
+        let randomVal = Random().Next(seed)
+        match randomVal with
+        | 1 ->
             Modest
-        | 3 ->
+        | 2 ->
             Major
         | _ ->
             Minor
@@ -231,6 +232,7 @@ module SharedTileTap =
         }
     let initModel = {
         TileTapGridBoard = generateEmptyTileTapGrid gridDimension
+        GameClock = 0
         LastSpawnInterval = 2 // magic number to make a tile spawn
         TilesSpawned = 0
         TilesMissed = 0

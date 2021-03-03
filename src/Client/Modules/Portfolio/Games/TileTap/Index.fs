@@ -17,9 +17,9 @@ type Msg =
     | SpawnNewActiveTile
     | CheckGridboardTiles
     | DestroyTile of TapTile
+    | ExpireTile of TapTile
     | ExitGameLoop
     | QuitGame
-
 
 // tile spawn / destroy
 let insertNewTapTile gridBoard position =
@@ -27,35 +27,12 @@ let insertNewTapTile gridBoard position =
     { GridPositions = [
         for i in 0 .. ( gridPositions.Length - 1 ) do
             if i = position 
-                then TapTile { TapPosition = position; LifeTime = 0; Value = SharedTileTap.randTapTileValue } 
+                then TapTile { TapPosition = position; LifeTime = 0; Value = SharedTileTap.randTapTileValue (3) } 
                 else gridPositions.[i]
-    ] }
-let removeExpiredTiles gridBoard activeTilePositions =
-    { GridPositions = [
-        for position in activeTilePositions do
-            let currentActiveTile = gridBoard.GridPositions.[position]
-            match currentActiveTile with
-            | TapTile x ->
-                if x.LifeTime >= 5 
-                    then Blank
-                    else TapTile x
-            | _ -> Blank
     ] }
 
 let stopGameLoop loopFloat =
     window.clearInterval(loopFloat)
-
-// BETTER WAY??
-let shittyWrapper ( model : SharedTileTap.Model ) dispatch =
-    if model.GameState = 0.0
-        then
-            printfn "LOOPING"
-            let loopFloat = window.setInterval((fun _ -> dispatch (GameLoopTick)), 250)
-            dispatch (SetGameState loopFloat)
-        else
-            printfn "UNLOOPING"
-            window.clearInterval(model.GameState)
-            dispatch ( SetGameState 0.0 )
 
 let init(): SharedTileTap.Model * Cmd<Msg> =
     SharedTileTap.initModel, Cmd.none
@@ -64,18 +41,20 @@ let update msg ( model : SharedTileTap.Model ) =
     | SetGameState flt ->
         { model with GameState = flt }, Cmd.none
     | GameLoopTick ->
-        // will update the value of GameTicks ++, in order to track round lengths
-        model, Cmd.batch [ Cmd.ofMsg ( CheckGridboardTiles ); Cmd.ofMsg ( SpawnNewActiveTile ) ]
+        // this should be checking things like: 
+            // if total # of allowable tiles expired surpassed
+            // if 
+        { model with GameClock = model.GameClock + 1 }, Cmd.batch [ Cmd.ofMsg ( CheckGridboardTiles ); Cmd.ofMsg ( SpawnNewActiveTile ) ]
     | SpawnNewActiveTile ->
         // check if max amount of tiles is reached && no tile spawned in last 2 ticks
-        if ( model.TilesSpawned < 5 ) && ( model.LastSpawnInterval >= 1 ) then 
+        if ( model.TilesSpawned < 10 ) && ( model.LastSpawnInterval >= 2 ) then 
             let activeTilePositionList = ( SharedTileTap.activeTilePositionsFromBoard model.TileTapGridBoard )
             // filter a list of all positions by what is already active
             // let availablePositions = List.filter ( fun x -> List.contains activeTilePositionList ) [0..64]
             let emptyGrid = [ 0..63 ]
             let availablePositions = List.filter ( fun x -> not (List.contains x activeTilePositionList ) ) ( emptyGrid )
             // randomly select a  position from remaining available
-            let selectedPosition = if not(availablePositions.IsEmpty) then availablePositions.[SharedTileSort.randomIndex availablePositions.Length] else ( SharedTileSort.randomIndex ( emptyGrid.Length - 1 ) )
+            let selectedPosition = if not ( availablePositions.IsEmpty ) then availablePositions.[SharedTileSort.randomIndex availablePositions.Length] else ( SharedTileSort.randomIndex ( emptyGrid.Length - 1 ) )
             let gridBoardWithTile = insertNewTapTile model.TileTapGridBoard selectedPosition
             // model with new taptile in active tile list
             { model with TileTapGridBoard = gridBoardWithTile; LastSpawnInterval = 0; TilesSpawned = model.TilesSpawned + 1 }, Cmd.none
@@ -87,12 +66,28 @@ let update msg ( model : SharedTileTap.Model ) =
             let tickedGrid = SharedTileTap.tickActiveTiles model.TileTapGridBoard
             let expiredTiles = ( List.filter ( fun x -> 
                 match x with
-                | TapTile x -> x.LifeTime < 5 
+                | TapTile x -> x.LifeTime > 15
                 | _ -> false
             ) tickedGrid.GridPositions )
-            { model with TileTapGridBoard = tickedGrid; TilesMissed = model.TilesMissed + expiredTiles.Length }, Cmd.none
+            let expiredTile = 
+                if expiredTiles.Length > 0 then 
+                    match expiredTiles.Head with
+                    | TapTile x ->
+                        Some x
+                    | _ -> None
+                else None
+            { model with TileTapGridBoard = tickedGrid; TilesMissed = model.TilesMissed + expiredTiles.Length }, match expiredTile with | None -> Cmd.none; | Some x -> Cmd.ofMsg ( ExpireTile ( x ) )
         else
-            model, Cmd.none 
+            model, Cmd.none
+    | ExpireTile expiredTile ->
+        let grid = { 
+            GridPositions = [ 
+            for tile in model.TileTapGridBoard.GridPositions do
+                match tile with 
+                | TapTile x -> if x = expiredTile then Blank else tile
+                | _ -> tile
+        ] }
+        { model with TileTapGridBoard = grid; TilesSpawned = model.TilesSpawned - 1; }, Cmd.none
     | DestroyTile tappedTile ->
         let grid = { 
             GridPositions = [ 
@@ -137,10 +132,6 @@ let update msg ( model : SharedTileTap.Model ) =
             // bomb takes away time
 // sleep function on spawn with timeout value for expiration
 // explode if timeoutValue reached
-// if clicked, intercept that timeout & destroy the tile and spawn a new one, with a fresh countdown clock
-
-// TODO: -- THIS SHOULD BE USING A SHARED GENERIC TILE GAME BOARD BUILDER, NEED TO IMPLEMENT IN SHARED!
-// STYLED WHEN REFACTOR ABOVE DONE?
 
 let tileTapDescriptions = [
     "Survival Mode:"
@@ -155,11 +146,16 @@ let sourceCodeLinks = [
     "Logic", "https://raw.githubusercontent.com/SeanWilken/WilkenWeb/master/src/Client/Modules/Portfolio/Games/TileTap/Index.fs"
 ]
 
-let gameControls = [ "Timer Start", GameLoopTick; ] // "Toggle Game State", ToggleGameState //"Quit Game", QuitGame; 
+let gameControls = [ "Timer Start", GameLoopTick; ]
 
-// distusting hack
-let startRound model dispatch =
-    div [ OnClick ( fun _ -> shittyWrapper model dispatch |> ignore ); Style [Color "#FF2843"; ] ] [ str "Start Game" ]
+let styleForTile tile =
+    match tile.Value with
+    | Minor -> Style [ FontFamily "Ubuntu"; FontSize 25; TextAlign TextAlignOptions.Center; Color "#FF2483"; Border "1px solid white"; Background "#000000"; Width 75; Height 75 ]
+    | Modest -> Style [ FontFamily "Ubuntu"; FontSize 25; TextAlign TextAlignOptions.Center; Color "#FF2483"; Border "1px solid white"; Background "#555555"; Width 75; Height 75 ]
+    | Major -> Style [ FontFamily "Ubuntu"; FontSize 25; TextAlign TextAlignOptions.Center; Color "#FF2483"; Border "1px solid white"; Background "#ffffff"; Width 75; Height 75 ]
+
+let tileClock tile =
+    string (tile.LifeTime / 4)
 
 let tileTapRowCreator ( rowPositions: LaneObject list ) dispatch =
     Level.level [] [
@@ -167,10 +163,8 @@ let tileTapRowCreator ( rowPositions: LaneObject list ) dispatch =
             for positionObject in rowPositions do
                 match positionObject with
                 // TO BECOME BOMB -2 Health 
-                | TapTile x -> Tile.child [] [ Box.box' [ Props [ OnClick (fun _ -> DestroyTile ( x ) |> dispatch); Style [ Border "1px solid white"; Background "#000000"; Width 75; Height 75 ] ] ] [] ]
-                | Blocker -> Tile.child [] [ Box.box' [ Props [ Style [ Border "1px solid white"; Background "#000000"; Width 75; Height 75 ] ] ] [] ]
-                | Goal -> Tile.child [] [ Box.box' [ Props [ Style [ Border "1px solid black"; Background "#FF2843"; Width 75; Height 75 ] ] ] [ Image.image [] [ img [ Src "./imgs/icons/Flag.png" ] ] ] ]
-                | _ -> Tile.child [] [ Box.box' [ Props [ Style [ Border "1px solid white"; Background "#FF2843"; Width 75; Height 75 ] ] ] [] ]// Tile.child [] [ Box.box' [ Props [ Style [ Border "1px solid black"; Width 75; Height 75 ] ] ] [] ]
+                | TapTile x -> Tile.child [] [ Box.box' [ Props [ OnClick (fun _ -> DestroyTile ( x ) |> dispatch); styleForTile x ] ] [str (tileClock x) ] ]
+                | _ -> Tile.child [] [ Box.box' [ Props [ Style [ Border "1px solid white"; Background "#FF2843"; Width 75; Height 75 ] ] ] [] ]
                 // 3HP // EZ: (3 missed intervals = -1 HP) MD: (2 missed intervals = -1 HP) HD: () XD: (1 miss = -3HP)
             ]
     ]
@@ -180,9 +174,7 @@ let tileTapBoardView gridPositions dispatch =
     Container.container [] [ for row in board do tileTapRowCreator row dispatch ]
  
 let tileTapHeader  dispatch =
-    div [] [
-        SharedViewModule.sharedModalHeaderControls "Tile Tap" ExitGameLoop dispatch
-    ]
+    div [] [ SharedViewModule.sharedModalHeaderControls "Tile Tap" ExitGameLoop dispatch ]
 
 let tileTapLeftModal =
     SharedViewModule.sharedModalLeft tileTapDescriptions sourceCodeLinks
@@ -190,10 +182,23 @@ let tileTapLeftModal =
 let tileTapModalContent  ( model : SharedTileTap.Model ) dispatch =
     tileTapBoardView model.TileTapGridBoard dispatch
 
+// HACKED AROUND UPDATE, TO DISPATCH THE GAMELOOP TICK + SET INTERVAL FOR RETURNED FLOAT
+let startGameLoop ( model : SharedTileTap.Model ) dispatch =
+    if model.GameState = 0.0
+        then
+            let loopFloat = window.setInterval((fun _ -> dispatch (GameLoopTick)), 250)
+            dispatch (SetGameState loopFloat)
+        else
+            window.clearInterval(model.GameState)
+            dispatch ( SetGameState 0.0 )
+
 // custom non-shared right modal, needs to handle functions outside update loop to dispatch messages
 let tileTapGameLoopToggle model dispatch =
     Container.container [] [
-        div [ ClassName "mainContainer" ] [ a [ OnClick ( fun _ -> shittyWrapper model dispatch |> ignore ); ] [ str "Start Game" ] ] ]
+        div [ ClassName "mainContainer" ] [ a [ OnClick ( fun _ -> startGameLoop model dispatch |> ignore ); ] [ str "Start Game" ] ] ]
+
+let modelValueAsString strin value =
+    strin + string value
 
 let tileTapModalRight model dispatch =
     Tile.parent [ Tile.Size Tile.Is3 ] [ 
@@ -203,6 +208,12 @@ let tileTapModalRight model dispatch =
                     div [ ClassName "modalLeft" ] [
                         Container.container [] [
                             tileTapGameLoopToggle model dispatch
+                        ]
+                        Container.container [] [
+                            div [] [ str ( modelValueAsString "Timer: " ( model.GameClock / 4 ) ) ]
+                            div [] [ str ( modelValueAsString "Spawned: " model.TilesSpawned ) ]
+                            div [] [ str ( modelValueAsString "Smashed: " model.TilesSmashed ) ]
+                            div [] [ str ( modelValueAsString "Expired: " model.TilesMissed ) ]
                         ]
                     ]
                 ]

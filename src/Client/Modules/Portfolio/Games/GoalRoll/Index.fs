@@ -252,6 +252,7 @@ let goalRollLevelCreator ( goalRollModel : SharedGoalRoll.Model) dispatch =
 let goalRollModalContent ( model : SharedGoalRoll.Model ) dispatch =
     SharedViewModule.modalContent (
         match model.GameState with 
+        | Paused
         | Playing -> goalRollLevelCreator model dispatch
         | Won -> div [ ClassName "levelCompletedCard" ] [ str "Level Completed!!!" ]
     )

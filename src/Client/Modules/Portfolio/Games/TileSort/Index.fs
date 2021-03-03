@@ -20,9 +20,9 @@ type Msg =
     | MoveTile of GameTile//GridGame.LaneObject // Move the selected tile to the empty space
     | UpdateDifficulty of Shared.SharedTileSort.TileSortDifficulty // Change the current difficulty for the given one
     | CheckSolution // Run the current board through the win validation check logic
-    | Won // Board is in the winning configuration
+    | Solved // Board is in the winning configuration
     | QuitGame // Quits back one level, exiting the game.
-    | ChangeView // NEW WIP EWW
+    | ChangeView // TOGGLE CARD AND MODAL
 //---------------------
 
 let init (): Shared.SharedTileSort.Model * Cmd<Msg> =
@@ -34,7 +34,7 @@ let init (): Shared.SharedTileSort.Model * Cmd<Msg> =
         InitialTiles = initialRound
         Turns = []
         GameState = Shared.GridGame.Playing
-        ContentView = Modal // NEW WIP EWW
+        ContentView = Modal
     }
     model, Cmd.none
 //---------------------
@@ -61,7 +61,7 @@ let update ( msg: Msg ) ( model: Shared.SharedTileSort.Model ): Shared.SharedTil
         let newDiff = changeDifficulty difficulty model
         let newRound = createNewRound newDiff
         newRound, Cmd.none
-    | ChangeView -> // NEW WIP EWW
+    | ChangeView -> // TOGGLE VIEW
         let swappedViewModel = 
             if model.ContentView = Modal 
                 then { model with ContentView = Card } 
@@ -70,9 +70,9 @@ let update ( msg: Msg ) ( model: Shared.SharedTileSort.Model ): Shared.SharedTil
     | CheckSolution ->
         match winValidator model.CurrentTiles with
         | true -> 
-            model, Cmd.ofMsg Won
+            model, Cmd.ofMsg Solved
         | false -> model, Cmd.none
-    | Won -> { model with GameState = Shared.GridGame.Won }, Cmd.none // Should do more
+    | Solved -> { model with GameState = Shared.GridGame.Won }, Cmd.none // Should do more
     | QuitGame -> model, Cmd.ofMsg QuitGame 
 
 open Fable.React
@@ -139,6 +139,7 @@ let tileSortGameBoard model dispatch =
 let tileSortModalContent model dispatch =
     match model.GameState with 
     | Shared.GridGame.Won -> div [ ClassName "levelCompletedCard" ] [ str "Congrats, you win!!!" ]
+    | Shared.GridGame.Paused
     | Shared.GridGame.Playing -> tileSortGameBoard model dispatch
 // right content controls
 let tileSortModalRight dispatch =
@@ -147,10 +148,6 @@ let tileSortModalRight dispatch =
 // main view
 let view model dispatch =
     SharedViewModule.sharedModal ( tileSortHeader dispatch ) ( tileSortLeftModal ) ( tileSortModalContent model dispatch ) ( tileSortModalRight dispatch )
-
-
-
-
 
 // card style
 let tileSortHeaderCard =
@@ -161,7 +158,6 @@ let tileSortContentHeaderControls dispatch =
 
 let tileSortCardView model dispatch =
     SharedViewModule.sharedContentCardView ( tileSortHeaderCard ) ( tileSortContentHeaderControls dispatch ) ( tileSortModalContent model dispatch ) ( dispatch )
-
 
 // OLD STYLE OF CONTENT CARDS
 // make generic also
