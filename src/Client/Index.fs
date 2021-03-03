@@ -28,7 +28,6 @@ type WebAppMsg =
     | LoadPage of Page
     | ErrorMsg of exn // WIP
 
-
 // PAGE ROUTER
 // if had to hit server
 // ------------

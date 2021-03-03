@@ -207,7 +207,7 @@ module SharedTileTap =
         LastSpawnInterval: int
         TilesMissed: int
         TilesSmashed: int
-        GameState: RoundState
+        GameState: float
     }
 
     let randTapTileValue =
@@ -235,7 +235,8 @@ module SharedTileTap =
         TilesSpawned = 0
         TilesMissed = 0
         TilesSmashed = 0
-        GameState = Paused
+        // GameState = Paused
+        GameState = 0.0
     }
 
     let activeTilePositionsFromBoard gridBoard =

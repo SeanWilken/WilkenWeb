@@ -13,33 +13,13 @@ open Browser
 
 type Msg =
     | GameLoopTick
+    | SetGameState of float
     | SpawnNewActiveTile
     | CheckGridboardTiles
-    | ToggleGameState
     | DestroyTile of TapTile
+    | ExitGameLoop
     | QuitGame
 
-
-
-
-
-
-
-    // setinterval returns a float, that I need to capture in order to call clear interval,
-    // otherwise runs away once started
-
-    // should be done through subscription. How to call subscription from submodule, rather than from program level?
-        // is this even possible
-
-// come back to this
-// trigger this from parent?
-let subscribe initial =
-    let sub dispatch =
-        window.setInterval((fun _ -> dispatch (GameLoopTick)), 1000) |> ignore
-        // window.setTimeout((fun _ -> dispatch (GameLoopTick)), 5000) |> ignore
-    Cmd.ofSub sub
-
-// NEED LOOP TO DICTATE AND INCREMENT THE PORTIONS OF DATA THAT ARE TIME DEPENDANT ^^
 
 // tile spawn / destroy
 let insertNewTapTile gridBoard position =
@@ -62,33 +42,30 @@ let removeExpiredTiles gridBoard activeTilePositions =
             | _ -> Blank
     ] }
 
-// runs off with interval
-// THIS WORKS BUT IS TRASH!!
-// NEED TO USE SUBSCRIBE
+let stopGameLoop loopFloat =
+    window.clearInterval(loopFloat)
+
+// BETTER WAY??
 let shittyWrapper ( model : SharedTileTap.Model ) dispatch =
-    if model.GameState = Playing
+    if model.GameState = 0.0
         then
             printfn "LOOPING"
-            window.setInterval((fun _ -> dispatch (GameLoopTick)), 500) |> ignore
-            // window.setTimeout((fun _ -> dispatch (GameLoopTick)), 500) |> ignore
-    else 
+            let loopFloat = window.setInterval((fun _ -> dispatch (GameLoopTick)), 250)
+            dispatch (SetGameState loopFloat)
+        else
             printfn "UNLOOPING"
-            window.setInterval((), 0) |> ignore
-            // window.clearInterval()
-
+            window.clearInterval(model.GameState)
+            dispatch ( SetGameState 0.0 )
 
 let init(): SharedTileTap.Model * Cmd<Msg> =
     SharedTileTap.initModel, Cmd.none
 let update msg ( model : SharedTileTap.Model ) =
     match msg with
+    | SetGameState flt ->
+        { model with GameState = flt }, Cmd.none
     | GameLoopTick ->
-        printfn "hello"
-        { model with GameState = Playing}, Cmd.batch [ Cmd.ofMsg ( CheckGridboardTiles ); Cmd.ofMsg ( SpawnNewActiveTile ) ]
-    | ToggleGameState ->
-        let toggledGameState = 
-            if model.GameState = Playing then { model with GameState = Paused }
-            else {model with GameState = Playing}
-        toggledGameState, Cmd.none
+        // will update the value of GameTicks ++, in order to track round lengths
+        model, Cmd.batch [ Cmd.ofMsg ( CheckGridboardTiles ); Cmd.ofMsg ( SpawnNewActiveTile ) ]
     | SpawnNewActiveTile ->
         // check if max amount of tiles is reached && no tile spawned in last 2 ticks
         if ( model.TilesSpawned < 5 ) && ( model.LastSpawnInterval >= 1 ) then 
@@ -127,24 +104,20 @@ let update msg ( model : SharedTileTap.Model ) =
                         else tile
                 | _ -> tile
         ] }
-        // check if tilePosition is contained within the model, filter the list of that and return it.
-        // will return the same if it doesn't exist.
-        { model with TileTapGridBoard = grid; TilesSpawned = model.TilesSpawned - 1 }, Cmd.none
+        { model with TileTapGridBoard = grid; TilesSpawned = model.TilesSpawned - 1; TilesSmashed = model.TilesSmashed + 1 }, Cmd.none
+    | ExitGameLoop ->
+        if (model.GameState <> 0.0) then stopGameLoop(model.GameState)
+        model, Cmd.ofMsg QuitGame
     | QuitGame ->
         model, Cmd.ofMsg QuitGame
 
 // Game starts
     // Spawns object(s) - timer starts
-
         // Tap object before timer, kill that objects timer, increment score, spawn new tile
         // Tile times out - decrement score / time, spawn new tile
 
         // health or time runs out
             // end game, show user their score.
-
-// function that acts as the countdown
-    //
-
 
 // Time drives main game state, as things happen in intervals contained within the main loop
     // tile expire -> scales with time remaining
@@ -181,12 +154,12 @@ let sourceCodeLinks = [
     "View", "https://raw.githubusercontent.com/SeanWilken/WilkenWeb/master/src/Client/Modules/Shared/Index.fs"
     "Logic", "https://raw.githubusercontent.com/SeanWilken/WilkenWeb/master/src/Client/Modules/Portfolio/Games/TileTap/Index.fs"
 ]
-let gameControls = [ "Quit Game", QuitGame; "Timer Start", GameLoopTick; "Toggle Game State", ToggleGameState] //
 
+let gameControls = [ "Timer Start", GameLoopTick; ] // "Toggle Game State", ToggleGameState //"Quit Game", QuitGame; 
 
 // distusting hack
-let shittyButton model dispatch =
-    div [ OnClick ( fun _ -> shittyWrapper model dispatch |> ignore ); Style [BackgroundColor "#FF2843"; Height 100; Width 100] ] []
+let startRound model dispatch =
+    div [ OnClick ( fun _ -> shittyWrapper model dispatch |> ignore ); Style [Color "#FF2843"; ] ] [ str "Start Game" ]
 
 let tileTapRowCreator ( rowPositions: LaneObject list ) dispatch =
     Level.level [] [
@@ -206,10 +179,9 @@ let tileTapBoardView gridPositions dispatch =
     let board = GridGame.getPositionsAsRows gridPositions 8
     Container.container [] [ for row in board do tileTapRowCreator row dispatch ]
  
-let tileTapHeader model dispatch =
+let tileTapHeader  dispatch =
     div [] [
-        shittyButton model dispatch
-        SharedViewModule.sharedModalHeaderControls "Tile Tap" QuitGame dispatch
+        SharedViewModule.sharedModalHeaderControls "Tile Tap" ExitGameLoop dispatch
     ]
 
 let tileTapLeftModal =
@@ -218,8 +190,25 @@ let tileTapLeftModal =
 let tileTapModalContent  ( model : SharedTileTap.Model ) dispatch =
     tileTapBoardView model.TileTapGridBoard dispatch
 
-let tileTapModalRight dispatch =
-    ( SharedViewModule.sharedModalRight gameControls dispatch )
+// custom non-shared right modal, needs to handle functions outside update loop to dispatch messages
+let tileTapGameLoopToggle model dispatch =
+    Container.container [] [
+        div [ ClassName "mainContainer" ] [ a [ OnClick ( fun _ -> shittyWrapper model dispatch |> ignore ); ] [ str "Start Game" ] ] ]
+
+let tileTapModalRight model dispatch =
+    Tile.parent [ Tile.Size Tile.Is3 ] [ 
+        Columns.columns [ Columns.IsVCentered ] [ 
+            Column.column [] [ 
+                Tile.child [] [ 
+                    div [ ClassName "modalLeft" ] [
+                        Container.container [] [
+                            tileTapGameLoopToggle model dispatch
+                        ]
+                    ]
+                ]
+            ]
+        ]
+    ]
 
 let view model dispatch =
-    SharedViewModule.sharedModal ( tileTapHeader model dispatch ) ( tileTapLeftModal ) ( tileTapModalContent (model) (dispatch) ) ( tileTapModalRight dispatch )
+    SharedViewModule.sharedModal ( tileTapHeader dispatch ) ( tileTapLeftModal ) ( tileTapModalContent (model) (dispatch) ) ( tileTapModalRight (model) ( dispatch ) )
