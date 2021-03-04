@@ -202,25 +202,17 @@ module SharedTileTap =
     open GridGame
 
     type Model = {
-        TileTapGridBoard: GridBoard
-        GameClock: int
-        TilesSpawned: int
-        LastSpawnInterval: int
-        TilesMissed: int
-        TilesSmashed: int
-        GameState: float
+        TileTapGridBoard: GridBoard // grid board that will contain the various tiles
+        GameState: float // the float pointer to the GameLoop's dispatch
+        GameClock: int // Total ticks from the Round that occurred.
+        // RoundTimer: int // Max allowable seconds for this Round on GameClock
+        TilesSpawned: int // Current # of tiles spawned on the board 
+        // RoundScore: int // Score of tiles destroyed within Round
+        TilesSmashed: int // # of tiles destroyed by the player
+        TilesMissed: int // How many mistakes were made that Round
+        // RoundTileLifeTime: int // How many GameTicks the tile will live for
+        LastSpawnInterval: int // Cooldown of new Tile being placed into the GameGrid
     }
-
-    let randTapTileValue seed =
-        let randomVal = Random().Next(seed)
-        match randomVal with
-        | 1 ->
-            Modest
-        | 2 ->
-            Major
-        | _ ->
-            Minor
-        
 
     let levelCeiling = 1
     let gridDimension = 8
@@ -232,42 +224,16 @@ module SharedTileTap =
         }
     let initModel = {
         TileTapGridBoard = generateEmptyTileTapGrid gridDimension
-        GameClock = 0
-        LastSpawnInterval = 2 // magic number to make a tile spawn
-        TilesSpawned = 0
-        TilesMissed = 0
-        TilesSmashed = 0
-        // GameState = Paused
         GameState = 0.0
+        GameClock = 0 // +1 increment per 250 ms
+        // RoundTimer = -1
+        TilesSpawned = 0
+        // RoundScore = 0
+        TilesSmashed = 0
+        TilesMissed = 0
+        // RoundTileLifeTime = 15 (just under 4 seconds)
+        LastSpawnInterval = 2
     }
-
-    let activeTilePositionsFromBoard gridBoard =
-        gridBoard.GridPositions
-        |> List.map ( fun x -> 
-            match x with 
-            | TapTile x -> x.TapPosition
-            | _ -> 0
-        ) |> List.filter (fun x -> x <> 0)
-
-    let tickActiveTiles gridBoard =
-        { GridPositions =
-            gridBoard.GridPositions
-            |> List.map ( fun x -> 
-                match x with 
-                | TapTile x -> TapTile ( { x with LifeTime = x.LifeTime + 1 } )
-                | _ -> Blank
-            ) 
-        }
-    
-    // let activeTilesFromBoard gridBoard =
-    //     { GridPositions =
-    //         gridBoard.GridPositions
-    //         |> List.map ( fun x -> 
-    //             match x with 
-    //             | TapTile x -> TapTile ( x )
-    //             | _ -> Blank
-    //         ) 
-    //     }
      
 module SharedTileSort =
 
