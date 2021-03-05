@@ -201,17 +201,57 @@ module SharedTileTap =
 
     open GridGame
 
+    type TileTapDifficulty =
+        | Simple
+        | Easy
+        | Intermediate
+        | Survival
+
+    (*
+        Simple:
+            - Mistakes are ignored.
+            - 30 Second Round Timer
+        Easy:
+            - 5 Mistake Limit
+            - 30 Second Round Timer
+        Medium:
+            - 3 Mistake Limit
+            - 30 Second Round Timer
+        Hard (Survival):
+            - Go until you fail
+            - No Mistakes, insta-fail
+            - No Round Timer
+    *)
+
+    // function to determine the model based on difficulty
+        // Simple -> model with AllowableMistakes = -1, timer = 30
+        // Easy -> model with mistakes = 5, timer = 30
+        // Medium -> model with mistakes = 3, timer = 30
+        // Hard -> model with mistakes = 1, timer = -1
+        // Time Attack (?) -> Hearts (-1 mistake), Clocks (slow down or speed up), Bomb (insta-fail)
+
+    // RoundConditions ->
+        // AllowableRoundMistakes ->
+            // ARM < 0 = Ignore Mistakes
+            // ARM > 0 = Mistakes allowed up to ARM
+                // RoundMistakes >= ARM then RoundEnd
+        // RoundTimer ->
+            // RT < 0 = Ignore Timer, play until ARM reached
+            // RT > 0 = Timer value in seconds, checks against ( GameClock ticks / 4 )
+                // RoundTimer < ( GameClock / 4 ) then RoundEnd
+
     type Model = {
         TileTapGridBoard: GridBoard // grid board that will contain the various tiles
+        LastSpawnInterval: int // Cooldown of new Tile being placed into the GameGrid
         GameState: float // the float pointer to the GameLoop's dispatch
         GameClock: int // Total ticks from the Round that occurred.
-        // RoundTimer: int // Max allowable seconds for this Round on GameClock
+        RoundTimer: int // Max allowable seconds for this Round on GameClock
+        AllowableRoundMistakes: int // max # of mistakes allowed before the round is considered 'lost' and will end
+        // RoundTileLifeTime: int // How many GameTicks the tile will live for // tie into Value?
+        RoundMistakes: int // How many mistakes were made that Round
         TilesSpawned: int // Current # of tiles spawned on the board 
-        // RoundScore: int // Score of tiles destroyed within Round
         TilesSmashed: int // # of tiles destroyed by the player
-        TilesMissed: int // How many mistakes were made that Round
-        // RoundTileLifeTime: int // How many GameTicks the tile will live for
-        LastSpawnInterval: int // Cooldown of new Tile being placed into the GameGrid
+        RoundScore: int // Score of tiles destroyed within Round
     }
 
     let levelCeiling = 1
@@ -224,16 +264,29 @@ module SharedTileTap =
         }
     let initModel = {
         TileTapGridBoard = generateEmptyTileTapGrid gridDimension
+        LastSpawnInterval = 2
         GameState = 0.0
         GameClock = 0 // +1 increment per 250 ms
-        // RoundTimer = -1
-        TilesSpawned = 0
-        // RoundScore = 0
-        TilesSmashed = 0
-        TilesMissed = 0
+        RoundTimer = 30
+        AllowableRoundMistakes = 5
         // RoundTileLifeTime = 15 (just under 4 seconds)
-        LastSpawnInterval = 2
+        RoundMistakes = 0
+        TilesSpawned = 0
+        TilesSmashed = 0
+        RoundScore = 0
     }
+
+    let resetRound model = 
+        { model with
+            TileTapGridBoard = generateEmptyTileTapGrid gridDimension
+            LastSpawnInterval = 2
+            RoundMistakes = 0
+            GameClock = 0
+            GameState = 0.0
+            TilesSpawned = 0
+            TilesSmashed = 0
+            RoundScore = 0
+        }
      
 module SharedTileSort =
 

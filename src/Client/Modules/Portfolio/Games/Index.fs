@@ -39,6 +39,7 @@ let update ( msg: Msg ) ( model: SharedCodeGallery.Model ): SharedCodeGallery.Mo
         let tileSmashModel, com = TileTap.init()
         SharedCodeGallery.TileTap tileSmashModel, Cmd.none
     | TileTapMsg TileTap.Msg.QuitGame, SharedCodeGallery.TileTap model ->
+        TileTap.update (TileTap.Msg.ExitGameLoop) model |> ignore // kill dispatch interval
         SharedCodeGallery.CodeGallery, Cmd.none
     | TileTapMsg msg, SharedCodeGallery.TileTap model ->
         let tileSmashModel, com = TileTap.update msg model
