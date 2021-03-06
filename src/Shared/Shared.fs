@@ -15,6 +15,8 @@ module GridGame =
         | Minor
         | Modest
         | Major
+        | Heart
+        | Bomb
     type TapTile = {
         TapPosition: int
         LifeTime: int
@@ -205,8 +207,11 @@ module SharedTileTap =
         | Simple
         | Easy
         | Intermediate
-        | Survival
+        | Hard
 
+    type TileTapGameMode =
+        | Survival
+        | TimeAttack
     (*
         Simple:
             - Mistakes are ignored.
@@ -243,6 +248,7 @@ module SharedTileTap =
     type Model = {
         TileTapGridBoard: GridBoard // grid board that will contain the various tiles
         LastSpawnInterval: int // Cooldown of new Tile being placed into the GameGrid
+        GameMode: TileTapGameMode
         GameState: float // the float pointer to the GameLoop's dispatch
         GameClock: int // Total ticks from the Round that occurred.
         RoundTimer: int // Max allowable seconds for this Round on GameClock
@@ -265,6 +271,7 @@ module SharedTileTap =
     let initModel = {
         TileTapGridBoard = generateEmptyTileTapGrid gridDimension
         LastSpawnInterval = 2
+        GameMode = Survival
         GameState = 0.0
         GameClock = 0 // +1 increment per 250 ms
         RoundTimer = 30
@@ -275,7 +282,11 @@ module SharedTileTap =
         TilesSmashed = 0
         RoundScore = 0
     }
-
+    let endRound model =
+        { model with
+            TileTapGridBoard = generateEmptyTileTapGrid gridDimension
+            GameState = 0.0
+        }
     let resetRound model = 
         { model with
             TileTapGridBoard = generateEmptyTileTapGrid gridDimension
@@ -287,6 +298,28 @@ module SharedTileTap =
             TilesSmashed = 0
             RoundScore = 0
         }
+    // When ChangeDifficulty Msg is dispatched,
+    // returns model with different round parameters
+    // based on requested TileTapDifficulty
+    let updateSurvivalModeDifficulty  ( model : Model ) ( difficulty : TileTapDifficulty ) =
+        match difficulty with
+        | Simple -> { model with RoundTimer = 30; AllowableRoundMistakes = 10 }
+        | Easy -> { model with RoundTimer = 60; AllowableRoundMistakes = 5 }
+        | Intermediate -> { model with RoundTimer = -1; AllowableRoundMistakes = 3 }
+        | Hard -> { model with RoundTimer = -1; AllowableRoundMistakes = 1 }
+    let updateTimeAttackModeDifficulty  ( model : Model ) ( difficulty : TileTapDifficulty ) =
+        match difficulty with
+        | Simple -> { model with RoundTimer = 90; AllowableRoundMistakes = -1 }
+        | Easy -> { model with RoundTimer = 60; AllowableRoundMistakes = -1 }
+        | Intermediate -> { model with RoundTimer = 45; AllowableRoundMistakes = -1 }
+        | Hard -> { model with RoundTimer = 30; AllowableRoundMistakes = -1 }
+    // When ChangeDifficulty Msg is dispatched,
+    // returns model with different round parameters
+    // based on requested TileTapDifficulty
+    let updateModelGameMode  ( model : Model ) ( mode : TileTapGameMode ) =
+        match mode with
+        | Survival -> { model with GameMode = Survival; RoundTimer = 30; AllowableRoundMistakes = 10 } // Timer will last as long as you will
+        | TimeAttack -> { model with GameMode = TimeAttack; RoundTimer = 30; AllowableRoundMistakes = -1 }
      
 module SharedTileSort =
 
