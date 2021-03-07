@@ -42,9 +42,9 @@ module GridGame =
     }
     // Represents a given game state
     type RoundState =
-        | Paused
-        | Playing
-        | Won
+        | Paused // change to idle (no game active)
+        | Playing // there is an active round
+        | Won // Round ended, model contains round details
 
     // unwrap optional int from tryFindIndex
     // this is pretty unnecessary and should be 'baked' into the model domain
@@ -249,7 +249,8 @@ module SharedTileTap =
         TileTapGridBoard: GridBoard // grid board that will contain the various tiles
         LastSpawnInterval: int // Cooldown of new Tile being placed into the GameGrid
         GameMode: TileTapGameMode
-        GameState: float // the float pointer to the GameLoop's dispatch
+        RoundState: GridGame.RoundState
+        DispatchPointer: float // the float pointer to the GameLoop's dispatch
         GameClock: int // Total ticks from the Round that occurred.
         RoundTimer: int // Max allowable seconds for this Round on GameClock
         AllowableRoundMistakes: int // max # of mistakes allowed before the round is considered 'lost' and will end
@@ -272,7 +273,8 @@ module SharedTileTap =
         TileTapGridBoard = generateEmptyTileTapGrid gridDimension
         LastSpawnInterval = 2
         GameMode = Survival
-        GameState = 0.0
+        RoundState = Paused
+        DispatchPointer = 0.0
         GameClock = 0 // +1 increment per 250 ms
         RoundTimer = 30
         AllowableRoundMistakes = 5
@@ -285,7 +287,8 @@ module SharedTileTap =
     let endRound model =
         { model with
             TileTapGridBoard = generateEmptyTileTapGrid gridDimension
-            GameState = 0.0
+            RoundState = Won
+            DispatchPointer = 0.0
         }
     let resetRound model = 
         { model with
@@ -293,7 +296,8 @@ module SharedTileTap =
             LastSpawnInterval = 2
             RoundMistakes = 0
             GameClock = 0
-            GameState = 0.0
+            RoundState = Paused
+            DispatchPointer = 0.0
             TilesSpawned = 0
             TilesSmashed = 0
             RoundScore = 0

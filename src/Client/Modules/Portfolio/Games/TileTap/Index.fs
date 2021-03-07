@@ -15,7 +15,7 @@ type Msg =
     // GAME LOOP
     | ChangeGameMode of SharedTileTap.TileTapGameMode
     | ChangeDifficulty of SharedTileTap.TileTapDifficulty
-    | SetGameState of float // stores float pointer to dispatch setInterval loop
+    | SetDispatchPointer of float // stores float pointer to dispatch setInterval loop
     | GameLoopTick // batches commands to check the lifetime and spawn new tiles
     // GRID TILES
     | CheckGridboardTiles // command to go through and check for expired tiles
@@ -167,8 +167,9 @@ let update msg ( model : SharedTileTap.Model ) =
             then SharedTileTap.updateSurvivalModeDifficulty model difficulty, Cmd.ofMsg ResetRound
             else SharedTileTap.updateTimeAttackModeDifficulty model difficulty, Cmd.ofMsg ResetRound
     // Game starts
-    | SetGameState flt ->
-        { model with GameState = flt }, Cmd.none
+    | SetDispatchPointer flt ->
+        if flt <> 0.0 then Playing else Paused
+        |> fun roundState -> { model with RoundState = roundState; DispatchPointer = flt }, Cmd.none
     // 'Tick' Interval in which the module operates.
     // this is dispatched through the browser windows setInterval function
     // Checks against Round 'Allowances' to see if the round should be stopped.
@@ -244,21 +245,21 @@ let update msg ( model : SharedTileTap.Model ) =
         // needs to be based on selected mode: Survival || Time Attack
         // negative value mistakes are helpful actually as they reduce total mistakes made or increase the clock
         // some might say, a "happy little mistake" :^)
-        if (model.GameState <> 0.0)
+        if (model.DispatchPointer <> 0.0)
             then gameModeRoundMistake model mistakeValue
             else model, Cmd.none
     // Round has finished, cleanup the intervalTimer
     | EndRound -> 
-        if (model.GameState <> 0.0) then stopGameLoop(model.GameState)
+        if (model.DispatchPointer <> 0.0) then stopGameLoop(model.DispatchPointer)
         SharedTileTap.endRound model, Cmd.none
     // Resets the values for a round aside 
     // from it's difficulty parameters
     | ResetRound ->
-        if (model.GameState <> 0.0) then stopGameLoop(model.GameState)
+        if (model.DispatchPointer <> 0.0) then stopGameLoop(model.DispatchPointer)
         SharedTileTap.resetRound model, Cmd.none
     // Stops the setInterval dispatch loop when the game is exited
     | ExitGameLoop -> 
-        if (model.GameState <> 0.0) then stopGameLoop(model.GameState)
+        if (model.DispatchPointer <> 0.0) then stopGameLoop(model.DispatchPointer)
         model, Cmd.ofMsg QuitGame
     // Msg that will be intercepted by CodeGallery
     // where User will be returned to
@@ -310,6 +311,14 @@ let tileTapLeftModal =
 
 // ********************************
 
+
+// ** IMPORTANT --
+// NEED TO MAKE SURE IF CARD VIEW IS USED (CAN CLICK ON HEADER)
+    // Ignore Message, as if App gets a ChangeSection message, 
+    // it wouldn't stop the game dispatch loop interval
+
+    // Ensure that message will always find it's way down to clear the interval
+
 // CONTENT --------
 let styleForTile tile =
     match tile.Value with
@@ -343,12 +352,36 @@ let tileTapRowCreator ( rowPositions: LaneObject list ) dispatch =
 let tileTapBoardView gridPositions dispatch =
     let board = GridGame.getPositionsAsRows gridPositions 8
     Container.container [] [ for row in board do tileTapRowCreator row dispatch ]
+  
+let roundOverString ( model : SharedTileTap.Model ) =
+    Container.container [ Container.Props [ Style [ FontSize 30; Color "#FFFFFF" ] ] ] [ // 69A69A
+        h1 [ Style [ Padding 10; Color "#69A69A" ] ] [ str ( "The round lasted " + ( gameTickClock ( model.GameClock ) ) + " second(s)," ) ]
+        h1 [ Style [ Padding 10; Color "#69A69A" ] ] [ str ( "You smashed " + string ( model.TilesSmashed ) + " tiles and made " + string ( model.RoundMistakes ) + " mistakes," ) ]
+        h1 [ Style [ Padding 10; Color "#69A69A" ] ] [ str ( " This results in a final score of:" ) ]
+        h1 [ Style [ Padding 20; Color "#00ff00"; FontSize 50 ] ] [ str ( string ( model.RoundScore ) ) ]
+    ]
 
 let tileTapModalContent  ( model : SharedTileTap.Model ) dispatch =
-    tileTapBoardView model.TileTapGridBoard dispatch
-    // match with GameState...
+    match model.RoundState with
+    | Won -> // WIP
+        div [ ClassName "levelCompletedCard" ] [ 
+            Container.container [ Container.Props [ Style [ Padding 20 ] ] ] [
+                str "ROUND OVER!"
+            ]
+            Container.container [ Container.Props [ Style [ FontSize 20; Padding 20] ] ] [
+                h2 [ Style [ FontSize 50; Color "#FF2843" ] ] [ str "Round Stats: "] 
+                div [ Style [ Padding 5; Color "#69A69A" ] ] [ str ( modelValueAsString "Round Score: " model.RoundScore ) ]
+                div [ Style [ Padding 5; Color "#69A69A" ] ] [ str ( "Round Timer: " + ( gameTickClock model.GameClock ) + modelValueAsString " / " model.RoundTimer) ]
+                div [ Style [ Padding 5; Color "#69A69A" ] ] [ str ( modelValueAsString "Round Mistakes: " model.RoundMistakes + modelValueAsString " / " model.AllowableRoundMistakes) ]
+            ]
+            Container.container [ Container.Props [ Style [ FontSize 20; Padding 20 ] ] ] [
+                h2 [ Style [ FontSize 50; Color "#FF2843" ] ] [ str "Details: "]
+                roundOverString model
+            ]
+        ]
+    | _ -> 
+        tileTapBoardView model.TileTapGridBoard dispatch
     (*
-        The round lasted {a} seconds, allowing you to smash {b} tiles. You made {c} mistakes, resulting in a final score of {d}. Well done!
     *)
 // ----------------
 
@@ -371,18 +404,18 @@ let tileTapModalContent  ( model : SharedTileTap.Model ) dispatch =
 
 // Time drives main game state, as things happen in intervals contained within the main loop
 let startGameLoop ( model : SharedTileTap.Model ) dispatch =
-    if model.GameState = 0.0
+    if model.DispatchPointer = 0.0
         then
             window.setInterval((fun _ -> dispatch (GameLoopTick)), 250)
-            |> fun loopFloat -> dispatch (SetGameState loopFloat)
+            |> fun loopFloat -> dispatch (SetDispatchPointer loopFloat)
         else
-            window.clearInterval(model.GameState)
-            dispatch ( SetGameState 0.0 )
+            window.clearInterval(model.DispatchPointer)
+            dispatch ( SetDispatchPointer 0.0 )
 
 // custom non-shared right modal, needs to handle functions outside update loop to dispatch messages
 let tileTapGameLoopToggle ( model : SharedTileTap.Model ) dispatch =
     let roundStateToggleString = 
-        if ( model.GameState <> 0.0 ) then "Pause" else "Start"
+        if ( model.DispatchPointer <> 0.0 ) then "Pause" else "Start"
     Container.container [] [
         div [ ClassName "mainContainer" ] [ a [ OnClick ( fun _ -> startGameLoop model dispatch |> ignore ); ] [ str ( roundStateToggleString + " Round" ) ] ] 
         div [ ClassName "mainContainer" ] [ a [ OnClick ( fun _ -> ResetRound |> dispatch ); ] [ str "Restart Round" ] ]
@@ -410,17 +443,12 @@ let tileTapModalRight model dispatch =
             Column.column [] [ 
                 Tile.child [] [ 
                     div [ ClassName "modalLeft" ] [
-                        Container.container [] [
-                            tileTapGameLoopToggle model dispatch
-                        ]
+                        Container.container [] [ tileTapGameLoopToggle model dispatch ]
                         Container.container [] [
                             h2 [] [ str "Round Stats: "] 
                             div [] [ str ( modelValueAsString "Round Score: " model.RoundScore ) ]
                             div [] [ str ( "Round Timer: " + ( gameTickClock model.GameClock ) + modelValueAsString " / " model.RoundTimer) ]
                             div [] [ str ( modelValueAsString "Round Mistakes: " model.RoundMistakes + modelValueAsString " / " model.AllowableRoundMistakes) ]
-                            h2 [] [ str "Details: "] 
-                            div [] [ str ( modelValueAsString "Total Tiles Spawned: " model.TilesSpawned ) ]
-                            div [] [ str ( modelValueAsString "Total Tiles Smashed: " model.TilesSmashed ) ]
                         ]
                     ]
                 ]
