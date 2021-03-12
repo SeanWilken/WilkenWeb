@@ -42,6 +42,8 @@ module GridGame =
     }
     // Represents a given game state
     type RoundState =
+        | Instruction
+        | Controls
         | Paused // change to idle (no game active)
         | Playing // there is an active round
         | Won // Round ended, model contains round details
@@ -185,9 +187,9 @@ module SharedGoalRoll =
 
     // initial model, no message or command
     let initModel =
-        let round = loadRound 1;
+        let round = loadRound 3;
         let initialModel = {
-            LevelIndex = 1;
+            LevelIndex = 3;
             InitialGrid = round;
             CurrentGrid = round;
             BallPositionIndex = getBallPositionIndex round;
@@ -249,7 +251,7 @@ module SharedTileTap =
         TileTapGridBoard: GridBoard // grid board that will contain the various tiles
         LastSpawnInterval: int // Cooldown of new Tile being placed into the GameGrid
         GameMode: TileTapGameMode
-        RoundState: GridGame.RoundState
+        GameState: GridGame.RoundState
         DispatchPointer: float // the float pointer to the GameLoop's dispatch
         GameClock: int // Total ticks from the Round that occurred.
         RoundTimer: int // Max allowable seconds for this Round on GameClock
@@ -273,7 +275,7 @@ module SharedTileTap =
         TileTapGridBoard = generateEmptyTileTapGrid gridDimension
         LastSpawnInterval = 2
         GameMode = Survival
-        RoundState = Paused
+        GameState = Paused
         DispatchPointer = 0.0
         GameClock = 0 // +1 increment per 250 ms
         RoundTimer = 30
@@ -287,7 +289,7 @@ module SharedTileTap =
     let endRound model =
         { model with
             TileTapGridBoard = generateEmptyTileTapGrid gridDimension
-            RoundState = Won
+            GameState = Won
             DispatchPointer = 0.0
         }
     let resetRound model = 
@@ -296,7 +298,7 @@ module SharedTileTap =
             LastSpawnInterval = 2
             RoundMistakes = 0
             GameClock = 0
-            RoundState = Paused
+            GameState = Paused
             DispatchPointer = 0.0
             TilesSpawned = 0
             TilesSmashed = 0
@@ -510,8 +512,8 @@ module SharedTileSort =
     // list should be empty, as the missing value should not exist
     let calculatedBlankValueNotFoundInTiles currentTiles =
         let missingValue = caclulatedValueOfBlankTile currentTiles
-        let test: GameTile list = List.filter(fun x -> x.Value = missingValue) currentTiles
-        List.isEmpty test
+        let filteredValues: GameTile list = List.filter(fun x -> x.Value = missingValue) currentTiles
+        List.isEmpty filteredValues
     // simplify calls of calculating and checking Blanks calculated value
     let checkBlankTileIsAtCorrectPosition currentTiles =
         calculatedBlankValueNotFoundInTiles currentTiles

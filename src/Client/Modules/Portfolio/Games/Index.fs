@@ -8,13 +8,18 @@ open Fulma
 
 open Shared
 
+type GallerySection =
+    | Gallery
+    | GoalRoll
+    | TileSort
+    | TileTap
+
 type Msg =
     | BackToPortfolio
-    | LoadSection of SharedCodeGallery.Model
+    | LoadSection of GallerySection
     | GoalRollMsg of GoalRoll.Msg
     | TileTapMsg of TileTap.Msg
     | TileSortMsg of TileSort.Msg
-
 
 let init(): SharedCodeGallery.Model * Cmd<Msg> =
     SharedCodeGallery.CodeGallery, Cmd.none
@@ -22,38 +27,38 @@ let init(): SharedCodeGallery.Model * Cmd<Msg> =
 let update ( msg: Msg ) ( model: SharedCodeGallery.Model ): SharedCodeGallery.Model * Cmd<Msg> =
     match msg, model with
     // GALLERY
-    | LoadSection SharedCodeGallery.CodeGallery, _ ->
+    | LoadSection Gallery, _ ->
         SharedCodeGallery.CodeGallery, Cmd.none
     // GOAL ROLL
-    // why am I passing the model as a message?
-    | LoadSection ( SharedCodeGallery.GoalRoll msg ), _ ->
+    | LoadSection GoalRoll, _ ->
         let goalRollModel, com = GoalRoll.init()
-        SharedCodeGallery.GoalRoll  ( goalRollModel ), Cmd.none
-    | GoalRollMsg GoalRoll.Msg.QuitGame, SharedCodeGallery.GoalRoll model ->
+        SharedCodeGallery.GoalRoll  ( goalRollModel ), Cmd.map GoalRollMsg com
+    | GoalRollMsg GoalRoll.Msg.QuitGame, _-> // any model ?? was Goal Roll
         SharedCodeGallery.CodeGallery, Cmd.none
     | GoalRollMsg msg, SharedCodeGallery.GoalRoll model ->
         let goalRollModel, com = GoalRoll.update msg model
         SharedCodeGallery.GoalRoll goalRollModel, Cmd.map GoalRollMsg com
-    // TILE SMASH
-    | LoadSection ( SharedCodeGallery.TileTap msg ), _ ->
+    // TILE TAP
+    | LoadSection TileTap, _ ->
         let tileSmashModel, com = TileTap.init()
-        SharedCodeGallery.TileTap tileSmashModel, Cmd.none
+        SharedCodeGallery.TileTap tileSmashModel, Cmd.map TileTapMsg com
     | TileTapMsg TileTap.Msg.QuitGame, SharedCodeGallery.TileTap model ->
-        TileTap.update (TileTap.Msg.ExitGameLoop) model |> ignore // kill dispatch interval
+        // kill dispatch interval
+        TileTap.update (TileTap.Msg.ExitGameLoop) model |> ignore 
         SharedCodeGallery.CodeGallery, Cmd.none
     | TileTapMsg msg, SharedCodeGallery.TileTap model ->
         let tileSmashModel, com = TileTap.update msg model
         SharedCodeGallery.TileTap tileSmashModel, Cmd.map TileTapMsg com
     // TILE SORT
-    | LoadSection ( SharedCodeGallery.TileSort msg ), _ ->
+    | LoadSection TileSort, _ ->
         let tileSortModel, com = TileSort.init()
-        SharedCodeGallery.TileSort tileSortModel, Cmd.none
-    | TileSortMsg TileSort.Msg.QuitGame, SharedCodeGallery.TileSort model ->
+        SharedCodeGallery.TileSort tileSortModel, Cmd.map TileSortMsg com
+    | TileSortMsg TileSort.Msg.QuitGame, _ -> // any model ?? was Tile Sort -- issue?
         SharedCodeGallery.CodeGallery, Cmd.none
     | TileSortMsg msg, SharedCodeGallery.TileSort model ->
         let tileSortModel, com = TileSort.update msg model
         SharedCodeGallery.TileSort tileSortModel, Cmd.map TileSortMsg com
-    // DEFAULT HACK
+    // DEFAULT
     | _, _ -> 
         model, Cmd.none
 
@@ -71,7 +76,7 @@ let makeCodeGalleryEntryItem title description dispatch =
     Container.container [ Container.Props [ ClassName "paddedContainer" ] ] [
         Columns.columns [ Columns.IsCentered ] [
             Column.column [ Column.Width ( Screen.All, Column.Is8 ) ] [
-                a [ OnClick ( fun _ -> LoadSection ( SharedCodeGallery.TileSort SharedTileSort.initModel ) |> dispatch ) ] [ // NEEDS TO GENERATE ITEM LIKE HEADER CONTROLS // NEEDS SAME CALL TO ITEM?
+                a [ OnClick ( fun _ -> LoadSection TileSort |> dispatch ) ] [ 
                     div [ ClassName "selectionTile"] [
                         h1 [] [ str title ]
                         p [] [ str description ] 
@@ -89,7 +94,7 @@ let CodeGalleryTileSort dispatch =
     Container.container [ Container.Props [ ClassName "paddedContainer" ] ] [
         Columns.columns [ Columns.IsCentered ] [
             Column.column [ Column.Width ( Screen.All, Column.Is8 ) ] [
-                a [ OnClick ( fun _ -> LoadSection ( SharedCodeGallery.TileSort SharedTileSort.initModel ) |> dispatch ) ] [
+                a [ OnClick ( fun _ -> LoadSection TileSort |> dispatch ) ] [
                     div [ ClassName "selectionTile" ] [
                         h1 [] [ str "Tile Sort" ]
                         p [] [ str "Arrange the tiles in the correct order, with the missing number being the empty." ] 
@@ -103,7 +108,7 @@ let CodeGalleryGoalRoll dispatch =
     Container.container [ Container.Props [ ClassName "paddedContainer" ] ] [
         Columns.columns [ Columns.IsCentered ] [
             Column.column [ Column.Width ( Screen.All, Column.Is7 ) ] [
-                a [ OnClick ( fun _ -> LoadSection ( SharedCodeGallery.GoalRoll SharedGoalRoll.initModel ) |> dispatch ) ] [
+                a [ OnClick ( fun _ -> LoadSection GoalRoll |> dispatch ) ] [
                     div [ ClassName "selectionTile" ] [ 
                         h1 [] [ str "Goal Roll" ] 
                         p [] [ str "Roll the ball in straight line movements to the goal." ] 
@@ -120,7 +125,7 @@ let CodeGalleryTileTap dispatch =
     Container.container [ Container.Props [ ClassName "paddedContainer"] ] [
         Columns.columns [ Columns.IsCentered ] [
             Column.column [ Column.Width ( Screen.All, Column.Is8 ) ] [
-                a [ OnClick ( fun _ -> LoadSection ( SharedCodeGallery.TileTap SharedTileTap.initModel ) |> dispatch ) ] [
+                a [ OnClick ( fun _ -> LoadSection TileTap |> dispatch ) ] [
                     div [ ClassName "selectionTile" ] [
                         h1 [] [ str "Tile Tap" ]
                         p [] [ str "Tap to smash as many tiles as you can while avoiding bombs." ] 
@@ -143,13 +148,8 @@ let view model dispatch =
             ]
         | SharedCodeGallery.GoalRoll model ->
             GoalRoll.view model ( GoalRollMsg >> dispatch )
-            // GoalRoll.goalRollCardView model ( GoalRollMsg >> dispatch )
         | SharedCodeGallery.TileSort model ->
-            match model.ContentView with
-            | SharedTileSort.ViewStyle.Card ->
-                TileSort.tileSortCardView model (TileSortMsg >> dispatch )
-            | SharedTileSort.ViewStyle.Modal ->
-                TileSort.view model ( TileSortMsg >> dispatch )
+            TileSort.view model ( TileSortMsg >> dispatch )
         | SharedCodeGallery.TileTap model ->
             TileTap.view ( model ) ( TileTapMsg >> dispatch )
     ]

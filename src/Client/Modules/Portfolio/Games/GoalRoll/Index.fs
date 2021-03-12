@@ -17,6 +17,7 @@ open System.Collections.Generic
     // shared view
 
 type Msg =
+    | SetGameState of RoundState
     | ResetRound
     | LoadRound of int
     | RollBall of GridGame.MovementDirection
@@ -121,6 +122,8 @@ let init (): SharedGoalRoll.Model * Cmd<Msg> =
 
 let update ( msg: Msg ) ( model: SharedGoalRoll.Model ): SharedGoalRoll.Model * Cmd<Msg> =
     match msg, model with
+    | SetGameState gameState, model ->
+        { model with GameState = gameState; }, Cmd.none
     | RollBall direction, model ->
         match direction with
         | Up ->
@@ -178,7 +181,6 @@ let sourceCodeLinks = [
 ]
 // content selection controls
 let gameControls = [
-    // "Quit Game", QuitGame
     "Reset Round", ResetRound
     "Level 0", LoadRound 0
     "Level 1", LoadRound 1
@@ -186,47 +188,47 @@ let gameControls = [
     "Level 3", LoadRound 3
 ]
 
-//header
-let goalRollHeader dispatch =
-    SharedViewModule.sharedModalHeaderControls "Goal Roll" QuitGame dispatch
+let controlList = [ 
+    "Play", (SetGameState (Playing))
+    "Controls", (SetGameState (Controls)) 
+    "Rules", (SetGameState (Instruction))
+]
 
-// left content
-let goalRollLeftModal =
-    SharedViewModule.sharedModalLeft goalRollDescriptions sourceCodeLinks
 
 // main content
 // // Assign positions to view elements
 let goalRollRowCreator ( rowPositions: LaneObject list ) dispatch =
-    Level.level [] [
-        Tile.parent [] [
-            for positionObject in rowPositions do
-                match positionObject with
+    Level.level [ Level.Level.IsMobile ] [
+        for positionObject in rowPositions do
+            Tile.child [] [ 
+                match positionObject with // RESTYLE THESE
                 | Blocker -> 
-                    Tile.child [] [ Box.box' [ Props [ ClassName "blockerLaneObject" ] ] [ Image.image [] [ img [ Src "./imgs/icons/Blocker.png" ] ] ] ]
+                    Box.box' [ Props [ ClassName "blockerLaneObject" ] ] [ Image.image [] [ img [ Src "./imgs/icons/Blocker.png" ] ] ]
                 | Ball ->
-                    Tile.child [] [ Box.box' [ Props [ ClassName "ballLaneObject" ] ] [ Image.image [] [ img [ Src "./imgs/icons/Ball.png" ] ] ] ]
+                    Box.box' [ Props [ ClassName "ballLaneObject" ] ] [ Image.image [] [ img [ Src "./imgs/icons/Ball.png" ] ] ]
                 | Goal ->
-                    Tile.child [] [ Box.box' [ Props [ ClassName "genericLaneObject" ] ] [ Image.image [] [ img [ Src "./imgs/icons/Flag.png" ] ] ] ]
+                    Box.box' [ Props [ ClassName "genericLaneObject" ] ] [ Image.image [] [ img [ Src "./imgs/icons/Flag.png" ] ] ]
                 | Heart ->
-                    Tile.child [] [ Box.box' [ Props [ ClassName "genericLaneObject" ] ] [ Image.image [] [ img [ Src "./imgs/icons/Heart.png"] ] ] ]
+                    Box.box' [ Props [ ClassName "genericLaneObject" ] ] [ Image.image [] [ img [ Src "./imgs/icons/Heart.png"] ] ]
                 | LaneLock ->
-                    Tile.child [] [ Box.box' [ Props [ ClassName "genericLaneObject" ] ] [ Image.image [] [ img [ Src "./imgs/icons/Lock.png"] ] ] ]
+                    Box.box' [ Props [ ClassName "genericLaneObject" ] ] [ Image.image [] [ img [ Src "./imgs/icons/Lock.png"] ] ]
                 | LaneKey ->
-                    Tile.child [] [ Box.box' [ Props [ ClassName "genericLaneObject" ] ] [ Image.image [] [ img [ Src "./imgs/icons/Key.png"] ] ] ]
+                    Box.box' [ Props [ ClassName "genericLaneObject" ] ] [ Image.image [] [ img [ Src "./imgs/icons/Key.png"] ] ]
                 | Bomb ->
-                    Tile.child [] [ Box.box' [ Props [ ClassName "genericLaneObject" ] ] [ Image.image [] [ img [ Src "./imgs/icons/Bomb.png"] ] ] ]
+                    Box.box' [ Props [ ClassName "genericLaneObject" ] ] [ Image.image [] [ img [ Src "./imgs/icons/Bomb.png"] ] ]
                 | MoveArrow Up -> 
-                    Tile.child [] [ Box.box' [ Props [ ClassName "movementArrowLaneObject"; OnClick( fun _ -> RollBall Up |> dispatch ) ] ] [ Image.image [] [ img [ Src "./imgs/icons/UpArrow.png"] ] ] ]
+                    Box.box' [ Props [ ClassName "movementArrowLaneObject"; OnClick( fun _ -> RollBall Up |> dispatch ) ] ] [ Image.image [] [ img [ Src "./imgs/icons/UpArrow.png"] ] ]
                 | MoveArrow Down -> 
-                    Tile.child [] [ Box.box' [ Props [ ClassName "movementArrowLaneObject"; OnClick( fun _ -> RollBall Down |> dispatch ) ] ] [ Image.image [] [ img [ Src "./imgs/icons/DownArrow.png"] ] ] ]
+                    Box.box' [ Props [ ClassName "movementArrowLaneObject"; OnClick( fun _ -> RollBall Down |> dispatch ) ] ] [ Image.image [] [ img [ Src "./imgs/icons/DownArrow.png"] ] ]
                 | MoveArrow Left -> 
-                    Tile.child [] [ Box.box' [ Props [ ClassName "movementArrowLaneObject"; OnClick( fun _ -> RollBall Left |> dispatch ) ] ] [ Image.image [] [ img [ Src "./imgs/icons/LeftArrow.png"] ] ] ]
+                    Box.box' [ Props [ ClassName "movementArrowLaneObject"; OnClick( fun _ -> RollBall Left |> dispatch ) ] ] [ Image.image [] [ img [ Src "./imgs/icons/LeftArrow.png"] ] ]
                 | MoveArrow Right -> 
-                    Tile.child [] [ Box.box' [ Props [ ClassName "movementArrowLaneObject"; OnClick( fun _ -> RollBall Right |> dispatch ) ] ] [ Image.image [] [ img [ Src "./imgs/icons/RightArrow.png"] ] ] ]
+                    Box.box' [ Props [ ClassName "movementArrowLaneObject"; OnClick( fun _ -> RollBall Right |> dispatch ) ] ] [ Image.image [] [ img [ Src "./imgs/icons/RightArrow.png"] ] ]
                 | _ -> 
-                    Tile.child [] [ Box.box' [ Props [ ClassName "genericLaneObject" ] ] [] ]
+                    Box.box' [ Props [ ClassName "genericLaneObject" ] ] [ Image.image [] [ img [ Src ""] ] ]
             ]
     ]
+    
 // // Given a Goal Roll Level, create the Game Board via rows
 let goalRollLevelCreator ( goalRollModel : SharedGoalRoll.Model) dispatch =
     let positions = goalRollModel.CurrentGrid
@@ -248,29 +250,44 @@ let goalRollLevelCreator ( goalRollModel : SharedGoalRoll.Model) dispatch =
     // positions as rows
     let gridRows = getPositionsAsRows gameGrid 8
     Container.container [] [ for row in gridRows do goalRollRowCreator row dispatch ]
+
 // modal content container
 let goalRollModalContent ( model : SharedGoalRoll.Model ) dispatch =
     SharedViewModule.modalContent (
         match model.GameState with 
+        | Controls -> SharedViewModule.codeModalControlsContent gameControls dispatch //goalRollModalRight dispatch
+        | Instruction -> SharedViewModule.codeModalInstructionContent goalRollDescriptions//goalRollLeftModal
+        | Won -> div [ ClassName "levelCompletedCard" ] [ str "Level Completed!!!" ]
         | Paused
         | Playing -> goalRollLevelCreator model dispatch
-        | Won -> div [ ClassName "levelCompletedCard" ] [ str "Level Completed!!!" ]
     )
-// right content controls
-let goalRollModalRight dispatch =
-    ( SharedViewModule.sharedModalRight gameControls dispatch )
-// main view
-let view ( model : SharedGoalRoll.Model ) dispatch =
-    SharedViewModule.sharedModal ( goalRollHeader dispatch ) ( goalRollLeftModal ) ( goalRollModalContent model dispatch ) ( goalRollModalRight dispatch )
-                           
+
 // --------------------------------
 
 // card style
-let goalRollHeaderCard =
-    SharedViewModule.contentHeaderCard "Goal Roll" sourceCodeLinks goalRollDescriptions
+// let goalRollHeaderCard =
+//     SharedViewModule.contentHeaderCard 
+//         "Goal Roll" 
+//         sourceCodeLinks 
+//         goalRollDescriptions
 
-let goalRollContentHeaderControls dispatch =
-    SharedViewModule.contentHeaderControls gameControls dispatch
+// let goalRollContentHeaderControls dispatch =
+//     SharedViewModule.contentHeaderControls gameControls dispatch
 
-let goalRollCardView model dispatch =
-    SharedViewModule.sharedContentCardView ( goalRollHeaderCard ) ( goalRollContentHeaderControls dispatch ) ( goalRollModalContent model dispatch ) ( dispatch )
+// let goalRollCardView model dispatch =
+//     SharedViewModule.sharedContentCardView 
+//         goalRollHeaderCard
+//         ( goalRollContentHeaderControls dispatch )
+//         ( goalRollModalContent model dispatch ) 
+//         dispatch
+
+// 2.0
+
+
+// main view
+let view ( model : SharedGoalRoll.Model ) dispatch =
+    // SharedViewModule.sharedModal ( goalRollHeader dispatch ) ( goalRollLeftModal ) ( goalRollModalContent model dispatch ) ( goalRollModalRight dispatch )
+    SharedViewModule.sharedViewModal 
+        ( SharedViewModule.codeModalHeader "Goal Roll" QuitGame dispatch )
+        ( goalRollModalContent model dispatch ) 
+        ( SharedViewModule.codeModalFooter controlList dispatch )

@@ -119,36 +119,84 @@ let getGalleryCardByIndex ( index: int ) =
     let piece, description = galleryPieces.Item ( index )
     piece, description
 
-let galleryEntryCard piece description =
+let galleryEntryHeaderControls dispatch =
     div [] [
-        Container.container [ Container.Props [ ClassName "galleryImage" ] ] [
-            Image.image [] [ img [ Src ( "./imgs/" + piece + ".png" ) ] ]
+        a [ ClassName "closeModal"; OnClick ( fun _ -> BackToPortfolio |> dispatch ) ] [ Image.image [ Image.Is64x64 ] [ img [ Src "./imgs/icons/X-it.png" ] ] ]
+        span [ ClassName "likeOnInsta" ] [ a [ Href "https://www.instagram.com/xeroeffort/" ] [ Image.image [ Image.Is64x64 ] [ img [ Src "./imgs/icons/IG.png" ] ]; ] ] //p [] [ str "Instagram" ] 
+    ]
+
+let galleryEntryContent piece =
+    div [] [
+        div [ ClassName "galleryTitleCard" ] [ h1 [] [ str piece ] ]
+        div [ ClassName "galleryImage" ] [ Image.image [] [ img [ Src ( "./imgs/" + piece + ".png" ) ] ] ]
+    ]
+
+
+
+// not aligned properly
+let galleryEntryFooterControls description dispatch =
+    Columns.columns [ Columns.IsMobile; Columns.Props [ Style [ Bottom "0px"; Position PositionOptions.Fixed; ] ] ] [
+        Column.column [Column.Props [ Style [ Margin "auto"; ] ] ] [
+            Column.column [] [ a [ OnClick ( fun _ -> (SetCurrentPieceIndex (-1) |> dispatch ) ) ] [ Image.image [Image.Is64x64] [ img [Src "./imgs/icons/LeftNavButton.png"] ] ] ]
         ]
-        Level.level [] [
-            Tile.child [ Tile.IsVertical ] [
-                Container.container [ Container.Props [ ClassName "galleryTitleCard" ] ] [ h1 [] [ str piece ] ]
-                Container.container [ Container.Props [ ClassName "galleryDescriptionCard" ] ] [ p [] [ str description ] ]
-            ]
+        Column.column [Column.Props [ Style [ Margin "auto"; ] ] ] [
+            Column.column [ Column.Props [ ClassName "galleryDescriptionCard" ] ] [ p [] [ str description ] ]
+        ]
+        Column.column [Column.Props [ Style [ Margin "auto"; ] ] ] [
+            Column.column [] [ a [ OnClick ( fun _ -> (SetCurrentPieceIndex (1) |> dispatch ) ) ] [ Image.image [Image.Is64x64] [ img [Src "./imgs/icons/RightNavButton.png"] ] ] ]
         ]
     ]
 
+// Container.container [] [ galleryModal model dispatch ]
+// NOT USED CURRENTLY
+// I LIKE THE BIG BUTTON STYLES FOR DESKTOP!!!!!!
 let galleryModal ( model: SharedDesignGallery.Model ) dispatch =
     Modal.modal [ Modal.IsActive true ] [ 
         Modal.background [] []
-        Modal.content [ Props [ClassName "modalContent"] ] [
+        div [ ClassName "modalContent" ] [
+        // Modal.content [ Props [ClassName "modalContent"] ] [
             Level.level [] [
-                SharedViewModule.bigNavButton (SetCurrentPieceIndex (-1)) "PREV" dispatch
+                // SharedViewModule.bigNavButton (SetCurrentPieceIndex (-1)) "PREV" dispatch
                 Level.item [] [
                     let piece, description = getGalleryCardByIndex model.CurrentPieceIndex
-                    galleryEntryCard piece description
+                    galleryEntryContent piece 
+                    galleryEntryFooterControls description dispatch
                 ]
-                SharedViewModule.bigNavButton (SetCurrentPieceIndex (1)) "NEXT" dispatch
+                // SharedViewModule.bigNavButton (SetCurrentPieceIndex (1)) "NEXT" dispatch
             ]
-            a [ ClassName "likeOnInsta" ] [ a [ Href "https://www.instagram.com/xeroeffort/" ] [ Image.image [ Image.Is64x64 ] [ img [ Src "./imgs/icons/IG.png" ] ]; p [] [ str "Instagram" ] ] ]
-            a [ ClassName "closeModal"; OnClick ( fun _ -> BackToPortfolio |> dispatch ) ] [ Image.image [ Image.Is64x64 ] [ img [ Src "./imgs/icons/X-it.png" ] ] ]
+            span [ ClassName "likeOnInsta" ] [ a [ Href "https://www.instagram.com/xeroeffort/" ] [ Image.image [ Image.Is64x64 ] [ img [ Src "./imgs/icons/IG.png" ] ];  ] ] //p [] [ str "Instagram" ]
+            span [ ClassName "closeModal"; OnClick ( fun _ -> BackToPortfolio |> dispatch ) ] [ Image.image [ Image.Is64x64 ] [ img [ Src "./imgs/icons/X-it.png" ] ] ]
         ]
     ]
 
+
+(*
+
+FOOTER LARGE DISPATCH BUTTONS!!
+
+Columns.columns [Columns.IsMobile] [
+    // Column.column [] [ SharedViewModule.bigNavButton (SetCurrentPieceIndex (-1)) "PREV" dispatch ]
+    // Column.column [] [ SharedViewModule.bigNavButton (SetCurrentPieceIndex (1)) "NEXT" dispatch ]
+    Column.column [] [ a [ OnClick ( fun _ -> (SetCurrentPieceIndex (-1) |> dispatch ) ) ] [ Image.image [Image.Is64x64] [ img [Src "./imgs/icons/LeftNavButton.png"] ] ] ]
+    Column.column [] [ a [ OnClick ( fun _ -> (SetCurrentPieceIndex (1) |> dispatch ) ) ] [ Image.image [Image.Is64x64] [ img [Src "./imgs/icons/RightNavButton.png"] ] ] ]
+]
+*)
+
+// spans were anchors, refactor
+
 // wrap in div to match other submodules, will have side effects as containers aren't styleless.
 let view ( model: SharedDesignGallery.Model ) dispatch =
-    Container.container [] [ galleryModal model dispatch ]
+    Modal.modal [Modal.IsActive true] [
+        Modal.background [] []
+        Modal.content [] [
+        // div [ ClassName "modalContent" ] [
+            let piece, description = getGalleryCardByIndex model.CurrentPieceIndex
+            galleryEntryHeaderControls dispatch
+            galleryEntryContent piece 
+            Level.level [] [
+                Level.item [] [
+                    galleryEntryFooterControls description dispatch
+                ]
+            ]
+        ]
+    ]

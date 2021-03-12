@@ -45,7 +45,7 @@ let PortfolioHeader =
                 Container.container [ Container.Props [ ClassName "portfolioContentCard" ] ] [
                     div [ ClassName "contentCardTextBackground" ] [
                         h1 [] [ str "Portfolio" ]
-                        p [] [ str "Select one of the below to delve deeper into the rabbit hole." ]
+                        p [] [ str "...where to begin..." ]
                     ]
                 ]
             ]
@@ -60,8 +60,8 @@ let PortfolioSplitView dispatch =
                     a [ OnClick ( fun _ -> LoadSection ( SharedPortfolioGallery.CodeGallery SharedCodeGallery.CodeGallery ) |> dispatch ) ] [
                         div [ ClassName "portfolioCodeCard" ] [
                             div [ ClassName "contentCardTextBackground" ] [
-                                h1 [] [ str "PLAY OR REVIEW CODE" ]
-                                h2 [] [ str "CODE GALLERY" ]
+                                h1 [] [ str "CODE" ]
+                                h2 [] [ str "CODE" ]
                             ]
                         ]
                     ]
@@ -72,8 +72,8 @@ let PortfolioSplitView dispatch =
                     a [ OnClick ( fun _ -> LoadSection ( SharedPortfolioGallery.DesignGallery SharedDesignGallery.getInitialModel ) |> dispatch ) ] [
                         div [ ClassName "portfolioDesignCard" ] [
                             div [ ClassName "contentCardTextBackground" ] [ 
-                                    h1 [] [ str "CHECK OUT SOME DRAWINGS" ]
-                                    h2 [] [ str "DESIGN GALLERY" ]
+                                    h1 [] [ str "DESIGN" ]
+                                    h2 [] [ str "DESIGN" ]
                             ]
                         ]       
                     ]       

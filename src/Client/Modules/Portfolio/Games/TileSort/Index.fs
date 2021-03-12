@@ -2,7 +2,6 @@ module TileSort
 
 open System
 open Elmish
-// open Shared
 open Shared.SharedTileSort
 
 // CURRENTLY BROKEN WHEN USING SHARED, AS I TRIED TO UPDATE TO USE GRIDGAME AND BROKE STUFF
@@ -14,6 +13,7 @@ open Shared.SharedTileSort
     // CLEAN COMMENTS
 
 type Msg =
+    | SetGameState of Shared.GridGame.RoundState
     | NewRound // Starts a New Round, initializing the board again with the selected difficulty
     | ResetRound // Resets the round to the same initial configuration
     | RewindMove // Undo the last tile move made by the user
@@ -40,6 +40,9 @@ let init (): Shared.SharedTileSort.Model * Cmd<Msg> =
 //---------------------
 let update ( msg: Msg ) ( model: Shared.SharedTileSort.Model ): Shared.SharedTileSort.Model * Cmd<Msg> =
     match msg with
+    | SetGameState gameState ->
+        // TEMP, REVIEW
+        { model with GameState = gameState }, Cmd.none
     | NewRound ->
         let newRound = createNewRound model
         newRound, Cmd.none
@@ -73,7 +76,7 @@ let update ( msg: Msg ) ( model: Shared.SharedTileSort.Model ): Shared.SharedTil
             model, Cmd.ofMsg Solved
         | false -> model, Cmd.none
     | Solved -> { model with GameState = Shared.GridGame.Won }, Cmd.none // Should do more
-    | QuitGame -> model, Cmd.ofMsg QuitGame 
+    | QuitGame -> model, Cmd.none//Cmd.ofMsg QuitGame 
 
 open Fable.React
 open Fable.React.Props
@@ -104,8 +107,6 @@ let sourceCodeLinks = [
     "Logic", "https://raw.githubusercontent.com/SeanWilken/WilkenWeb/master/src/Client/Modules/Portfolio/Games/TileSort/Index.fs"
 ]
 let gameControls = [
-    // QUIT GAME NEEDS TO BE ON CARD VIEW?
-    // "Quit Game", QuitGame
     "New Round", NewRound
     "Reset Round", ResetRound
     "Undo Move", RewindMove
@@ -116,48 +117,77 @@ let gameControls = [
     "Toggle View", ChangeView
 ]
 
-//header
-let tileSortHeader dispatch =
-    SharedViewModule.sharedModalHeaderControls "Tile Sort" QuitGame dispatch
-
-// left content
-let tileSortLeftModal =
-    SharedViewModule.sharedModalLeft tileSortDescriptions sourceCodeLinks
-
 // main content
 let tileSortRowCreator ( tileRow: GameTile list ) ( dispatch: Msg -> unit ) =
-    Tile.parent [] [
-        for tile in tileRow do
-            let displayValue = convertValueToProperString ( getValueOrZeroFromGameTile tile )
-            let tileClass = if ( displayValue <> "" ) then "valueTile" else "blankTile"
-            Column.column [] [ Tile.child [] [ Box.box' [ Props [ ClassName tileClass; OnClick( fun _ -> MoveTile tile |> dispatch ) ]  ] [ str displayValue ] ] ]
+    Level.level [Level.Level.IsMobile] [
+        for tile in tileRow do // RESTYLE THESE
+            Tile.child [] [ 
+                let displayValue = convertValueToProperString ( getValueOrZeroFromGameTile tile )
+                let tileClass = if ( displayValue <> "" ) then "valueTile" else "emptyTile"
+                Box.box' [ Props [ ClassName tileClass; OnClick( fun _ -> MoveTile tile |> dispatch ) ]  ] [ Image.image [] []; str displayValue ] 
+            ]
     ]
 let tileSortGameBoard model dispatch =
     let tileRows = Shared.SharedTileSort.getTilesAsRows model.CurrentTiles model.Difficulty
-    Container.container [ Container.CustomClass "tileSortCenter" ] [ for row in tileRows do tileSortRowCreator row dispatch ]
+    div [] [ for row in tileRows do tileSortRowCreator row dispatch ]
+    
 // modal content container
 let tileSortModalContent model dispatch =
-    match model.GameState with 
-    | Shared.GridGame.Won -> div [ ClassName "levelCompletedCard" ] [ str "Congrats, you win!!!" ]
-    | Shared.GridGame.Paused
-    | Shared.GridGame.Playing -> tileSortGameBoard model dispatch
+    SharedViewModule.modalContent ( 
+        match model.GameState with 
+        | Shared.GridGame.Controls -> SharedViewModule.codeModalControlsContent gameControls dispatch
+        | Shared.GridGame.Instruction -> SharedViewModule.codeModalInstructionContent tileSortDescriptions
+        | Shared.GridGame.Won -> div [ ClassName "levelCompletedCard" ] [ str "Congrats, you win!!!" ]
+        | Shared.GridGame.Playing
+        | Shared.GridGame.Paused -> tileSortGameBoard model dispatch 
+    )
+
 // right content controls
-let tileSortModalRight dispatch =
-    SharedViewModule.sharedModalRight gameControls dispatch
+// let tileSortModalRight dispatch =
+//     SharedViewModule.sharedModalRight gameControls dispatch
+
+
+// // card style
+// let tileSortHeaderCard =
+//     SharedViewModule.contentHeaderCard "Tile Sort" sourceCodeLinks tileSortDescriptions
+
+// let tileSortContentHeaderControls dispatch =
+//     SharedViewModule.contentHeaderControls gameControls dispatch
+
+// let tileSortCardView model dispatch =
+//     SharedViewModule.sharedContentCardView ( tileSortHeaderCard ) ( tileSortContentHeaderControls dispatch ) ( tileSortModalContent model dispatch ) ( dispatch )
+
+
+
+
+
+
+
+
+
+
+
+// 2.0
+
+open Shared.GridGame
+
+let controlList = [ "Play", (SetGameState (Playing));"Controls", (SetGameState (Controls)); "Rules", (SetGameState (Instruction)) ]
 
 // main view
 let view model dispatch =
-    SharedViewModule.sharedModal ( tileSortHeader dispatch ) ( tileSortLeftModal ) ( tileSortModalContent model dispatch ) ( tileSortModalRight dispatch )
+    // SharedViewModule.sharedModal ( tileSortHeader dispatch ) ( tileSortLeftModal ) ( tileSortModalContent model dispatch ) ( tileSortModalRight dispatch )
+    SharedViewModule.sharedViewModal 
+        ( SharedViewModule.codeModalHeader "Tile Sort" QuitGame dispatch )
+        ( tileSortModalContent model dispatch ) 
+        ( SharedViewModule.codeModalFooter controlList dispatch )
 
-// card style
-let tileSortHeaderCard =
-    SharedViewModule.contentHeaderCard "Tile Sort" sourceCodeLinks tileSortDescriptions
 
-let tileSortContentHeaderControls dispatch =
-    SharedViewModule.contentHeaderControls gameControls dispatch
 
-let tileSortCardView model dispatch =
-    SharedViewModule.sharedContentCardView ( tileSortHeaderCard ) ( tileSortContentHeaderControls dispatch ) ( tileSortModalContent model dispatch ) ( dispatch )
+
+
+
+
+// SHARED VERSION DOES NOT MATCH BELOW
 
 // OLD STYLE OF CONTENT CARDS
 // make generic also
@@ -243,7 +273,7 @@ let tileSortCardView model dispatch =
 //         match model.GameState with
 //         | Shared.GridGame.Won ->
 //             div [ ClassName "levelCompletedCard"; ] [ str "Congrats, you win!!!" ] //Style [ Padding 15; Border "1px solid #000000"; FontSize 100; TextAlign TextAlignOptions.Center; Color "#FF2843"; FontFamily "Philosopher"]
-//         | Shared.GridGame.Playing ->
+//         | _ ->
 //             Container.container [ Container.Props [ ClassName "gameGridContainer" ] ] [ gameGrid model dispatch ]
 //     ]
     

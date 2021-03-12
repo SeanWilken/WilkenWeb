@@ -26,7 +26,7 @@ type WebAppMsg =
     | PortfolioMsg of Portfolio.Msg
     | SwitchToOtherApp of string // please wrap me
     | LoadPage of Page
-    | ErrorMsg of exn // WIP
+    | ErrorMsg of exn // WIP?
 
 // PAGE ROUTER
 // if had to hit server
@@ -131,28 +131,32 @@ let headerBlurSelector model =
 
 // Web App Header Nav content
 let headerContent ( model: SharedWebAppModels.Model ) dispatch =
-    Container.container [ headerBlurSelector model ] [
-        Level.level [] [
-            Level.item [] [
-                a [ OnClick ( fun _ -> SwitchToOtherApp "Welcome" |> dispatch ) ] [
-                    Level.item [] [ 
-                        Image.image [ Image.Is64x64 ] [ img [ Src "./imgs/icons/Flat logo backless.png"; ] ]
-                        p [ ClassName "headerTitle" ] [ str "Sean Wilken" ]
+    Columns.columns [ Columns.IsVCentered ] [
+        Column.column [] [
+            Container.container [ headerBlurSelector model ] [
+                Level.level [] [
+                    Level.item [] [
+                        a [ OnClick ( fun _ -> SwitchToOtherApp "Welcome" |> dispatch ) ] [
+                            Level.item [] [ 
+                                Image.image [ Image.Is48x48 ] [ img [ Src "./imgs/icons/Flat logo backless.png"; ] ]
+                                p [ ClassName "headerTitle" ] [ str "Sean Wilken" ]
+                            ]
+                        ]
                     ]
-                ]
-            ]
-            Level.item [ ] [
-                Columns.columns [ Columns.Props [ ClassName "headerNavColumns"; ] ] [
-                    for contentArea in contentAreas do
-                        let areaName = contentArea.Name
-                        let currentContentSection = 
-                            match model with
-                            | SharedWebAppModels.Welcome -> "Welcome"
-                            | SharedWebAppModels.AboutSection _ -> "AboutSection"
-                            | SharedWebAppModels.Portfolio _ -> "Portfolio"
-                            | SharedWebAppModels.Contact -> "Contact"
-                        let areaClassName = if currentContentSection = areaName then "selectedNavLink" else "navSectionLink";
-                        a [ ClassName areaClassName; OnClick( fun _ -> SwitchToOtherApp areaName |> dispatch ) ] [ str areaName ]
+                    Level.item [ ] [
+                        Columns.columns [ Columns.IsMobile ] [ // vs IsDesktop
+                            for contentArea in contentAreas do
+                                let areaName = contentArea.Name
+                                let currentContentSection = 
+                                    match model with
+                                    | SharedWebAppModels.Welcome -> "Welcome"
+                                    | SharedWebAppModels.AboutSection _ -> "AboutSection"
+                                    | SharedWebAppModels.Portfolio _ -> "Portfolio"
+                                    | SharedWebAppModels.Contact -> "Contact"
+                                let areaClassName = if currentContentSection = areaName then "selectedNavLink" else "navSectionLink";
+                                Column.column [] [ a [ ClassName areaClassName; OnClick( fun _ -> SwitchToOtherApp areaName |> dispatch ) ] [ str areaName ] ]
+                        ]
+                    ]
                 ]
             ]
         ]

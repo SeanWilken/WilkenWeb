@@ -97,25 +97,21 @@ html {
     color: #69A69A;
     font-family: "Exo";
     font-weight: 100;
-    font-size: 90px;
+    font-size: 50px;
+    padding-left: 10px;
 }
 .headerNavColumns {
-    padding: 10px;
-    display: flex;
-    flex-direction: column;
+    margin: 0px;
     text-align: center;
     font-family: "Exo";
     font-style: italic;
 }
-.headerNavLinks {
-    font-size: 20px;
-    padding: 5px;
-}
+.headerNavLinks { font-size: medium; }
 .navSectionLink {
     @extend .headerNavLinks;
     color: #FF2843;
     &:hover {
-        font-size: 35px;
+        font-size: x-large;//35px;
         color: #FF2843;
     }
 }
@@ -124,7 +120,7 @@ html {
     font-weight: 600;
     color: #69A69A;
     &:hover {
-        font-size: 35px;
+        // font-size: 35px;
         color: #69A69A;
     }
 }
@@ -153,7 +149,7 @@ html {
         font-size: 50px;
         font-weight: 600;
     }
-    h2 {
+    h2 { // switch me to just be hover h1
         font-size: 30px;
         font-weight: 300;
         font-style: italic;
@@ -174,14 +170,10 @@ html {
     background-color: rgba(0, 0, 0, .6);
     padding: 25px;
     margin: 5px;
-    height: 100%;
 }
-.mainContainer {
-    padding: 15px;
-}
-.paddedContainer {
-    padding: 50px; 
-}
+
+.mainContainer { padding: 0px; }
+.paddedContainer { padding: 50px; }
 // better style the modal
 .modalTitle {
     position: fixed;
@@ -191,7 +183,7 @@ html {
     font-size: 75px;
     color: #69A69A;
 }
-.modalLeft {
+.modalAltContent {
     @extend .contentCard;
     margin: 10px;
     padding: 10px;
@@ -201,28 +193,24 @@ html {
     align-content: center;
     .container {
         @extend .contentCardTextBackground;
-        height: 100%;
     }
-    h2 {
-        color:#FF2843;
-    }
-    h3 {
-        font-size: 20px;
-    }
+    h2 { color:#FF2843; }
+    h3 { font-size: 20px; }
 }
 .modalContent { 
+    z-index: 40;
     width: 100%;
-    z-index: inherit;
+    overflow: auto;
 }
 .closeModal {
     position: fixed;
-    right: 25px;
-    top: 25px;
+    right: 15px;
+    top: 15px;
 }
 .likeOnInsta {
     position: fixed;
-    bottom: 25px;
-    left: 25px;
+    top: 15px;
+    left: 15px;
     p {
         color: #FF2843; 
     }
@@ -230,9 +218,7 @@ html {
 .bigSectionNavigationButton { 
     padding: 50px;
     background-color: rgba(0,0,0,.5);
-    &:hover {
-        font-size: 20px;
-    }
+    &:hover { font-size: 20px; }
 }
 .sectionNavButtonCols {
     display: flex;
@@ -286,6 +272,8 @@ html {
 .welcomeContentCard {
     @extend .contentCard;
     background-image: url("../public/imgs/unsplash/moonFade.jpg");
+    // background-image: url("../public/imgs/Out for Blood.png");
+    background-color: #111111;
     background-size: cover;
     background-repeat: no-repeat;
 }
@@ -294,6 +282,8 @@ html {
     border: 1px solid #000000;
     box-shadow: 10px 10px 10px black;
     margin: auto;
+    max-height: fit-content;
+    max-width: fit-content;
 }
 .welcomeNextSectionCard  {
     @extend .aboutSectionHoverSelection;
@@ -362,11 +352,11 @@ html {
 }
 .portfolioContentCard {
     @extend .aboutContentCard;
-    padding: 10px;
-    .container {
-        @extend .contentCardTextBackground;
-        max-width: none;
-    }
+    // margin: 5px;
+    // .container {
+    //     @extend .contentCardTextBackground;
+    //     // max-width: none;
+    // }
 }
 .portfolioSectionHoverSelection  {
     @extend .hoverActionSectionCard;
@@ -380,13 +370,13 @@ html {
     @extend .portfolioSectionHoverSelection;
     @extend .contentCard; // used for italics, REFACTOR THIS
     background-image: url("../public/imgs/unsplash/walkator-code-unsplash.jpg");
-    padding: 100px;
+    padding: 50px;
 }
 .portfolioDesignCard {
     @extend .portfolioSectionHoverSelection;
     @extend .contentCard; // used for italics, REFACTOR THIS
     background-image: url("../public/imgs/unsplash/diego-ph-design-unsplash.jpg");
-    padding: 100px;
+    padding: 50px;
 }
 .backToGallery {
     padding: 15px;
@@ -425,7 +415,7 @@ html {
     }
 }
 .gameGridControlBar {
-    margin: 15px;
+    margin: 5px;
     border: 1px solid #000000;
     box-shadow: 10px 10px 10px black;
     background: #010E14;
@@ -434,6 +424,7 @@ html {
     background-position-x: center;
     font-family: "Exo";
     font-size: 20px;
+    font-size: small;
     text-align: center;
     h1 {
         font-size: 45px;
@@ -477,36 +468,11 @@ html {
     color: #00ff00;
     margin: 20px;
     padding: 20px;
+    margin: auto;
 }
-.blockerLaneObject {
-    border: 1px solid black;
-    border-radius: 6px;
-    width: 75px; 
-    height: 75px;
-    background-color: white;
-}
-.genericLaneObject {
-    border: 1px solid black;
-    border-radius: 6px;
-    background-color: white;
-    width: 75px;
-    height: 75px;
-}
-.ballLaneObject {
-    border: 1px solid black;
-    border-radius: 6px;
-    background-color: #555;
-    width: 75px;
-    height: 75px;
-    
-}
-.movementArrowLaneObject {
-    border: 1px solid black;
-    border-radius: 6px;
-    background-color: #FF2843;
-    width: 75px;
-    height: 75px;
-
+// TILE SORT
+.tileSortCenter {
+    margin: auto;
 }
 .valueTile {
     color: #444;
@@ -517,55 +483,159 @@ html {
     font-family: "Bungee";
     text-align: center;
     outline: none;
-    font-size: 30px;
+    font-size: xx-large;
+    // max-width: 128px; 
+    // max-height: 128px;
+    max-width: 64px; 
+    max-height: 64px; 
+    margin: auto;
 }
-.blankTile {
+.emptyTile {
     color: #444;
     border-color: #444;
     border-width: 0px;
     border-radius: 6px;
     outline: none;
     font-size: 30px;
+    // max-width: 128px; 
+    // max-height: 128px;
+    max-width: 64px; 
+    max-height: 64px; 
     background-color: rgba(0,0,0,0);
-}
-.tileSortCenter {
     margin: auto;
 }
-
+//Goal Roll
+.blockerLaneObject {
+    border: 1px solid black;
+    border-radius: 6px;
+    max-width: 64px; 
+    max-height: 64px; 
+    // max-width: 128x; 
+    // max-height: 128px;
+    background-color: white;
+    margin: auto;
+}
+.genericLaneObject {
+    border: 1px solid black;
+    border-radius: 6px;
+    background-color: white;
+    // max-width: 128px; 
+    // max-height: 128px;
+    max-width: 64px; 
+    max-height: 64px; 
+    margin: auto;
+}
+.ballLaneObject {
+    border: 1px solid black;
+    border-radius: 6px;
+    background-color: #555;
+    // max-width: 128px; 
+    // max-height: 128px;
+    max-width: 64px; 
+    max-height: 64px; 
+    margin: auto;
+}
+.movementArrowLaneObject {
+    border: 1px solid black;
+    border-radius: 6px;
+    background-color: #FF2843;
+    // max-width: 128px; 
+    // max-height: 128px;
+    max-width: 64px; 
+    max-height: 64px; 
+    margin: auto;
+    
+}
+.blankTile {
+    border: 1px solid white;
+    border-radius: 6px;
+    background-color: #FF2843;
+    // max-width: 128px; 
+    // max-height: 128px;
+    max-width: 64px; 
+    max-height: 64px; 
+    margin: auto;
+}
+.gameTile {
+    font-family:  "Ubuntu"; 
+    font-size: xx-large;
+    text-align: center; 
+    color: #FF2843;
+    border: 1px solid white;
+    border-radius: 6px;
+    // max-width: 128px; 
+    // max-height: 128px;
+    max-width: 64px; 
+    max-height: 64px; 
+    margin: auto;
+}
 // **********************
 
 
 // **********************
 // PORTFOLIO DESIGN GALLERY CLASSES
 .galleryTitleCard {
-    font-size: 75px;
+    // font-size: 75px;
+    font-size: xx-large;
     color: #69A69A;
     font-family: "Exo";
     font-style: italic;
     text-align: center;
-    min-width: 500px;
+    // min-width: 500px;
     h1 { font-weight: 600; }
 }
 .galleryDescriptionCard {
-    font-size: 25px;
+    // font-size: 25px;
+    font-size: medium;
     color: #69A69A;
     font-family: "Exo";
     text-align: center;
 }
 .galleryImage {
     border: 1px solid #000000;
-    box-shadow: 10px 10px 10px black;
+    // box-shadow: 10px 10px 10px black;
     background-color: #ffffff;
     text-align: center;
-    .image {
-        max-width: fit-content;
-    }
+    max-width: 80%;
+    margin: auto;
+    // .image {
+    //     max-width: fit-content;
+    // }
 }
 // **********************
 
 
 // **********************
 // CONTACT
+.contentCardOverrideTemp {
+    padding: 20px;
+    margin: auto;
+    border: 1px solid #000000;
+    box-shadow: 10px 10px 10px black;
+    color: #69A69A;
+    font-family: "Exo";
+    text-align: center;
+    h1 {
+        font-size: 50px;
+        font-weight: 600;
+    }
+    h2 { // switch me to just be hover h1
+        font-size: 30px;
+        font-weight: 300;
+        font-style: italic;
+        color: #dddddd;
+    }
+    p {
+        font-size: 20px;
+        font-weight: 200;
+        color: #dddddd;
+    }
+    a {
+        color: #FF2843;
+        font-family: "Ubuntu";
+        font-size: 20px;
+    }
+}
 .contactContentCard {
     @extend .contentCard;
     background-image: url("../public/imgs/unsplash/spaceSunset.jpg");
@@ -578,5 +648,19 @@ html {
         align-items: center;
         padding: 10px;
     }
+}
+.contactCard {
+    @extend .contentCardOverrideTemp;
+    background-image: url("../public/imgs/Misfortune.png");
+    background-color: rgba(0, 0, 0, .75);
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+    a { font-size: medium; }
+}
+.contactCardBackground {
+    @extend .contentCardOverrideTemp;
+    background-color: rgba(0, 0, 0, .75);
+    a { font-size: medium; }
 }
 // **********************
