@@ -7,16 +7,9 @@
 @import url('https://fonts.googleapis.com/css?family=Bungee&display=swap');
 @import url('https://fonts.googleapis.com/css2?family=Exo:ital,wght@0,100;0,200;0,300;0,600;1,300&display=swap');
 
-// NOTHING TO SEE HERE...
-// @import '../Modules/Portfolio/Games/TileSort/style/style.scss';
 // **********************
 
 // TEST SANDBOX STYLES *******************
-
-// @import url('https://fonts.googleapis.com/css2?family=Exo:ital,wght@0,600;1,300&display=swap');
-// @import url('https://fonts.googleapis.com/css2?family=Philosopher:ital@1&display=swap');
-// @import url('https://fonts.googleapis.com/css2?family=Big+Shoulders+Inline+Text:wght@100&display=swap');
-// @import url('https://fonts.googleapis.com/css2?family=Abel&display=swap');
 
 // USEFUL LINKS:
 // https://convertacolor.com/
@@ -79,39 +72,27 @@
 // **********************
 // GENERAL CLASSES
 // **********************
-// #elmish-app {
-//     background: linear-gradient(rgb(1, 14, 20), rgb(15, 71, 95));
-//     background-image: url("../public/imgs/space.jpg");
-//     background-size: cover;
-//     background-repeat: no-repeat;
-// }
 html {
     background-image: url("../public/imgs/unsplash/space.jpg");
-    background-size: cover;
-    background-repeat: no-repeat;
     padding: 10px;
 }
-// **********************
-// HEADER
+// Header Nav Classes
 .headerTitle {
     color: #69A69A;
     font-family: "Exo";
-    font-weight: 100;
+    font-weight: 200;
     font-size: 50px;
     padding-left: 10px;
 }
-.headerNavColumns {
-    margin: 0px;
-    text-align: center;
-    font-family: "Exo";
-    font-style: italic;
+.headerNavLinks { 
+    font-size: medium;
+    font-family: "Ubuntu";
 }
-.headerNavLinks { font-size: medium; }
 .navSectionLink {
     @extend .headerNavLinks;
     color: #FF2843;
     &:hover {
-        font-size: x-large;//35px;
+        font-size: x-large;
         color: #FF2843;
     }
 }
@@ -120,7 +101,6 @@ html {
     font-weight: 600;
     color: #69A69A;
     &:hover {
-        // font-size: 35px;
         color: #69A69A;
     }
 }
@@ -133,24 +113,22 @@ html {
     }
 }
 // **********************
-
-
 // *************************
 // BASE EXTENSIBLE SECTION CLASSES
 // *************************
 .contentCard {
-    padding: 50px;
+    padding: 10px;
     border: 1px solid #000000;
     box-shadow: 10px 10px 10px black;
     color: #69A69A;
     font-family: "Exo";
     text-align: center;
     h1 {
-        font-size: 50px;
+        font-size: xx-large;
         font-weight: 600;
     }
-    h2 { // switch me to just be hover h1
-        font-size: 30px;
+    h2 {
+        font-size: medium;
         font-weight: 300;
         font-style: italic;
         color: #dddddd;
@@ -163,68 +141,8 @@ html {
     a {
         color: #FF2843;
         font-family: "Ubuntu";
-        font-size: 20px;
+        font-size: medium;
     }
-}
-.contentCardTextBackground {
-    background-color: rgba(0, 0, 0, .6);
-    padding: 25px;
-    margin: 5px;
-}
-
-.mainContainer { padding: 0px; }
-.paddedContainer { padding: 50px; }
-// better style the modal
-.modalTitle {
-    position: fixed;
-    top: 50px;
-    left: 75px;
-    font-family: "Ubuntu";
-    font-size: 75px;
-    color: #69A69A;
-}
-.modalAltContent {
-    @extend .contentCard;
-    margin: 10px;
-    padding: 10px;
-    background-size: cover;
-    background-position: center;
-    background-image: url("../public/imgs/unsplash/spaceSunset.jpg");
-    align-content: center;
-    .container {
-        @extend .contentCardTextBackground;
-    }
-    h2 { color:#FF2843; }
-    h3 { font-size: 20px; }
-}
-.modalContent { 
-    z-index: 40;
-    width: 100%;
-    overflow: auto;
-}
-.closeModal {
-    position: fixed;
-    right: 15px;
-    top: 15px;
-}
-.likeOnInsta {
-    position: fixed;
-    top: 15px;
-    left: 15px;
-    p {
-        color: #FF2843; 
-    }
-}
-.bigSectionNavigationButton { 
-    padding: 50px;
-    background-color: rgba(0,0,0,.5);
-    &:hover { font-size: 20px; }
-}
-.sectionNavButtonCols {
-    display: flex;
-    flex-direction:  column;
-    font-family: "Bungee"; 
-    color: #FF2843;
 }
 .hoverActionSectionCard  {
     display: block;
@@ -235,14 +153,13 @@ html {
     font-style: normal;
     text-align: center;
     h1 {
-        font-size: 30px;
+        font-size: xx-large;
         font-weight: 600;
     }
     h2 {
         display: none;
         color: #FF2843;
         font-family: "Ubuntu";
-        font-size: 30px;
         font-size: 30px;
     }
     p {
@@ -261,8 +178,24 @@ html {
         }
     }
 }
-// *************************
-
+.viewTitleCard {
+    @extend .contentCard;
+    padding: 20px;
+    background-color: rgba(0, 0, 0, .65);
+    h1 { font-size: 40px; }
+    h2 { font-size: x-large; }
+    p { font-size: large; }
+    .level {    
+        background-color: rgba(0, 0, 0, .75);
+    }
+}
+.contentCardTextBackground {
+    background-color: rgba(0, 0, 0, .6);
+    padding: 25px;
+    margin: 5px;
+}
+.paddedContainer { padding: 50px; }
+// **********************
 
 // **********************
 // WELCOME PAGE CLASSES
@@ -271,11 +204,11 @@ html {
 }
 .welcomeContentCard {
     @extend .contentCard;
-    background-image: url("../public/imgs/unsplash/moonFade.jpg");
-    // background-image: url("../public/imgs/Out for Blood.png");
-    background-color: #111111;
-    background-size: cover;
-    background-repeat: no-repeat;
+    background: rgba(0, 0, 0, .5);
+    h2 { 
+        color: #69A69A;
+        font-size: xx-large; 
+    }
 }
 .welcomeHeroImage {
     background: #dddddd;
@@ -285,15 +218,29 @@ html {
     max-height: fit-content;
     max-width: fit-content;
 }
+.hoverSelectionElement {
+    @extend .contentCardTextBackground;
+    @extend .hoverActionSectionCard;
+    background: rgba(0, 0, 0, .75);
+    box-shadow: none;
+    padding: 0px;
+    font-weight: 100;
+    p { color: #FF2843; }
+    &:hover {
+        p { 
+            color: #FF2843; 
+            font-weight: 600;
+        }
+    }
+}
 .welcomeNextSectionCard  {
-    @extend .aboutSectionHoverSelection;
+    @extend .hoverSelectionElement;
     background: rgba(0, 0, 0, .6);
     border: 1px solid #000000;
     box-shadow: 15px 10px 10px black;
-    background-size:cover;
+    background-size: cover;
 }
 // **********************
-
 
 // **********************
 // ABOUT SECTION CLASSES
@@ -305,6 +252,52 @@ html {
 }
 .aboutContentCard {
     @extend .contentCard;
+    border: none;
+    box-shadow: none;
+    .container {
+        @extend .contentCardTextBackground;
+    }
+    h2 {
+        color:#FF2843;
+        font-size: x-large;
+    }
+    h3 {
+        color:#ffffff;
+        font-size: large;
+    }
+}
+// **********************
+
+// **********************
+// PORTFOLIO CLASSES
+
+// LANDING SELECTION CLASSES
+.portfolioSectionHoverSelection  {
+    @extend .hoverActionSectionCard;
+    background-size: cover;
+    background-position: center;
+    border: 1px solid #000000;
+    box-shadow: 15px 10px 10px black;
+    padding: 50px;
+    margin: 10px;
+}
+.portfolioCodeCard {
+    @extend .portfolioSectionHoverSelection;
+    background-image: url("../public/imgs/unsplash/walkator-code-unsplash.jpg");
+}
+.portfolioDesignCard {
+    @extend .portfolioSectionHoverSelection;
+    background-image: url("../public/imgs/unsplash/diego-ph-design-unsplash.jpg");
+}
+// MODAL
+.modalContent { 
+    z-index: 40;
+    width: 100%;
+    overflow: auto;
+}
+.modalAltContent {
+    @extend .contentCard;
+    margin: 10px;
     background-size: cover;
     background-position: center;
     background-image: url("../public/imgs/unsplash/spaceSunset.jpg");
@@ -312,102 +305,73 @@ html {
     .container {
         @extend .contentCardTextBackground;
     }
-    h2 {
+    h2 { 
         color:#FF2843;
+        font-weight: 600;
     }
 }
-.aboutModalContentCard {
-    @extend .aboutContentCard;
-    .level-left, .level-right {
-        @extend .contentCardTextBackground;
-    }
+.closeModal {
+    position: fixed;
+    right: 15px;
+    top: 15px;
 }
-.leftCol {
-    align-content: flex-start;
-}
-.rightCol {
-    align-content: flex-end;
-}
-.aboutSectionHoverSelection {
-    @extend .contentCardTextBackground;
-    @extend .hoverActionSectionCard;
-    background: rgba(0, 0, 0, .75);
-    box-shadow: none;
-    padding: 0px;
-    font-weight: 100;
-    &:hover {
-        p { 
-            color: #FF2843; 
-            font-weight: 600;
-        }
-    }
+.modalExternalLink {
+    position: fixed;
+    top: 15px;
+    left: 15px;
+    p { color: #FF2843; }
 }
 // **********************
-
-
-// **********************
-// PORTFOLIO SECTION CLASSES
-.portfolioSectionSelectionContainer {
-    padding-top: 25px;
-}
-.portfolioContentCard {
-    @extend .aboutContentCard;
-    // margin: 5px;
-    // .container {
-    //     @extend .contentCardTextBackground;
-    //     // max-width: none;
-    // }
-}
-.portfolioSectionHoverSelection  {
-    @extend .hoverActionSectionCard;
-    background-size: cover;
-    background-position: center;
-    border: 1px solid #000000;
-    box-shadow: 15px 10px 10px black;
-    margin: 10px;
-}
-.portfolioCodeCard {
-    @extend .portfolioSectionHoverSelection;
-    @extend .contentCard; // used for italics, REFACTOR THIS
-    background-image: url("../public/imgs/unsplash/walkator-code-unsplash.jpg");
-    padding: 50px;
-}
-.portfolioDesignCard {
-    @extend .portfolioSectionHoverSelection;
-    @extend .contentCard; // used for italics, REFACTOR THIS
-    background-image: url("../public/imgs/unsplash/diego-ph-design-unsplash.jpg");
-    padding: 50px;
+// PORTFOLIO GALLERY CLASSES
+.galleryTitleCard {
+    font-size: xx-large;
+    color: #69A69A;
+    font-family: "Exo";
+    font-style: italic;
+    text-align: center;
+    h1 { font-weight: 600; }
 }
 .backToGallery {
-    padding: 15px;
     border: 1px solid #FF2843;
+    background: rgba(0, 0, 0, .65); 
     font-family: "Exo";
-    font-size: 20px;
+    font-size: medium;
+    padding: 15px;
     p {
         color: #FF2843;
         font-weight: 600;
     }
 }
-// **********************
-
-
-// **********************
-// PORTFOLIO CODE GALLERY CLASSES
-.selectionTile {
-    padding: 20px;
-    box-shadow: 5px 5px 5px black;
-    background: #010E14; 
-    background-image: url("../public/imgs/unsplash/moonFade.jpg");
-    background-size:cover;
+// DESIGN GALLERY CLASSES
+.galleryDescriptionCard {
+    font-size: medium;
+    color: #69A69A;
+    font-family: "Exo";
     text-align: center;
+}
+.galleryImage {
+    border: 1px solid #000000;
+    background-color: #ffffff;
+    text-align: center;
+    max-width: 80%;
+    margin: auto;
+}
+// CODE GALLERY CLASSES
+// REVIEW + MOVE STYLES TO HERE
+// *****************
+.selectionTile {
+    box-shadow: 5px 5px 5px black;
+    background: rgba(0, 0, 0, .65); 
+    text-align: center;
+    padding: 20px;
     p {
         font-family: "Exo";
-        font-size: 18px;
-        color: #69A69A;
+        font-size: large;
+        color: #fff;
     }
     h1 {
         color: #FF2843;
-        font-size: 45px;
+        font-size: 40px;
         font-family: "Ubuntu";
     }
     &:hover {
@@ -426,9 +390,7 @@ html {
     font-size: 20px;
     font-size: small;
     text-align: center;
-    h1 {
-        font-size: 45px;
-    }
+    h1 { font-size: 45px; }
     p {
         padding: 10px;
         color: #69A69A;
@@ -437,13 +399,9 @@ html {
     }
     a {
         color: #FF2843;
-        &:hover {
-            font-size: 30px;
-        }  
+        &:hover { font-size: 30px; }
     }
-    .level-item {
-        padding: 10px;
-    }
+    .level-item { padding: 10px; }
 }
 .gameGridContainer {
     text-align: -webkit-center;
@@ -464,203 +422,87 @@ html {
     box-shadow: 15px 10px 10px black;
     text-align: center;
     font-family: "Bungee";
-    font-size: 100px;
+    font-size: 60px;
     color: #00ff00;
     margin: 20px;
     padding: 20px;
     margin: auto;
 }
-// TILE SORT
-.tileSortCenter {
+// Grid Game Tiles
+.genericGameTile {
+    font-size: xx-large;
+    text-align: center; 
+    border: 1px solid black;
+    border-radius: 6px;        
+    max-width: 64px; 
+    max-height: 64px; 
     margin: auto;
 }
 .valueTile {
+    @extend .genericGameTile;
     color: #444;
-    border-radius: 6px;
-    border-color: #444;
-    border-width: 4px;
+    border: 4px solid #444;
     background-color: #AAA;
     font-family: "Bungee";
-    text-align: center;
-    outline: none;
-    font-size: xx-large;
-    // max-width: 128px; 
-    // max-height: 128px;
-    max-width: 64px; 
-    max-height: 64px; 
-    margin: auto;
 }
 .emptyTile {
-    color: #444;
-    border-color: #444;
+    @extend .genericGameTile;
     border-width: 0px;
-    border-radius: 6px;
-    outline: none;
-    font-size: 30px;
-    // max-width: 128px; 
-    // max-height: 128px;
-    max-width: 64px; 
-    max-height: 64px; 
-    background-color: rgba(0,0,0,0);
-    margin: auto;
-}
-//Goal Roll
-.blockerLaneObject {
-    border: 1px solid black;
-    border-radius: 6px;
-    max-width: 64px; 
-    max-height: 64px; 
-    // max-width: 128x; 
-    // max-height: 128px;
-    background-color: white;
-    margin: auto;
 }
 .genericLaneObject {
-    border: 1px solid black;
-    border-radius: 6px;
+    @extend .genericGameTile;
     background-color: white;
-    // max-width: 128px; 
-    // max-height: 128px;
-    max-width: 64px; 
-    max-height: 64px; 
-    margin: auto;
 }
 .ballLaneObject {
-    border: 1px solid black;
-    border-radius: 6px;
+    @extend .genericGameTile;
     background-color: #555;
-    // max-width: 128px; 
-    // max-height: 128px;
-    max-width: 64px; 
-    max-height: 64px; 
-    margin: auto;
 }
 .movementArrowLaneObject {
-    border: 1px solid black;
-    border-radius: 6px;
+    @extend .genericGameTile;
     background-color: #FF2843;
-    // max-width: 128px; 
-    // max-height: 128px;
-    max-width: 64px; 
-    max-height: 64px; 
-    margin: auto;
-    
 }
 .blankTile {
+    @extend .genericGameTile;
     border: 1px solid white;
-    border-radius: 6px;
     background-color: #FF2843;
-    // max-width: 128px; 
-    // max-height: 128px;
-    max-width: 64px; 
-    max-height: 64px; 
-    margin: auto;
 }
 .gameTile {
-    font-family:  "Ubuntu"; 
-    font-size: xx-large;
-    text-align: center; 
+    @extend .genericGameTile;
     color: #FF2843;
     border: 1px solid white;
-    border-radius: 6px;
-    // max-width: 128px; 
-    // max-height: 128px;
-    max-width: 64px; 
-    max-height: 64px; 
-    margin: auto;
+    font-family:  "Ubuntu";
 }
 // **********************
 
 
 // **********************
-// PORTFOLIO DESIGN GALLERY CLASSES
-.galleryTitleCard {
-    // font-size: 75px;
-    font-size: xx-large;
-    color: #69A69A;
-    font-family: "Exo";
-    font-style: italic;
-    text-align: center;
-    // min-width: 500px;
-    h1 { font-weight: 600; }
-}
-.galleryDescriptionCard {
-    // font-size: 25px;
-    font-size: medium;
-    color: #69A69A;
-    font-family: "Exo";
-    text-align: center;
-}
-.galleryImage {
-    border: 1px solid #000000;
-    // box-shadow: 10px 10px 10px black;
-    background-color: #ffffff;
-    text-align: center;
-    max-width: 80%;
-    margin: auto;
-    // .image {
-    //     max-width: fit-content;
-    // }
+// CONTACT CLASSES
+.splitCard {
+    // pads them taller but ugly -> 600px
+    min-height: auto;
 }
 // **********************
 
 
 // **********************
-// CONTACT
-.contentCardOverrideTemp {
-    padding: 20px;
-    margin: auto;
-    border: 1px solid #000000;
-    box-shadow: 10px 10px 10px black;
-    color: #69A69A;
-    font-family: "Exo";
-    text-align: center;
-    h1 {
-        font-size: 50px;
-        font-weight: 600;
-    }
-    h2 { // switch me to just be hover h1
-        font-size: 30px;
-        font-weight: 300;
-        font-style: italic;
-        color: #dddddd;
-    }
-    p {
-        font-size: 20px;
-        font-weight: 200;
-        color: #dddddd;
-    }
-    a {
-        color: #FF2843;
-        font-family: "Ubuntu";
-        font-size: 20px;
-    }
+// SHARED
+// REVIEW ---
+// WANT THESE ON DESKTOP
+.bigSectionNavigationButton { 
+    padding: 50px;
+    background-color: rgba(0,0,0,.5);
+    &:hover { font-size: 20px; }
 }
-.contactContentCard {
-    @extend .contentCard;
-    background-image: url("../public/imgs/unsplash/spaceSunset.jpg");
-    background-size: cover;
-    background-position: center;
-    height: 100%;
-    .columns {
-        flex-direction: column;
-        display: flex;
-        align-items: center;
-        padding: 10px;
-    }
+.sectionNavButtonCols {
+    display: flex;
+    flex-direction:  column;
+    font-family: "Bungee"; 
+    color: #FF2843;
 }
-.contactCard {
-    @extend .contentCardOverrideTemp;
-    background-image: url("../public/imgs/Misfortune.png");
-    background-color: rgba(0, 0, 0, .75);
-    background-size: contain;
-    background-repeat: no-repeat;
-    background-position: center;
-    a { font-size: medium; }
+.leftCol {
+    align-content: flex-start;
 }
-.contactCardBackground {
-    @extend .contentCardOverrideTemp;
-    background-color: rgba(0, 0, 0, .75);
-    a { font-size: medium; }
+.rightCol {
+    align-content: flex-end;
 }
-// **********************
+// *************************

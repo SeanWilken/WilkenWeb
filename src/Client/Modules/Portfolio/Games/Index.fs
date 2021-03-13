@@ -1,6 +1,5 @@
 module CodeGallery
 
-open FSharp
 open Elmish
 open Fable.React
 open Fable.React.Props
@@ -63,20 +62,18 @@ let update ( msg: Msg ) ( model: SharedCodeGallery.Model ): SharedCodeGallery.Mo
         model, Cmd.none
 
 let CodeGalleryHeader =
-    Container.container [ Container.Props [ ClassName "portfolioContentCard" ] ] [
+    Container.container [ Container.Props [ ClassName "viewTitleCard" ] ] [
         Container.container [] [
             h1 [] [ str "Code Gallery" ]
-            p [] [ str "Select one of the below to try out or view the source code." ]
+            h2 [] [ str "Select one of the below to try out or view the source code." ]
         ]
     ]
 
-// GENERIC NOT IMPLEMENTED YET
-// iterative generation of gallery item cards
-let makeCodeGalleryEntryItem title description dispatch =
+let makeCodeGalleryEntryItem title description msg dispatch =
     Container.container [ Container.Props [ ClassName "paddedContainer" ] ] [
         Columns.columns [ Columns.IsCentered ] [
-            Column.column [ Column.Width ( Screen.All, Column.Is8 ) ] [
-                a [ OnClick ( fun _ -> LoadSection TileSort |> dispatch ) ] [ 
+            Column.column [ Column.Width ( Screen.All, Column.Is10 ) ] [
+                a [ OnClick ( fun _ -> msg |> dispatch ) ] [ 
                     div [ ClassName "selectionTile"] [
                         h1 [] [ str title ]
                         p [] [ str description ] 
@@ -86,54 +83,27 @@ let makeCodeGalleryEntryItem title description dispatch =
         ]
     ]
 
-// TODO
-// MAKE THIS INTO A HELPER FUNCTION!!
-// ITERATE THROUGH THESE TO GENERATE
-// ODD NUMBERS GENERATE LEFT SIDE BUTTON
-let CodeGalleryTileSort dispatch =
-    Container.container [ Container.Props [ ClassName "paddedContainer" ] ] [
-        Columns.columns [ Columns.IsCentered ] [
-            Column.column [ Column.Width ( Screen.All, Column.Is8 ) ] [
-                a [ OnClick ( fun _ -> LoadSection TileSort |> dispatch ) ] [
-                    div [ ClassName "selectionTile" ] [
-                        h1 [] [ str "Tile Sort" ]
-                        p [] [ str "Arrange the tiles in the correct order, with the missing number being the empty." ] 
-                    ]
-                ]
-            ]
-        ]
-    ]
+let tileSortSelection dispatch =
+    makeCodeGalleryEntryItem 
+        "Tile Sort"
+        "Arrange the tiles in the correct order, with the missing number being the empty."
+        (LoadSection TileSort)
+        dispatch
 
-let CodeGalleryGoalRoll dispatch =
-    Container.container [ Container.Props [ ClassName "paddedContainer" ] ] [
-        Columns.columns [ Columns.IsCentered ] [
-            Column.column [ Column.Width ( Screen.All, Column.Is7 ) ] [
-                a [ OnClick ( fun _ -> LoadSection GoalRoll |> dispatch ) ] [
-                    div [ ClassName "selectionTile" ] [ 
-                        h1 [] [ str "Goal Roll" ] 
-                        p [] [ str "Roll the ball in straight line movements to the goal." ] 
-                    ]
-                ]
-            ]
-        ]
-    ]
+let tileTapSelection dispatch =
+    makeCodeGalleryEntryItem 
+        "Tile Tap"
+        "Tap to smash as many tiles as you can while avoiding bombs."
+        (LoadSection TileTap)
+        dispatch
 
+let goalRollSelection dispatch =
+    makeCodeGalleryEntryItem 
+        "Goal Roll"
+        "Roll the ball in straight line movements to the goal."
+        (LoadSection GoalRoll)
+        dispatch
 
-// TODO
-// NEW WIP, JUST HOPPED IN
-let CodeGalleryTileTap dispatch =
-    Container.container [ Container.Props [ ClassName "paddedContainer"] ] [
-        Columns.columns [ Columns.IsCentered ] [
-            Column.column [ Column.Width ( Screen.All, Column.Is8 ) ] [
-                a [ OnClick ( fun _ -> LoadSection TileTap |> dispatch ) ] [
-                    div [ ClassName "selectionTile" ] [
-                        h1 [] [ str "Tile Tap" ]
-                        p [] [ str "Tap to smash as many tiles as you can while avoiding bombs." ] 
-                    ]
-                ]
-            ]
-        ]
-    ]
 
 let view model dispatch =
     Container.container [] [
@@ -142,9 +112,9 @@ let view model dispatch =
             Container.container [] [
                 SharedViewModule.backToGallery BackToPortfolio dispatch
                 CodeGalleryHeader
-                CodeGalleryTileSort dispatch
-                CodeGalleryGoalRoll dispatch
-                CodeGalleryTileTap dispatch
+                goalRollSelection dispatch
+                tileSortSelection dispatch
+                tileTapSelection dispatch
             ]
         | SharedCodeGallery.GoalRoll model ->
             GoalRoll.view model ( GoalRollMsg >> dispatch )

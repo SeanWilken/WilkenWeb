@@ -138,7 +138,7 @@ let headerContent ( model: SharedWebAppModels.Model ) dispatch =
                     Level.item [] [
                         a [ OnClick ( fun _ -> SwitchToOtherApp "Welcome" |> dispatch ) ] [
                             Level.item [] [ 
-                                Image.image [ Image.Is48x48 ] [ img [ Src "./imgs/icons/Flat logo backless.png"; ] ]
+                                Image.image [ Image.Is64x64 ] [ img [ Src "./imgs/icons/Flat logo backless.png"; ] ]
                                 p [ ClassName "headerTitle" ] [ str "Sean Wilken" ]
                             ]
                         ]
@@ -165,7 +165,7 @@ let headerContent ( model: SharedWebAppModels.Model ) dispatch =
 let view ( model : SharedWebAppModels.Model ) ( dispatch : WebAppMsg -> unit ) =
     div [] [
         headerContent model dispatch
-        Container.container [ Container.Props [ ClassName "mainContainer" ] ] [
+        Container.container [] [
             match model with
             | SharedWebAppModels.AboutSection model -> AboutSection.view model ( AboutMsg >> dispatch )
             | SharedWebAppModels.Welcome -> Welcome.view ( WelcomeMsg >> dispatch )

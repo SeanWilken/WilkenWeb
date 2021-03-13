@@ -1,15 +1,10 @@
 module ArtGallery
 
-open FSharp
 open Elmish
-open System
-open System.IO
 open Fable.React
 open Fable.React.Props
 open Fulma
-
 open Shared
-
 
 (*
 
@@ -122,7 +117,7 @@ let getGalleryCardByIndex ( index: int ) =
 let galleryEntryHeaderControls dispatch =
     div [] [
         a [ ClassName "closeModal"; OnClick ( fun _ -> BackToPortfolio |> dispatch ) ] [ Image.image [ Image.Is64x64 ] [ img [ Src "./imgs/icons/X-it.png" ] ] ]
-        span [ ClassName "likeOnInsta" ] [ a [ Href "https://www.instagram.com/xeroeffort/" ] [ Image.image [ Image.Is64x64 ] [ img [ Src "./imgs/icons/IG.png" ] ]; ] ] //p [] [ str "Instagram" ] 
+        span [ ClassName "modalExternalLink" ] [ a [ Href "https://www.instagram.com/xeroeffort/" ] [ Image.image [ Image.Is64x64 ] [ img [ Src "./imgs/icons/IG.png" ] ]; ] ] //p [] [ str "Instagram" ] 
     ]
 
 let galleryEntryContent piece =
@@ -131,9 +126,7 @@ let galleryEntryContent piece =
         div [ ClassName "galleryImage" ] [ Image.image [] [ img [ Src ( "./imgs/" + piece + ".png" ) ] ] ]
     ]
 
-
-
-// not aligned properly
+// not aligned properly!!!!!
 let galleryEntryFooterControls description dispatch =
     Columns.columns [ Columns.IsMobile; Columns.Props [ Style [ Bottom "0px"; Position PositionOptions.Fixed; ] ] ] [
         Column.column [Column.Props [ Style [ Margin "auto"; ] ] ] [
@@ -154,7 +147,6 @@ let galleryModal ( model: SharedDesignGallery.Model ) dispatch =
     Modal.modal [ Modal.IsActive true ] [ 
         Modal.background [] []
         div [ ClassName "modalContent" ] [
-        // Modal.content [ Props [ClassName "modalContent"] ] [
             Level.level [] [
                 // SharedViewModule.bigNavButton (SetCurrentPieceIndex (-1)) "PREV" dispatch
                 Level.item [] [
@@ -164,7 +156,7 @@ let galleryModal ( model: SharedDesignGallery.Model ) dispatch =
                 ]
                 // SharedViewModule.bigNavButton (SetCurrentPieceIndex (1)) "NEXT" dispatch
             ]
-            span [ ClassName "likeOnInsta" ] [ a [ Href "https://www.instagram.com/xeroeffort/" ] [ Image.image [ Image.Is64x64 ] [ img [ Src "./imgs/icons/IG.png" ] ];  ] ] //p [] [ str "Instagram" ]
+            span [ ClassName "modalExternalLink" ] [ a [ Href "https://www.instagram.com/xeroeffort/" ] [ Image.image [ Image.Is64x64 ] [ img [ Src "./imgs/icons/IG.png" ] ];  ] ] //p [] [ str "Instagram" ]
             span [ ClassName "closeModal"; OnClick ( fun _ -> BackToPortfolio |> dispatch ) ] [ Image.image [ Image.Is64x64 ] [ img [ Src "./imgs/icons/X-it.png" ] ] ]
         ]
     ]
@@ -173,7 +165,6 @@ let galleryModal ( model: SharedDesignGallery.Model ) dispatch =
 (*
 
 FOOTER LARGE DISPATCH BUTTONS!!
-
 Columns.columns [Columns.IsMobile] [
     // Column.column [] [ SharedViewModule.bigNavButton (SetCurrentPieceIndex (-1)) "PREV" dispatch ]
     // Column.column [] [ SharedViewModule.bigNavButton (SetCurrentPieceIndex (1)) "NEXT" dispatch ]
@@ -189,7 +180,6 @@ let view ( model: SharedDesignGallery.Model ) dispatch =
     Modal.modal [Modal.IsActive true] [
         Modal.background [] []
         Modal.content [] [
-        // div [ ClassName "modalContent" ] [
             let piece, description = getGalleryCardByIndex model.CurrentPieceIndex
             galleryEntryHeaderControls dispatch
             galleryEntryContent piece 

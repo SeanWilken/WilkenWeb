@@ -1,170 +1,99 @@
 module Contact
 
-open FSharp
-open Elmish
 open Fable.React
 open Fable.React.Props
 open Fulma
 
+type AnchorLink = {
+    Hyperlink: string
+    LinkIcon: string
+    LinkTitle: string
+}
 
+let swContactEmailAnchor =
+    [   
+        "Got something to say?",
+        Some { 
+            Hyperlink = "mailto: sean.d.wilken@gmail.com"
+            LinkIcon = "./imgs/icons/Mail.png"
+            LinkTitle = "Sean.D.Wilken@GMail.com" 
+        };
+        "Credentials coming soon to resumes near you...",
+        None;
+    ]
 
-    
-let ContactHeader =
+let xeContactEmailAnchor = 
+    [ 
+        "Complement or complaint...",
+        Some { 
+            Hyperlink = "mailto: xeroeffortclub@gmail.com"
+            LinkIcon = "./imgs/icons/Mail.png"
+            LinkTitle = "XeroEffortClub@GMail.com" 
+        };
+        "Coming very soon to social platforms near you...",
+        None;
+        // "Follow, Like & Share...",
+        // Some { 
+        //     Hyperlink = "https://www.instagram.com/xeroeffort/"
+        //     LinkIcon = "./imgs/icons/IG.png"
+        //     LinkTitle = "@XeroEffort" 
+        // };
+    ]
+
+// should have style different than cards
+let contactHeader =
     Tile.ancestor [] [
         Tile.parent [] [
             Tile.child [ Tile.Size Tile.Is12 ] [
-                Container.container [ Container.Props [ ClassName "contactContentCard" ] ] [
-                    div [ ClassName "contactCardBackground" ] [ 
-                        p [] [ str """Say hello or drop me a line with your questions or comments
-                                 about the website and it's features..Whatever it is, 
-                                 just please DO NOT spam me.""" ]                                 
-                    ]
+                div [ ClassName "viewTitleCard" ] [ 
+                    h1 [] [ str "Looking to tell me something?" ]
+                    h2 [] [ str "Drop a line to the appropriate entity.." ]
+                    h2 [] [ str "Whatever it is, NO spam!" ]
                 ]
             ]
         ]
     ]
 
-let ContactSplitView =
-    div [ ClassName "portfolioSectionSelectionContainer" ] [
-        Tile.ancestor [] [
-            Tile.parent [ Tile.Size Tile.Is6 ] [
-                Tile.child [] [
-                    Container.container [ Container.CustomClass "contactCard" ] [
-                        div [ ClassName "contactCardBackground" ] [ h1 [] [ str "Sean Wilken" ]  ]
-                        Level.level [] []
-                        div [ ClassName "contactCardBackground" ] [ 
-                            Level.level [] [
-                                p [] [ str "Got something to say to my face?" ] 
-                                a [ Href "mailto: sean.d.wilken@gmail.com" ] [ 
-                                    Level.item [] [
-                                        Image.image [ Image.Is64x64 ] [ img [ Src "./imgs/icons/Mail.png" ] ]
-                                        div [] [ str "Sean.D.Wilken@GMail.com" ] 
-                                    ]
-                                ]
-                            ]
-                            Level.level [] [
-                                Level.item [] [
-                                    p [] [ str "Credentials coming soon to resumes near you..." ] 
-                                ]
-                                // p [] [ str "Show me off to your boss..." ] 
-                                // a [ Href "mailto: sean.d.wilken@gmail.com" ] [ // download resume resource
-                                //     Level.item [] [
-                                //         Image.image [ Image.Is64x64 ] [ img [ Src "./imgs/icons/Mail.png" ] ] // Generic Person Icon
-                                //         div [] [ str "Resume" ] 
-                                //     ]
-                                // ]
-                            ]
+// style is not to my liking..
+// should fill more of the screen vertically when on desktop views....
+let childSplitTile title ( tileBullets: ( string * AnchorLink option ) list ) =
+    Tile.child [ Tile.IsVertical; Tile.CustomClass "splitCard" ] [ 
+        div [ ClassName "viewTitleCard" ] [ 
+            h1 [] [ str title ]
+            if not tileBullets.IsEmpty then br []
+            for tileString, anchorLink in tileBullets do
+                p [] [ str tileString ]
+                match anchorLink with
+                | Some link ->
+                    a [ Href link.Hyperlink ] [ 
+                        Level.item [] [
+                            Image.image [ Image.Is64x64 ] [ img [ Src link.LinkIcon ] ]
+                            div [] [ str link.LinkTitle ] 
                         ]
                     ]
-                ]
+                | None -> ()
+                br []
+        ]
+    ]
+
+let contactSplitView =
+    div [] [
+        Tile.ancestor [] [
+            Tile.parent [ Tile.Size Tile.Is6 ] [
+                childSplitTile "Sean Wilken" swContactEmailAnchor
             ]
             Tile.parent [ Tile.Size Tile.Is6 ] [
-                Tile.child [] [
-                    Container.container [ Container.CustomClass "contactCard" ] [
-                        div [ ClassName "contactCardBackground" ] [ h1 [] [ str "Xero Effort" ]  ]
-                        Level.level [] []
-                        div [ ClassName "contactCardBackground" ] [ 
-                            Level.level [] [
-                                Level.item [] [
-                                    p [] [ str "Coming very soon to social platforms near you..." ]
-                                ]
-                                // p [] [ str "Follow, Like & Share. It takes..." ] 
-                                // a [ Href "https://www.instagram.com/xeroeffort/" ] [ 
-                                //     Level.item [] [
-                                //         Image.image [ Image.Is64x64 ] [ img [ Src "./imgs/icons/IG.png" ] ]
-                                //         div [] [ str "@XeroEffort" ]
-                                //     ]
-                                // ]
-                            ]
-                            Level.level [] [
-                                p [] [ str "Complement or complaint..." ] 
-                                a [ Href "mailto: xeroeffortclub@gmail.com" ] [ 
-                                    Level.item [] [
-                                        Image.image [ Image.Is64x64 ] [ img [ Src "./imgs/icons/Mail.png" ] ]
-                                        div [] [ str "XeroEffortClub@GMail.com" ] 
-                                    ]
-                                ]
-                            ]
-                        ]
-                    ]     
-                ]
+                childSplitTile "Xero Effort" xeContactEmailAnchor
             ]
         ]
     ]
 
 let viewSplit =
     div [] [
-        ContactHeader
-        ContactSplitView
-    ]
-
-let viewColumns =
-    Columns.columns [Columns.IsDesktop] [
-        // CONTACT HEADER
-        Column.column [] [ 
-            Tile.ancestor [ Tile.Props [ ClassName "contactContentCard" ] ] [
-                div [ ClassName "contactCardBackground" ] [ 
-                    p [] [ str """Say hello or drop me a line with your questions or comments
-                                 about the website and it's features..Whatever it is, 
-                                 just please DO NOT spam me.""" ]                                 
-                ]
-            ]
-        ]
-        // SEAN WILKEN
-        Column.column [] [
-            Container.container [ Container.CustomClass "contactCard" ] [
-                div [ ClassName "contactCardBackground" ] [ h1 [] [ str "Sean Wilken" ]  ]
-                Level.level [] []
-                div [ ClassName "contactCardBackground" ] [ 
-                    Level.level [] [
-                        p [] [ str "Howdy there." ] 
-                        a [ Href "mailto: sean.d.wilken@gmail.com" ] [ 
-                            Level.item [] [
-                                Image.image [ Image.Is64x64 ] [ img [ Src "./imgs/icons/Mail.png" ] ]
-                                div [] [ str "Sean.D.Wilken@GMail.com" ] 
-                            ]
-                        ]
-                    ]
-                ]
-            ]
-        ]
-        // XERO EFFORT
-        Column.column [] [
-            Container.container [ Container.CustomClass "contactCard" ] [
-                div [ ClassName "contactCardBackground" ] [ h1 [] [ str "Xero Effort" ]  ]
-                Level.level [] []
-                div [ ClassName "contactCardBackground" ] [ 
-                    Level.level [] [
-                        p [] [ str "Coming very soon to social platforms near you..." ]
-                        // p [] [ str "Follow, Like & Share" ] 
-                        // a [ Href "https://www.instagram.com/xeroeffort/" ] [ 
-                        //     Level.item [] [
-                        //         Image.image [ Image.Is64x64 ] [ img [ Src "./imgs/icons/IG.png" ] ]
-                        //         div [] [ str "@XeroEffort" ]
-                        //     ]
-                        // ]
-                    ]
-                    Level.level [] [
-                        p [] [ str "Let's hear it.." ] 
-                        a [ Href "mailto: xeroeffortclub@gmail.com" ] [ 
-                            Level.item [] [
-                                Image.image [ Image.Is64x64 ] [ img [ Src "./imgs/icons/Mail.png" ] ]
-                                div [] [ str "XeroEffortClub@GMail.com" ] 
-                            ]
-                        ]
-                    ]
-                ]
-            ]
-        ]
+        contactHeader
+        contactSplitView
     ]
 
 // CONTACT: -> CONTENT -> {GMAIL / LINKEDIN / (IG / FACEBOOK / TWITTER / ETC..?)}
-// Static Page:
-// does not depend on the dispatch loop, as currently there are no messages that would need to be submitted into it.
 let view = 
     viewSplit
-    // viewColumns // looks bad on desktop, good on mobile
-
-    // -- OR --
-
-

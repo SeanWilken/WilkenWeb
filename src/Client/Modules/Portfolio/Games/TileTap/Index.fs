@@ -1,14 +1,12 @@
 module TileTap
 
 open System
-open FSharp
 open Shared
 open GridGame
 open Elmish
 open Fable.React
 open Fable.React.Props
 open Fulma
-open System.Threading
 open Browser
 
 type Msg =
@@ -286,11 +284,6 @@ let modelValueAsString strin value =
 
 // *********************************
 
-// HEADER ---------
-let tileTapHeader  dispatch =
-    div [] [ SharedViewModule.sharedModalHeaderControls "Tile Tap" ExitGameLoop dispatch ]
-// ----------------
-
 // *********************************
 
 // LEFT -----------
@@ -306,10 +299,6 @@ let sourceCodeLinks = [
     "View", "https://raw.githubusercontent.com/SeanWilken/WilkenWeb/master/src/Client/Modules/Shared/Index.fs"
     "Logic", "https://raw.githubusercontent.com/SeanWilken/WilkenWeb/master/src/Client/Modules/Portfolio/Games/TileTap/Index.fs"
 ]
-
-let tileTapLeftModal =
-    SharedViewModule.sharedModalLeft tileTapDescriptions sourceCodeLinks
-// ----------------
 
 // ********************************
 
@@ -363,15 +352,7 @@ let roundOverString ( model : SharedTileTap.Model ) =
         h1 [ Style [ Padding 20; Color "#00ff00"; FontSize 50 ] ] [ str ( string ( model.RoundScore ) ) ]
     ]
 
-
-
 // *********************************
-
-// RIGHT ----------
-// NOT BEING USED CURRENTLY
-// let gameControls = [ "Timer Start", GameLoopTick; ]
-
-// REVIEW AND CLEAN ME
 
 // Controls are being made in more custom override fashion,
 // as the needs for this submodule require a bit more of a workaround
@@ -399,16 +380,16 @@ let tileTapGameLoopToggle ( model : SharedTileTap.Model ) dispatch =
     let gameRoundStateToggleString = 
         if ( model.DispatchPointer <> 0.0 ) then "Pause" else "Start"
     Container.container [] [
-        div [ ClassName "mainContainer" ] [ a [ OnClick ( fun _ -> startGameLoop model dispatch |> ignore ); ] [ str ( gameRoundStateToggleString + " Round" ) ] ] 
-        div [ ClassName "mainContainer" ] [ a [ OnClick ( fun _ -> ResetRound |> dispatch ); ] [ str "Restart Round" ] ]
-        div [ ClassName "mainContainer" ] [ 
+        div [] [ a [ OnClick ( fun _ -> startGameLoop model dispatch |> ignore ); ] [ str ( gameRoundStateToggleString + " Round" ) ] ]
+        div [] [ a [ OnClick ( fun _ -> ResetRound |> dispatch ); ] [ str "Restart Round" ] ]
+        div [] [
             span [] [ 
                 h3 [] [ str "Game Mode: "] 
                 div [] [ a [ OnClick ( fun _ -> ( ChangeGameMode SharedTileTap.TileTapGameMode.Survival |> dispatch ) ) ] [ str "Survival" ] ]
                 div [] [ a [ OnClick ( fun _ -> ( ChangeGameMode SharedTileTap.TileTapGameMode.TimeAttack |> dispatch ) ) ] [ str "Time Attack" ] ] 
             ]
         ]
-        div [ ClassName "mainContainer" ] [ 
+        div [] [
             span [] [ 
                 h3 [] [ str "Round Difficulty: "] 
                 div [] [ a [ OnClick ( fun _ -> ( ChangeDifficulty ( SharedTileTap.TileTapDifficulty.Simple ) ) |> dispatch ) ] [ str "Simple" ] ] 
@@ -420,7 +401,6 @@ let tileTapGameLoopToggle ( model : SharedTileTap.Model ) dispatch =
     ]
 
 let tileTapModalRight model dispatch =
-    // Tile.parent [ Tile.Size Tile.Is2 ] [ 
     Column.column [] [
         Columns.columns [ Columns.IsVCentered ] [ 
             Column.column [] [ 
@@ -441,17 +421,6 @@ let tileTapModalRight model dispatch =
 // ----------------
 
 // *********************************
-
-
-
-
-
-
-
-
-
-
-
 
 let tileTapModalContent  ( model : SharedTileTap.Model ) dispatch =
     SharedViewModule.modalContent ( 
@@ -481,7 +450,6 @@ let tileTapModalContent  ( model : SharedTileTap.Model ) dispatch =
 
 // ----------------
 
-
 let controlList = [ 
     "Controls", (SetGameState (RoundState.Controls)) 
     "Rules", (SetGameState (Instruction))
@@ -507,10 +475,8 @@ let codeModalFooterOverride model controlList dispatch =
         ]
     ]
 
-
 // MODULE VIEW ----
 let view model dispatch =
-    // SharedViewModule.sharedModal ( tileTapHeader dispatch ) ( tileTapLeftModal ) ( tileTapModalContent (model) (dispatch) ) ( tileTapModalRight (model) ( dispatch ) )
     SharedViewModule.sharedViewModal 
         ( SharedViewModule.codeModalHeader "Tile Tap" QuitGame dispatch )
         ( tileTapModalContent model dispatch ) 

@@ -1,6 +1,5 @@
 module AboutSection
 
-open FSharp
 open Elmish
 open Fable.React
 open Fable.React.Props
@@ -107,16 +106,15 @@ let update msg model : Model * Cmd<Msg> =
     | _ -> model, Cmd.none
 
 let aboutModalCard modalContent = 
-    div [ ClassName "aboutModalContentCard" ] [
-        Level.level [] [
-            div [ ClassName "contentCardTextBackground" ] [
-                Tile.child [ ] [
-                    // Container.container [ Container.Props [ ClassName "" ] ] [ h1 [] [ str modalContent.Title ] ]
-                    Container.container [ Container.Props [ ClassName "" ] ] [ p [] [ str modalContent.MainContent ] ]
+    Level.level [] [
+        Level.item [] [
+            div [ ClassName "aboutContentCard" ] [
+                div [ ClassName "contentCardTextBackground" ] [
+                        Container.container [] [ p [] [ str modalContent.MainContent ] ]
+                    ]
                 ]
             ]
         ]
-    ]
 
 // ALSO USE SHARED MODAL?
 let aboutModal model dispatch modalContent =
@@ -146,23 +144,26 @@ let mainAbout dispatch =
     Tile.ancestor [] [
         Tile.parent [] [
             Level.level [] [
-                // ADD / UPDATE PIC
-                Tile.child [ Tile.Size Tile.Is5 ] [ Image.image [] [ img [ Src "./imgs/Out for Blood.png" ] ] ]
-                Tile.child [] [ 
+                Tile.child [] []
+                Tile.child [ Tile.Size Tile.Is4 ] [ 
                     Container.container [ Container.Props [ ClassName "aboutContentCard" ] ] [
                         Level.level [ Level.Level.Props [ ClassName "contentCardTextBackground" ] ] [
                             Level.item [] [
                                 Tile.child [] [
                                     h1 [] [ str "General" ]
-                                    p [] [ str """I wrote this website as a way to demonstrate some of my skills, processes, and personal traits / interests.""" ]
+                                    h3 [] [ str "I wrote this website as a way to" ]
+                                    h3 [] [ str "demonstrate some of my abilities &" ]
+                                    h3 [] [ str "explain a little about me." ]
                                 ]
                             ]
                         ]
-                        Level.level [ Level.Level.Props [ ClassName "aboutSectionHoverSelection" ] ] [
-                            p [ OnClick (fun _ -> ToggleModal 0 |> dispatch ) ] [ str "Read More" ]
+                        Level.level [ Level.Level.Props [ ClassName "hoverSelectionElement" ] ] [
+                            p [ OnClick ( fun _ -> ToggleModal 0 |> dispatch ) ] [ str "Read More" ]
                         ]
                     ]
                 ]
+                Tile.child [ Tile.Size Tile.Is5 ] [ Image.image [] [ img [ Src "./imgs/Out for Blood.png" ] ] ]
+                Tile.child [] []
             ]
         ]
     ]
@@ -171,7 +172,8 @@ let secondaryAbout dispatch =
     Tile.ancestor [] [
         Tile.parent [] [
             Level.level [] [
-                Tile.child [] [ 
+                Tile.child [] []
+                Tile.child [Tile.Size Tile.Is4] [ 
                     Container.container [ Container.Props [ ClassName "aboutContentCard" ] ] [
                         Level.level [ Level.Level.Props [ ClassName "contentCardTextBackground" ] ] [
                             Level.item [] [
@@ -181,13 +183,14 @@ let secondaryAbout dispatch =
                                 ]
                             ]
                         ]
-                        Level.level [ Level.Level.Props [ ClassName "aboutSectionHoverSelection" ] ] [
+                        Level.level [ Level.Level.Props [ ClassName "hoverSelectionElement" ] ] [
                             p [ OnClick ( fun _ -> ToggleModal 1 |> dispatch ) ] [ str "Read More" ]
                         ]
                     ]
                 ]
                 // ADD / UPDATE PIC
                 Tile.child [ Tile.Size Tile.Is5 ] [ Image.image [ ] [ img [Src "./imgs/Misfortune.png" ] ] ]
+                Tile.child [] []
             ]
         ]
     ]
@@ -206,7 +209,7 @@ let tertiaryAbout dispatch =
                                 ]
                             ]
                         ]
-                        Level.level [ Level.Level.Props [ ClassName "aboutSectionHoverSelection" ] ] [
+                        Level.level [ Level.Level.Props [ ClassName "hoverSelectionElement" ] ] [
                             p [ OnClick ( fun _ -> ToggleModal 2 |> dispatch ) ] [ str "Read More" ]
                         ]
                     ]
@@ -223,10 +226,68 @@ let tertiaryAbout dispatch =
         ]
     ]
 
+let general dispatch =
+    Tile.ancestor [] [
+        Tile.parent [] [
+            Level.level [] [
+                Tile.child [ Tile.Size Tile.Is4 ] [ 
+                    Container.container [ Container.Props [ ClassName "aboutContentCard" ] ] [
+                        Level.level [ Level.Level.Props [ ClassName "contentCardTextBackground" ] ] [
+                            Level.item [] [
+                                Tile.child [] [
+                                    h1 [] [ str "General" ]
+                                    h3 [] [ str "I wrote this website as a way to" ]
+                                    h3 [] [ str "demonstrate some of my abilities &" ]
+                                    h3 [] [ str "explain a little about me." ]
+                                ]
+                            ]
+                        ]
+                        Level.level [ Level.Level.Props [ ClassName "hoverSelectionElement" ] ] [
+                            p [ OnClick ( fun _ -> ToggleModal 0 |> dispatch ) ] [ str "Read More" ]
+                        ]
+                    ]
+                ]
+                Tile.child [ Tile.Size Tile.Is4 ] [ 
+                    Container.container [ Container.Props [ ClassName "aboutContentCard" ] ] [
+                        Level.level [ Level.Level.Props [ ClassName "contentCardTextBackground" ] ] [
+                            Level.item [] [
+                                Tile.child [ ] [
+                                    h1 [] [ str "Professional" ]
+                                    h3 [] [ str "I've been working with programming languages for about 5 years." ]
+                                    h3 [] [ str "Read More to check out what I've done in that time." ]
+                                ]
+                            ]
+                        ]
+                        Level.level [ Level.Level.Props [ ClassName "hoverSelectionElement" ] ] [
+                            p [ OnClick ( fun _ -> ToggleModal 1 |> dispatch ) ] [ str "Read More" ]
+                        ]
+                    ]
+                ]
+                Tile.child [ Tile.Size Tile.Is4 ] [ 
+                    Container.container [ Container.Props [ ClassName "aboutContentCard" ] ] [
+                        Level.level [ Level.Level.Props [ ClassName "contentCardTextBackground" ] ] [
+                            Level.item [] [
+                                Tile.child [ ] [
+                                    h1 [] [ str "Personal" ]
+                                    h3 [] [ str "I'm a person just like you (unless you're a bot)." ]
+                                    h3 [] [ str "I enjoy kicking back and relaxing, exploring, and experiencing new things." ]
+                                ]
+                            ]
+                        ]
+                        Level.level [ Level.Level.Props [ ClassName "hoverSelectionElement" ] ] [
+                            p [ OnClick ( fun _ -> ToggleModal 1 |> dispatch ) ] [ str "Read More" ]
+                        ]
+                    ]
+                ]
+            ]
+        ]
+    ]
+
 let view model dispatch =
     div [ ClassName "aboutSectionContainer" ] [
-        mainAbout dispatch
-        secondaryAbout dispatch
-        tertiaryAbout dispatch
+        // general dispatch
+        mainAbout dispatch // change what these are
+        tertiaryAbout dispatch // change what these are
+        secondaryAbout dispatch // change what these are
         aboutModal ( model ) ( dispatch ) ( aboutModalContentSections.Item( model.ActiveModalIndex ) )
     ]

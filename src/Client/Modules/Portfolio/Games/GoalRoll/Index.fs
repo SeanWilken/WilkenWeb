@@ -1,7 +1,5 @@
 module GoalRoll
 
-open System
-open FSharp
 open Elmish
 open Fable.React
 open Fable.React.Props
@@ -9,7 +7,6 @@ open Fulma
 open Shared
 open Shared.GridGame
 open Shared.SharedGoalRoll
-open System.Collections.Generic
 
 // ---------TODO---------
     // - MovementMade (Undo Move)
@@ -203,7 +200,7 @@ let goalRollRowCreator ( rowPositions: LaneObject list ) dispatch =
             Tile.child [] [ 
                 match positionObject with // RESTYLE THESE
                 | Blocker -> 
-                    Box.box' [ Props [ ClassName "blockerLaneObject" ] ] [ Image.image [] [ img [ Src "./imgs/icons/Blocker.png" ] ] ]
+                    Box.box' [ Props [ ClassName "genericLaneObject" ] ] [ Image.image [] [ img [ Src "./imgs/icons/Blocker.png" ] ] ]
                 | Ball ->
                     Box.box' [ Props [ ClassName "ballLaneObject" ] ] [ Image.image [] [ img [ Src "./imgs/icons/Ball.png" ] ] ]
                 | Goal ->
@@ -264,29 +261,10 @@ let goalRollModalContent ( model : SharedGoalRoll.Model ) dispatch =
 
 // --------------------------------
 
-// card style
-// let goalRollHeaderCard =
-//     SharedViewModule.contentHeaderCard 
-//         "Goal Roll" 
-//         sourceCodeLinks 
-//         goalRollDescriptions
-
-// let goalRollContentHeaderControls dispatch =
-//     SharedViewModule.contentHeaderControls gameControls dispatch
-
-// let goalRollCardView model dispatch =
-//     SharedViewModule.sharedContentCardView 
-//         goalRollHeaderCard
-//         ( goalRollContentHeaderControls dispatch )
-//         ( goalRollModalContent model dispatch ) 
-//         dispatch
-
 // 2.0
-
 
 // main view
 let view ( model : SharedGoalRoll.Model ) dispatch =
-    // SharedViewModule.sharedModal ( goalRollHeader dispatch ) ( goalRollLeftModal ) ( goalRollModalContent model dispatch ) ( goalRollModalRight dispatch )
     SharedViewModule.sharedViewModal 
         ( SharedViewModule.codeModalHeader "Goal Roll" QuitGame dispatch )
         ( goalRollModalContent model dispatch ) 

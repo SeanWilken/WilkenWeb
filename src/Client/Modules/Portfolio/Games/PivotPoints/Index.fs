@@ -1,9 +1,6 @@
 module PivotPoints
-
-open System
-
+// open System
 // TODO
-
 // This game uses the same grid list idea for positions as GoalRoll and TileSort
     // rolls in set direction until pivoted in new direction
         // Once a roll is initiated in a direction, will only roll forward in that direction

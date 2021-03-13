@@ -1,6 +1,5 @@
 module Portfolio
 
-open FSharp
 open Elmish
 open Fable.React
 open Fable.React.Props
@@ -42,18 +41,16 @@ let PortfolioHeader =
     Tile.ancestor [] [
         Tile.parent [] [
             Tile.child [ Tile.Size Tile.Is12 ] [
-                Container.container [ Container.Props [ ClassName "portfolioContentCard" ] ] [
-                    div [ ClassName "contentCardTextBackground" ] [
+                    div [ ClassName "viewTitleCard" ] [
                         h1 [] [ str "Portfolio" ]
-                        p [] [ str "...where to begin..." ]
+                        h2 [] [ str "...where to begin..." ]
                     ]
-                ]
             ]
         ]
     ]
 
 let PortfolioSplitView dispatch =
-    div [ ClassName "portfolioSectionSelectionContainer" ] [
+    div [] [
         Tile.ancestor [] [
             Tile.parent [ Tile.Size Tile.Is6 ] [
                 Tile.child [] [
