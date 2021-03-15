@@ -119,6 +119,7 @@ html {
 .contentCard {
     padding: 10px;
     border: 1px solid #000000;
+    border: 1px solid white;
     box-shadow: 10px 10px 10px black;
     color: #69A69A;
     font-family: "Exo";
@@ -129,13 +130,14 @@ html {
     }
     h2 {
         font-size: medium;
-        font-weight: 300;
+        font-weight: 600;
         font-style: italic;
         color: #dddddd;
     }
+    h3 { font-weight: 500; }
     p {
         font-size: 20px;
-        font-weight: 200;
+        font-weight: 400;
         color: #dddddd;
     }
     a {
@@ -182,19 +184,56 @@ html {
     @extend .contentCard;
     padding: 20px;
     background-color: rgba(0, 0, 0, .65);
-    h1 { font-size: 40px; }
-    h2 { font-size: x-large; }
+    border: 1px solid #fff;
+    // vertical spacing issue on wide views
+    // height: 100%;
+    // div {
+    //     height: 100%;
+    // }
+    h1 { 
+        font-size: xx-large; 
+        font-weight: 400;
+    }
+    h2 { 
+        font-size: larger; 
+        font-weight: 200;
+    }
     p { font-size: large; }
-    .level {    
+    .level {
         background-color: rgba(0, 0, 0, .75);
     }
 }
 .contentCardTextBackground {
     background-color: rgba(0, 0, 0, .6);
+    border: 1px solid white;
     padding: 25px;
     margin: 5px;
 }
 .paddedContainer { padding: 50px; }
+
+.relativeBackButton {
+    position: absolute;
+    top: 0;
+    right: 0;
+}
+
+// **********************
+
+// **********************
+// SHARED VIEW CLASSES
+// bigNavButton
+.bigSectionNavigationButton { 
+    padding: 50px;
+    background-color: rgba(0,0,0,.5);
+    &:hover { font-size: 20px; }
+}
+//bigNavButton
+.sectionNavButtonCols {
+    display: flex;
+    flex-direction:  column;
+    font-family: "Bungee"; 
+    color: #FF2843;
+}
 // **********************
 
 // **********************
@@ -204,7 +243,8 @@ html {
 }
 .welcomeContentCard {
     @extend .contentCard;
-    background: rgba(0, 0, 0, .5);
+    background-color: rgba(0, 0, 0, .5);
+    border: 1px solid #fff;
     h2 { 
         color: #69A69A;
         font-size: xx-large; 
@@ -236,7 +276,8 @@ html {
 .welcomeNextSectionCard  {
     @extend .hoverSelectionElement;
     background: rgba(0, 0, 0, .6);
-    border: 1px solid #000000;
+    // border: 1px solid #000000;
+    border: 1px solid #fff;
     box-shadow: 15px 10px 10px black;
     background-size: cover;
 }
@@ -254,12 +295,9 @@ html {
     @extend .contentCard;
     border: none;
     box-shadow: none;
-    .container {
-        @extend .contentCardTextBackground;
-    }
-    h2 {
-        color:#FF2843;
-        font-size: x-large;
+    h2 { 
+        color: #69A69A;
+        font-size: xx-large; 
     }
     h3 {
         color:#ffffff;
@@ -280,10 +318,16 @@ html {
     box-shadow: 15px 10px 10px black;
     padding: 50px;
     margin: 10px;
+    &:hover {
+        .contentCardTextBackground {
+            border: 1px solid #FF2843;
+        }
+    }
 }
 .portfolioCodeCard {
     @extend .portfolioSectionHoverSelection;
     background-image: url("../public/imgs/unsplash/walkator-code-unsplash.jpg");
+    
 }
 .portfolioDesignCard {
     @extend .portfolioSectionHoverSelection;
@@ -292,9 +336,14 @@ html {
 // MODAL
 .modalContent { 
     z-index: 40;
-    width: 100%;
+    width: 80%;
     overflow: auto;
+    // max-height: calc(100vh - 40px);
+    // margin: 0 auto;
 }
+// .modal-background {
+//     background-color: rgba(0, 0, 0, .9)
+// }
 .modalAltContent {
     @extend .contentCard;
     margin: 10px;
@@ -331,20 +380,9 @@ html {
     text-align: center;
     h1 { font-weight: 600; }
 }
-.backToGallery {
-    border: 1px solid #FF2843;
-    background: rgba(0, 0, 0, .65); 
-    font-family: "Exo";
-    font-size: medium;
-    padding: 15px;
-    p {
-        color: #FF2843;
-        font-weight: 600;
-    }
-}
 // DESIGN GALLERY CLASSES
 .galleryDescriptionCard {
-    font-size: medium;
+    font-size: larger;
     color: #69A69A;
     font-family: "Exo";
     text-align: center;
@@ -353,13 +391,33 @@ html {
     border: 1px solid #000000;
     background-color: #ffffff;
     text-align: center;
+    // max-height: calc(100vh - 40px);
     max-width: 80%;
     margin: auto;
 }
+// DESIGN MODAL BUTTONS
+.leftButton {
+    position: fixed;
+    bottom: 5%;
+    left: 0;
+}
+.rightButton {
+    position: fixed;
+    bottom: 5%;
+    right: 0;
+}
+.leftButtonDesktop {
+    @extend .leftButton;
+    bottom: 30%;
+}
+.rightButtonDesktop {
+    @extend .rightButton;
+    bottom: 30%;
+}
 // CODE GALLERY CLASSES
-// REVIEW + MOVE STYLES TO HERE
 // *****************
 .selectionTile {
+    border: 1px solid #fff;
     box-shadow: 5px 5px 5px black;
     background: rgba(0, 0, 0, .65); 
     text-align: center;
@@ -371,63 +429,15 @@ html {
     }
     h1 {
         color: #FF2843;
-        font-size: 40px;
+        font-size: xx-large;
         font-family: "Ubuntu";
+        font-weight: 400;
     }
     &:hover {
         border: 2px solid #FF2843;
     }
 }
-.gameGridControlBar {
-    margin: 5px;
-    border: 1px solid #000000;
-    box-shadow: 10px 10px 10px black;
-    background: #010E14;
-    background-image: url("../public/imgs/Bricklines.png");
-    background-size: contain;
-    background-position-x: center;
-    font-family: "Exo";
-    font-size: 20px;
-    font-size: small;
-    text-align: center;
-    h1 { font-size: 45px; }
-    p {
-        padding: 10px;
-        color: #69A69A;
-        font-style: italic;
-        font-weight: 600;
-    }
-    a {
-        color: #FF2843;
-        &:hover { font-size: 30px; }
-    }
-    .level-item { padding: 10px; }
-}
-.gameGridContainer {
-    text-align: -webkit-center;
-    margin: 20px;
-    padding: 30px;
-    // PICK A GOOD BACKGROUND!!
-    background-image: url("../public/imgs/unsplash/spaceSunset.jpg");
-    background-position: center;
-    background-size: cover;
-    background-repeat: no-repeat;
-    border: 1px solid #000000;
-}
-// NEEDS ANIMATIONS?
-// SCROLL WINNER ACROSS GRID SECTION MIGHT BE COOL
-.levelCompletedCard {
-    background: #010E14; 
-    border: 2px solid #00ff00;
-    box-shadow: 15px 10px 10px black;
-    text-align: center;
-    font-family: "Bungee";
-    font-size: 60px;
-    color: #00ff00;
-    margin: 20px;
-    padding: 20px;
-    margin: auto;
-}
+.gameGridContainer { .level { margin: auto; } }
 // Grid Game Tiles
 .genericGameTile {
     font-size: xx-large;
@@ -472,37 +482,45 @@ html {
     border: 1px solid white;
     font-family:  "Ubuntu";
 }
-// **********************
 
 
-// **********************
-// CONTACT CLASSES
-.splitCard {
-    // pads them taller but ugly -> 600px
-    min-height: auto;
+// REVIEW + MOVE STYLES TO HERE
+.gameGridControlBar {
+    margin: 5px;
+    border: 1px solid #000000;
+    box-shadow: 10px 10px 10px black;
+    background: #010E14;
+    background-image: url("../public/imgs/Bricklines.png");
+    background-size: contain;
+    background-position-x: center;
+    font-family: "Exo";
+    font-size: 20px;
+    font-size: small;
+    text-align: center;
+    h1 { font-size: 45px; }
+    p {
+        padding: 10px;
+        color: #69A69A;
+        font-style: italic;
+        font-weight: 600;
+    }
+    a {
+        color: #FF2843;
+        &:hover { font-size: 30px; }
+    }
+    .level-item { padding: 10px; }
 }
-// **********************
+.levelCompletedCard {
+    background: #010E14; 
+    border: 2px solid #00ff00;
+    box-shadow: 15px 10px 10px black;
+    text-align: center;
+    font-family: "Bungee";
+    font-size: 60px;
+    color: #00ff00;
+    margin: 20px;
+    padding: 20px;
+    margin: auto;
+}
 
-
 // **********************
-// SHARED
-// REVIEW ---
-// WANT THESE ON DESKTOP
-.bigSectionNavigationButton { 
-    padding: 50px;
-    background-color: rgba(0,0,0,.5);
-    &:hover { font-size: 20px; }
-}
-.sectionNavButtonCols {
-    display: flex;
-    flex-direction:  column;
-    font-family: "Bungee"; 
-    color: #FF2843;
-}
-.leftCol {
-    align-content: flex-start;
-}
-.rightCol {
-    align-content: flex-end;
-}
-// *************************

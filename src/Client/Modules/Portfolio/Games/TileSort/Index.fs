@@ -132,7 +132,7 @@ let tileSortGameBoard model dispatch =
     
 // modal content container
 let tileSortModalContent model dispatch =
-    SharedViewModule.modalContent ( 
+    SharedViewModule.gameModalContent ( 
         match model.GameState with 
         | Shared.GridGame.Controls -> SharedViewModule.codeModalControlsContent gameControls dispatch
         | Shared.GridGame.Instruction -> SharedViewModule.codeModalInstructionContent tileSortDescriptions
@@ -145,12 +145,13 @@ let tileSortModalContent model dispatch =
 
 open Shared.GridGame
 
-let controlList = [ "Play", (SetGameState (Playing));"Controls", (SetGameState (Controls)); "Rules", (SetGameState (Instruction)) ]
+let controlList = [ "Play", (SetGameState (Playing)); "Controls", (SetGameState (Controls)); "Rules", (SetGameState (Instruction)) ]
 
 // main view
 let view model dispatch =
-    SharedViewModule.sharedViewModal 
-        ( SharedViewModule.codeModalHeader "Tile Sort" QuitGame dispatch )
+    SharedViewModule.sharedViewModal
+        true 
+        ( SharedViewModule.sharedModalHeader "Tile Sort" QuitGame dispatch )
         ( tileSortModalContent model dispatch ) 
         ( SharedViewModule.codeModalFooter controlList dispatch )
 

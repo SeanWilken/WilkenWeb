@@ -423,7 +423,7 @@ let tileTapModalRight model dispatch =
 // *********************************
 
 let tileTapModalContent  ( model : SharedTileTap.Model ) dispatch =
-    SharedViewModule.modalContent ( 
+    SharedViewModule.gameModalContent ( 
         Column.column [] [
             match model.GameState with
             | RoundState.Controls -> tileTapModalRight model dispatch
@@ -477,8 +477,9 @@ let codeModalFooterOverride model controlList dispatch =
 
 // MODULE VIEW ----
 let view model dispatch =
-    SharedViewModule.sharedViewModal 
-        ( SharedViewModule.codeModalHeader "Tile Tap" QuitGame dispatch )
+    SharedViewModule.sharedViewModal
+        true
+        ( SharedViewModule.sharedModalHeader "Tile Tap" QuitGame dispatch )
         ( tileTapModalContent model dispatch ) 
         ( codeModalFooterOverride model controlList dispatch )
 // ----------------

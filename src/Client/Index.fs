@@ -68,15 +68,15 @@ let update ( msg: WebAppMsg ) ( model: SharedWebAppModels.Model ): SharedWebAppM
     | PortfolioMsg msg, SharedWebAppModels.Portfolio model ->
         match msg, model with
         // PORTFOLIO GALLERY SUB MODULE
-        | LoadSection ( SharedPortfolioGallery.PortfolioGallery ), _ -> 
+        | LoadSection ( Portfolio.PortfolioView.LandingView ), _ ->
             SharedWebAppModels.Portfolio model, Cmd.ofMsg ( LoadPage ( Page.Portfolio Landing ) )
         // CODE GALLERY SUB MODULE
-        | LoadSection ( SharedPortfolioGallery.CodeGallery ( SharedCodeGallery.CodeGallery ) ), _ ->
+        | LoadSection ( Portfolio.PortfolioView.CodeGalleryView ), _ ->
            SharedWebAppModels.Portfolio model, Cmd.ofMsg ( LoadPage ( Page.Portfolio ( Code ( CodeSection.Landing ) ) ) )
         | CodeGalleryMsg CodeGallery.Msg.BackToPortfolio, _ -> 
             SharedWebAppModels.Portfolio model, Cmd.ofMsg ( LoadPage ( Page.Portfolio Landing ) )
         // ART GALLERY SUB MODULE
-        | LoadSection ( SharedPortfolioGallery.DesignGallery ( { CurrentPieceIndex = 0 } ) ), _ ->
+        | LoadSection ( Portfolio.PortfolioView.DesignGalleryView ), _ ->
            SharedWebAppModels.Portfolio model, Cmd.ofMsg ( LoadPage ( Page.Portfolio ( Design ) ) )
         | ArtGalleryMsg ArtGallery.Msg.BackToPortfolio, _ -> 
             SharedWebAppModels.Portfolio model, Cmd.ofMsg ( LoadPage ( Page.Portfolio Landing ) )

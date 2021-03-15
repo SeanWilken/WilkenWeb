@@ -106,39 +106,21 @@ let update msg model : Model * Cmd<Msg> =
     | _ -> model, Cmd.none
 
 let aboutModalCard modalContent = 
-    Level.level [] [
-        Level.item [] [
-            div [ ClassName "aboutContentCard" ] [
-                div [ ClassName "contentCardTextBackground" ] [
-                        Container.container [] [ p [] [ str modalContent.MainContent ] ]
-                    ]
-                ]
-            ]
-        ]
-
-// ALSO USE SHARED MODAL?
-let aboutModal model dispatch modalContent =
-    Modal.modal [ Modal.IsActive model.ModalIsActive ] [ 
-        Modal.background [ Props [ OnClick ( fun _ -> ToggleModal model.ActiveModalIndex |> dispatch ) ] ] []
-        Modal.content [ Props [ClassName "modalContent"] ] [
-            SharedViewModule.codeModalHeader ( aboutModalContentSections.Item(model.ActiveModalIndex).Title ) ( ToggleModal (model.ActiveModalIndex) ) dispatch
-            aboutModalCard modalContent
-            // Columns.columns [ Columns.IsVCentered ] [
-                // Column.column [ Column.Props [ ClassName "leftCol" ] ] [
-                //     let navFunc = ( if ( model.ActiveModalIndex = 0 ) then PreviousSection else SwitchModal (-1) )
-                //     // change text if navigating to new submodule?
-                //     SharedViewModule.bigNavButton navFunc "PREV" dispatch
-                // ]
-                // Column.column [] [
-                // ]
-                // Column.column [ Column.Props [ ClassName "rightCol" ] ] [
-                //     let navFunc = ( if ( model.ActiveModalIndex = aboutModalContentSections.Length - 1 ) then NextSection else SwitchModal (1) )
-                //     // change text if navigating to new submodule?
-                //     SharedViewModule.bigNavButton navFunc "NEXT" dispatch
-                // ]
-            // ] 
+    div [ ClassName "aboutContentCard" ] [
+        div [ ClassName "contentCardTextBackground" ] [
+            p [] [ str modalContent.MainContent ]
         ]
     ]
+
+let aboutModal model dispatch modalContent =
+    SharedViewModule.sharedViewModal
+        ( model.ModalIsActive )
+        ( SharedViewModule.sharedModalHeader
+            ( aboutModalContentSections.Item(model.ActiveModalIndex).Title )
+            ( ToggleModal (model.ActiveModalIndex) )
+            ( dispatch ) )
+        ( aboutModalCard modalContent ) 
+        ( span [] [] )
 
 let mainAbout dispatch =
     Tile.ancestor [] [
@@ -150,7 +132,7 @@ let mainAbout dispatch =
                         Level.level [ Level.Level.Props [ ClassName "contentCardTextBackground" ] ] [
                             Level.item [] [
                                 Tile.child [] [
-                                    h1 [] [ str "General" ]
+                                    h2 [] [ str "General" ]
                                     h3 [] [ str "I wrote this website as a way to" ]
                                     h3 [] [ str "demonstrate some of my abilities &" ]
                                     h3 [] [ str "explain a little about me." ]
@@ -178,7 +160,7 @@ let secondaryAbout dispatch =
                         Level.level [ Level.Level.Props [ ClassName "contentCardTextBackground" ] ] [
                             Level.item [] [
                                 Tile.child [ ] [
-                                    h1 [] [ str "Professional" ]
+                                    h2 [] [ str "Professional" ]
                                     p [] [ str """I've been working with programming languages for about 5 years. Read More to check out what I've done in that time""" ]
                                 ]
                             ]
@@ -204,7 +186,7 @@ let tertiaryAbout dispatch =
                         Level.level [ Level.Level.Props [ ClassName "contentCardTextBackground" ] ] [
                             Level.item [] [
                                 Tile.child [ ] [
-                                    h1 [] [ str "Personal" ]
+                                    h2 [] [ str "Personal" ]
                                     p [] [ str """I'm a person just like you (unless you're a bot), who enjoys kicking back and relaxing. Check out some IRL shenanigans pics below.""" ]
                                 ]
                             ]
@@ -226,7 +208,7 @@ let tertiaryAbout dispatch =
         ]
     ]
 
-let general dispatch =
+let aboutDirectory dispatch =
     Tile.ancestor [] [
         Tile.parent [] [
             Level.level [] [
@@ -234,11 +216,26 @@ let general dispatch =
                     Container.container [ Container.Props [ ClassName "aboutContentCard" ] ] [
                         Level.level [ Level.Level.Props [ ClassName "contentCardTextBackground" ] ] [
                             Level.item [] [
+                                Tile.child [ ] [
+                                    h1 [] [ str "Code Gallery" ]
+                                    h3 [] [ str "Play or review the code that is this site or it's features.." ]
+                                    Image.image [] [ img [ Src "./imgs/Out for Blood.png" ] ]
+                                ]
+                            ]
+                        ]
+                        Level.level [ Level.Level.Props [ ClassName "hoverSelectionElement" ] ] [
+                            p [ OnClick ( fun _ -> ToggleModal 1 |> dispatch ) ] [ str "Read More" ]
+                        ]
+                    ]
+                ]
+                Tile.child [ Tile.Size Tile.Is4 ] [ 
+                    Container.container [ Container.Props [ ClassName "aboutContentCard" ] ] [
+                        Level.level [ Level.Level.Props [ ClassName "contentCardTextBackground" ] ] [
+                            Level.item [] [
                                 Tile.child [] [
-                                    h1 [] [ str "General" ]
-                                    h3 [] [ str "I wrote this website as a way to" ]
-                                    h3 [] [ str "demonstrate some of my abilities &" ]
-                                    h3 [] [ str "explain a little about me." ]
+                                    h1 [] [ str "Portfolio" ]
+                                    h3 [] [ str "Check out the code gallery, design gallery or my resume" ]
+                                    Image.image [] [ img [ Src "./imgs/Misfortune.png" ] ]
                                 ]
                             ]
                         ]
@@ -252,30 +249,14 @@ let general dispatch =
                         Level.level [ Level.Level.Props [ ClassName "contentCardTextBackground" ] ] [
                             Level.item [] [
                                 Tile.child [ ] [
-                                    h1 [] [ str "Professional" ]
-                                    h3 [] [ str "I've been working with programming languages for about 5 years." ]
-                                    h3 [] [ str "Read More to check out what I've done in that time." ]
+                                    h1 [] [ str "Design Gallery" ]
+                                    h3 [] [ str "I draw things sometimes, some of which I actually kinda like." ]
+                                    Image.image [] [ img [ Src "./imgs/Bowing Bubbles.png" ] ]
                                 ]
                             ]
                         ]
                         Level.level [ Level.Level.Props [ ClassName "hoverSelectionElement" ] ] [
-                            p [ OnClick ( fun _ -> ToggleModal 1 |> dispatch ) ] [ str "Read More" ]
-                        ]
-                    ]
-                ]
-                Tile.child [ Tile.Size Tile.Is4 ] [ 
-                    Container.container [ Container.Props [ ClassName "aboutContentCard" ] ] [
-                        Level.level [ Level.Level.Props [ ClassName "contentCardTextBackground" ] ] [
-                            Level.item [] [
-                                Tile.child [ ] [
-                                    h1 [] [ str "Personal" ]
-                                    h3 [] [ str "I'm a person just like you (unless you're a bot)." ]
-                                    h3 [] [ str "I enjoy kicking back and relaxing, exploring, and experiencing new things." ]
-                                ]
-                            ]
-                        ]
-                        Level.level [ Level.Level.Props [ ClassName "hoverSelectionElement" ] ] [
-                            p [ OnClick ( fun _ -> ToggleModal 1 |> dispatch ) ] [ str "Read More" ]
+                            p [ OnClick ( fun _ -> ToggleModal 2 |> dispatch ) ] [ str "Read More" ]
                         ]
                     ]
                 ]
@@ -285,9 +266,11 @@ let general dispatch =
 
 let view model dispatch =
     div [ ClassName "aboutSectionContainer" ] [
-        // general dispatch
-        mainAbout dispatch // change what these are
-        tertiaryAbout dispatch // change what these are
-        secondaryAbout dispatch // change what these are
-        aboutModal ( model ) ( dispatch ) ( aboutModalContentSections.Item( model.ActiveModalIndex ) )
+        if model.ModalIsActive 
+            then aboutModal ( model ) ( dispatch ) ( aboutModalContentSections.Item( model.ActiveModalIndex ) )
+            else
+                mainAbout dispatch // change what these are
+                tertiaryAbout dispatch // change what these are
+                secondaryAbout dispatch // change what these are
+                aboutDirectory dispatch
     ]

@@ -250,10 +250,10 @@ let goalRollLevelCreator ( goalRollModel : SharedGoalRoll.Model) dispatch =
 
 // modal content container
 let goalRollModalContent ( model : SharedGoalRoll.Model ) dispatch =
-    SharedViewModule.modalContent (
+    SharedViewModule.gameModalContent (
         match model.GameState with 
-        | Controls -> SharedViewModule.codeModalControlsContent gameControls dispatch //goalRollModalRight dispatch
-        | Instruction -> SharedViewModule.codeModalInstructionContent goalRollDescriptions//goalRollLeftModal
+        | Controls -> SharedViewModule.codeModalControlsContent gameControls dispatch
+        | Instruction -> SharedViewModule.codeModalInstructionContent goalRollDescriptions
         | Won -> div [ ClassName "levelCompletedCard" ] [ str "Level Completed!!!" ]
         | Paused
         | Playing -> goalRollLevelCreator model dispatch
@@ -265,7 +265,8 @@ let goalRollModalContent ( model : SharedGoalRoll.Model ) dispatch =
 
 // main view
 let view ( model : SharedGoalRoll.Model ) dispatch =
-    SharedViewModule.sharedViewModal 
-        ( SharedViewModule.codeModalHeader "Goal Roll" QuitGame dispatch )
+    SharedViewModule.sharedViewModal
+        true
+        ( SharedViewModule.sharedModalHeader "Goal Roll" QuitGame dispatch )
         ( goalRollModalContent model dispatch ) 
         ( SharedViewModule.codeModalFooter controlList dispatch )

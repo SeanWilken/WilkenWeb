@@ -61,11 +61,13 @@ let update ( msg: Msg ) ( model: SharedCodeGallery.Model ): SharedCodeGallery.Mo
     | _, _ -> 
         model, Cmd.none
 
-let CodeGalleryHeader =
+let CodeGalleryHeader dispatch =
     Container.container [ Container.Props [ ClassName "viewTitleCard" ] ] [
         Container.container [] [
+            SharedViewModule.backToGallery BackToPortfolio dispatch
             h1 [] [ str "Code Gallery" ]
             h2 [] [ str "Select one of the below to try out or view the source code." ]
+
         ]
     ]
 
@@ -110,8 +112,7 @@ let view model dispatch =
         match model with
         | SharedCodeGallery.CodeGallery ->
             Container.container [] [
-                SharedViewModule.backToGallery BackToPortfolio dispatch
-                CodeGalleryHeader
+                CodeGalleryHeader dispatch
                 goalRollSelection dispatch
                 tileSortSelection dispatch
                 tileTapSelection dispatch

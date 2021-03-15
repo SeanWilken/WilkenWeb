@@ -10,6 +10,11 @@ type AnchorLink = {
     LinkTitle: string
 }
 
+let contactHeaderTitle = "Looking to tell me something?"
+let contactHeaderBlurbs = [
+    "Drop a line to the appropriate entity.."
+    "Whatever it is, NO spam!"
+]
 let swContactEmailAnchor =
     [   
         "Got something to say?",
@@ -21,7 +26,6 @@ let swContactEmailAnchor =
         "Credentials coming soon to resumes near you...",
         None;
     ]
-
 let xeContactEmailAnchor = 
     [ 
         "Complement or complaint...",
@@ -40,60 +44,32 @@ let xeContactEmailAnchor =
         // };
     ]
 
-// should have style different than cards
-let contactHeader =
-    Tile.ancestor [] [
-        Tile.parent [] [
-            Tile.child [ Tile.Size Tile.Is12 ] [
-                div [ ClassName "viewTitleCard" ] [ 
-                    h1 [] [ str "Looking to tell me something?" ]
-                    h2 [] [ str "Drop a line to the appropriate entity.." ]
-                    h2 [] [ str "Whatever it is, NO spam!" ]
-                ]
-            ]
-        ]
-    ]
-
-// style is not to my liking..
 // should fill more of the screen vertically when on desktop views....
-let childSplitTile title ( tileBullets: ( string * AnchorLink option ) list ) =
-    Tile.child [ Tile.IsVertical; Tile.CustomClass "splitCard" ] [ 
-        div [ ClassName "viewTitleCard" ] [ 
-            h1 [] [ str title ]
-            if not tileBullets.IsEmpty then br []
-            for tileString, anchorLink in tileBullets do
-                p [] [ str tileString ]
-                match anchorLink with
-                | Some link ->
-                    a [ Href link.Hyperlink ] [ 
-                        Level.item [] [
-                            Image.image [ Image.Is64x64 ] [ img [ Src link.LinkIcon ] ]
-                            div [] [ str link.LinkTitle ] 
+let contactChildSplitTile title ( tileBullets: ( string * AnchorLink option ) list ) =
+    Tile.child [] [
+        div [ ClassName "viewTitleCard" ] [
+            Container.container [] [
+                h1 [] [ str title ]    
+                if not tileBullets.IsEmpty then br []
+                for tileString, anchorLink in tileBullets do
+                    p [] [ str tileString ]
+                    match anchorLink with
+                    | Some link ->
+                        a [ Href link.Hyperlink ] [ 
+                            Level.item [] [
+                                Image.image [ Image.Is64x64 ] [ img [ Src link.LinkIcon ] ]
+                                div [] [ str link.LinkTitle ] 
+                            ]
                         ]
-                    ]
-                | None -> ()
-                br []
-        ]
-    ]
-
-let contactSplitView =
-    div [] [
-        Tile.ancestor [] [
-            Tile.parent [ Tile.Size Tile.Is6 ] [
-                childSplitTile "Sean Wilken" swContactEmailAnchor
-            ]
-            Tile.parent [ Tile.Size Tile.Is6 ] [
-                childSplitTile "Xero Effort" xeContactEmailAnchor
+                    | None -> ()
+                    br []
             ]
         ]
-    ]
-
-let viewSplit =
-    div [] [
-        contactHeader
-        contactSplitView
     ]
 
 // CONTACT: -> CONTENT -> {GMAIL / LINKEDIN / (IG / FACEBOOK / TWITTER / ETC..?)}
 let view = 
-    viewSplit
+    SharedViewModule.sharedSplitView
+        ( SharedViewModule.sharedSplitHeader contactHeaderTitle contactHeaderBlurbs )
+        ( contactChildSplitTile "Sean Wilken" swContactEmailAnchor )
+        ( contactChildSplitTile "Xero Effort" xeContactEmailAnchor )

@@ -6,70 +6,6 @@ open Fable.React.Props
 open Fulma
 open Shared
 
-(*
-
-t shirts  = 20
-3/4 || long sleeve 25
-sweatshirt = ??
-hats // backpack // mug // else...??
-
-// mimic to some degree style of printful store (clone that essentially, with wrapper API to place orders)
-let gridProductCard heroImage productSwatches productInfo =
-    div [] [
-        // will be next or back a picture (if there is more than one picture, if only one alternate picture then flip icon {like the one used for front / back facing camera swap})
-        div [] []
-        Image.image [] [ img [Src = ""] ]
-        div [] [ str "" ]
-        div [] [ str "" ]
-        div [] [ str "" ]
-    ]
-// mimic amazon style list
-let listProductCard heroImage productSwatches productInfo =
-    div [] [
-        // will be next or back a picture (if there is more than one picture, if only one alternate picture then flip icon {like the one used for front / back facing camera swap})
-        div [] []
-        Image.image [] [ img [ Src = "" ] ]
-        div [] [ str "" ]
-        div [] [ str "" ]
-        div [] [ str "" ]
-    ]
-
-// mockup of products
-    // finalize designs
-        // download generated mock ups
-
-// ProductImages -- The image(s) for the product record.
-|| string list --> [ "path/to/img.ext"; "path/to/img.ext"; ... ]
-    // HERO IMAGE || Index: [0] 
-        || The first element in the product image list will be used as the 'HERO IMAGE' for the product.
-        || If there are no elements, the default store logo will be used.
-    // ALT VIEWS || Index: [1..n] 
-        || Any additional images contained within the product image list will be used as alternate views. 
-        || If there is only one additional image, the icon for chaning the view should be 'Flip' style.
-        || All additional images will be shown in order of assigned index from it's defined record.
-
-// Needs to have higher level of separation in order to have the Option title, along with the list of it's options.
-
-// ProductOptions -- A distinct and required selection of an option to choose between variants.
-|| string list --> [ "OptionA"; "OptionB"; ... ] --> || Indexes: [0..n]
-    // Color
-    // Size
-    // Etc....
-        // If there is only one option, it will be considered a default and non-selectable option.
-        // Otherwise, the options will be listed for user's selection.
-
-// ProductDetails -- Describe the intent, build or purpose of a product.
-|| string list --> [ "DescriptivePointA"; "DescriptivePointB"; ... ]
-
-*)
-
-
-// GALLERY POSTCARD APP -> SHARE THIS SITE (POSTCARD FROM THE INTERWEBS)
-// RELATED TAGS BROWSER:
-    // OTHER IMAGES ALSO FLAGGED FOR SAME STYLE / THEME; SELF DRIVE-RECOMENDATIONS
-// POSTCARD SENDER, SEND A TEMPLATE OF THE GALLERY ART WITH CUSTOM TEXT OR IMAGE AND EMAIL TO A FRIEND
-    // SHARE THIS SITE / PRODUCT / IMAGE
-
 // name, description tuple for gallery pieces.
 // unable to read out folder file contents, System.IO not compatible with Fable
 let galleryPieces = [
@@ -105,10 +41,6 @@ let update msg ( model : SharedDesignGallery.Model ) =
     | _ ->
         model, Cmd.none
 
-// HEADER CONTROLS FOR 
-    // CHANGE VIEW -> T-SHIRT / LONG SLEEVE / SWEATSHIRT / ETC.... - IF DESIGN EXISTS ON MULTIPLE IMAGES ()
-    // LINK TO PRINTFUL STORE OF SELECTED PRODUCT  - IF DESIGN IS SALEABLE / SELECTED GARMENT VIEW
-
 // HELPER FUNCTION TO BREAKDOWN THE GALLERY TUPLE
 let getGalleryCardByIndex ( index: int ) =
     let piece, description = galleryPieces.Item ( index )
@@ -120,73 +52,31 @@ let galleryEntryHeaderControls dispatch =
         span [ ClassName "modalExternalLink" ] [ a [ Href "https://www.instagram.com/xeroeffort/" ] [ Image.image [ Image.Is64x64 ] [ img [ Src "./imgs/icons/IG.png" ] ]; ] ] //p [] [ str "Instagram" ] 
     ]
 
-let galleryEntryContent piece =
+let galleryEntryContent piece description =
     div [] [
         div [ ClassName "galleryTitleCard" ] [ h1 [] [ str piece ] ]
         div [ ClassName "galleryImage" ] [ Image.image [] [ img [ Src ( "./imgs/" + piece + ".png" ) ] ] ]
+        p [ ClassName "galleryDescriptionCard" ] [ str description ]
     ]
 
-// not aligned properly!!!!!
-let galleryEntryFooterControls description dispatch =
-    Columns.columns [ Columns.IsMobile; Columns.Props [ Style [ Bottom "0px"; Position PositionOptions.Fixed; ] ] ] [
-        Column.column [Column.Props [ Style [ Margin "auto"; ] ] ] [
-            Column.column [] [ a [ OnClick ( fun _ -> (SetCurrentPieceIndex (-1) |> dispatch ) ) ] [ Image.image [Image.Is64x64] [ img [Src "./imgs/icons/LeftNavButton.png"] ] ] ]
-        ]
-        Column.column [Column.Props [ Style [ Margin "auto"; ] ] ] [
-            Column.column [ Column.Props [ ClassName "galleryDescriptionCard" ] ] [ p [] [ str description ] ]
-        ]
-        Column.column [Column.Props [ Style [ Margin "auto"; ] ] ] [
-            Column.column [] [ a [ OnClick ( fun _ -> (SetCurrentPieceIndex (1) |> dispatch ) ) ] [ Image.image [Image.Is64x64] [ img [Src "./imgs/icons/RightNavButton.png"] ] ] ]
-        ]
+let galleryEntryDesktopFooterControls dispatch =
+    div [] [
+        div [ ClassName "leftButtonDesktop" ] [ SharedViewModule.bigNavButton ( SetCurrentPieceIndex (-1) ) "PREV" dispatch ]
+        div [ ClassName "rightButtonDesktop" ] [ SharedViewModule.bigNavButton ( SetCurrentPieceIndex (1) ) "NEXT" dispatch ]
     ]
 
-// Container.container [] [ galleryModal model dispatch ]
-// NOT USED CURRENTLY
-// I LIKE THE BIG BUTTON STYLES FOR DESKTOP!!!!!!
-let galleryModal ( model: SharedDesignGallery.Model ) dispatch =
-    Modal.modal [ Modal.IsActive true ] [ 
-        Modal.background [] []
-        div [ ClassName "modalContent" ] [
-            Level.level [] [
-                // SharedViewModule.bigNavButton (SetCurrentPieceIndex (-1)) "PREV" dispatch
-                Level.item [] [
-                    let piece, description = getGalleryCardByIndex model.CurrentPieceIndex
-                    galleryEntryContent piece 
-                    galleryEntryFooterControls description dispatch
-                ]
-                // SharedViewModule.bigNavButton (SetCurrentPieceIndex (1)) "NEXT" dispatch
-            ]
-            span [ ClassName "modalExternalLink" ] [ a [ Href "https://www.instagram.com/xeroeffort/" ] [ Image.image [ Image.Is64x64 ] [ img [ Src "./imgs/icons/IG.png" ] ];  ] ] //p [] [ str "Instagram" ]
-            span [ ClassName "closeModal"; OnClick ( fun _ -> BackToPortfolio |> dispatch ) ] [ Image.image [ Image.Is64x64 ] [ img [ Src "./imgs/icons/X-it.png" ] ] ]
-        ]
+let galleryEntryMobileFooterControls dispatch =
+    div [] [
+        div [ ClassName "leftButton" ] [ a [ OnClick ( fun _ -> (SetCurrentPieceIndex (-1) |> dispatch ) ) ] [ Image.image [ Image.Is64x64 ] [ img [Src "./imgs/icons/LeftNavButton.png"] ] ] ]
+        div [ ClassName "rightButton" ] [ a [ OnClick ( fun _ -> (SetCurrentPieceIndex (1) |> dispatch ) ) ] [ Image.image [ Image.Is64x64 ] [ img [Src "./imgs/icons/RightNavButton.png"] ] ] ]
     ]
 
-
-(*
-
-FOOTER LARGE DISPATCH BUTTONS!!
-Columns.columns [Columns.IsMobile] [
-    // Column.column [] [ SharedViewModule.bigNavButton (SetCurrentPieceIndex (-1)) "PREV" dispatch ]
-    // Column.column [] [ SharedViewModule.bigNavButton (SetCurrentPieceIndex (1)) "NEXT" dispatch ]
-    Column.column [] [ a [ OnClick ( fun _ -> (SetCurrentPieceIndex (-1) |> dispatch ) ) ] [ Image.image [Image.Is64x64] [ img [Src "./imgs/icons/LeftNavButton.png"] ] ] ]
-    Column.column [] [ a [ OnClick ( fun _ -> (SetCurrentPieceIndex (1) |> dispatch ) ) ] [ Image.image [Image.Is64x64] [ img [Src "./imgs/icons/RightNavButton.png"] ] ] ]
-]
-*)
-
-// spans were anchors, refactor
-
-// wrap in div to match other submodules, will have side effects as containers aren't styleless.
 let view ( model: SharedDesignGallery.Model ) dispatch =
-    Modal.modal [Modal.IsActive true] [
-        Modal.background [] []
-        Modal.content [] [
-            let piece, description = getGalleryCardByIndex model.CurrentPieceIndex
-            galleryEntryHeaderControls dispatch
-            galleryEntryContent piece 
-            Level.level [] [
-                Level.item [] [
-                    galleryEntryFooterControls description dispatch
-                ]
-            ]
-        ]
-    ]
+    let piece, description = getGalleryCardByIndex model.CurrentPieceIndex
+    SharedViewModule.sharedViewModal
+        true
+        ( galleryEntryHeaderControls dispatch )
+        ( galleryEntryContent piece description ) 
+        ( if SharedViewModule.viewPortModalBreak
+            then galleryEntryDesktopFooterControls dispatch
+            else galleryEntryMobileFooterControls dispatch )
