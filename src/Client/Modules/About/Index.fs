@@ -191,7 +191,7 @@ let aboutModalCard modalContent =
         ]
     ]
 
-let aboutModal model dispatch modalContent =
+let aboutModal model modalContent dispatch =
     SharedViewModule.sharedViewModal
         ( model.ModalIsActive )
         ( SharedViewModule.sharedModalHeader
@@ -294,23 +294,9 @@ let aboutDirectory dispatch =
 
 let view model dispatch =
     div [ ClassName "aboutSectionContainer" ] [
-        if model.ModalIsActive 
-            then aboutModal ( model ) ( dispatch ) ( aboutModalContentSections.Item( model.ActiveModalIndex ) )
-            else
-                aboutTileDetailsLevel
-                    aboutGeneralTileDetails
-                    aboutGeneralTileDirectoryButton
-                    aboutGeneralTileImage 
-                    dispatch
-                aboutTileDetailsFullView
-                    aboutPersonalTileDetails
-                    aboutPersonalTileDirectoryButton
-                    aboutPersonalFullTileImages 
-                    dispatch
-                aboutTileDetailsLevel 
-                    aboutProfessionalTileDetails
-                    aboutProfessionalTileDirectoryButton
-                    aboutProfessionalTileImage 
-                    dispatch
-                aboutDirectory dispatch // change you a lil'
+        aboutModal model ( aboutModalContentSections.Item( model.ActiveModalIndex ) ) dispatch
+        aboutTileDetailsLevel aboutGeneralTileDetails aboutGeneralTileDirectoryButton aboutGeneralTileImage dispatch
+        aboutTileDetailsFullView aboutPersonalTileDetails aboutPersonalTileDirectoryButton aboutPersonalFullTileImages dispatch
+        aboutTileDetailsLevel aboutProfessionalTileDetails aboutProfessionalTileDirectoryButton aboutProfessionalTileImage dispatch
+        aboutDirectory dispatch // change you a lil'
     ]
