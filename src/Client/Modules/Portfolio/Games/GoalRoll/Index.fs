@@ -261,8 +261,6 @@ let goalRollModalContent ( model : SharedGoalRoll.Model ) dispatch =
 
 // --------------------------------
 
-// 2.0
-
 // main view
 let view ( model : SharedGoalRoll.Model ) dispatch =
     SharedViewModule.sharedViewModal

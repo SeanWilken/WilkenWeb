@@ -24,23 +24,9 @@ type WebAppMsg =
     | WelcomeMsg of Welcome.Msg
     | AboutMsg of AboutSection.Msg
     | PortfolioMsg of Portfolio.Msg
-    | SwitchToOtherApp of string // please wrap me
+    | SwitchToOtherApp of SharedWebAppViewSections.AppSection
     | LoadPage of Page
     | ErrorMsg of exn // WIP?
-
-// PAGE ROUTER
-// if had to hit server
-// ------------
-// implementation of IPageApi
-// this uses the route builder!!
-// let pageApi =
-//     Remoting.createApi()
-//     |> Remoting.withRouteBuilder Route.builder
-//     |> Remoting.buildProxy<IPageApi>
-// let loadPage path = async {
-//     let! page = pageApi.GetPage path
-//     return page
-// }
 
 // DIRECTORY PAGE, DIRECT LINKS FROM ANY MODEL VIEW TO ANOTHER. MODAL VIEW?
 
@@ -52,31 +38,29 @@ let update ( msg: WebAppMsg ) ( model: SharedWebAppModels.Model ): SharedWebAppM
     match msg, model with
     
     // WELCOME PAGE
-    | WelcomeMsg msg, SharedWebAppModels.Model.Welcome ->
-        model, Cmd.ofMsg ( LoadPage Page.About )
+    | WelcomeMsg ( Welcome.SwitchSection appSection ), SharedWebAppModels.Model.Welcome ->
+        model, Cmd.ofMsg ( SwitchToOtherApp appSection )
 
     // ABOUT PAGE
-    | AboutMsg ( NextSection ),  model ->
-        model, Cmd.ofMsg ( LoadPage ( Page.Portfolio Landing ) )
-    | AboutMsg ( PreviousSection ), model ->
-        model, Cmd.ofMsg ( LoadPage ( Page.Welcome ) )
+    | AboutMsg ( AboutSection.SwitchSection appSection ), model ->
+        model, Cmd.ofMsg (SwitchToOtherApp appSection)
     | AboutMsg msg, SharedWebAppModels.Model.AboutSection ( model ) ->
-        let thing, com = AboutSection.update msg model
-        SharedWebAppModels.AboutSection thing, Cmd.none
+        let updateModel, com = AboutSection.update msg model
+        SharedWebAppModels.AboutSection updateModel, Cmd.none
 
     // PORTFOLIO PAGE
     | PortfolioMsg msg, SharedWebAppModels.Portfolio model ->
         match msg, model with
         // PORTFOLIO GALLERY SUB MODULE
-        | LoadSection ( Portfolio.PortfolioView.LandingView ), _ ->
+        | LoadSection ( SharedWebAppViewSections.AppSection.PortfolioAppLandingView ), _ ->
             SharedWebAppModels.Portfolio model, Cmd.ofMsg ( LoadPage ( Page.Portfolio Landing ) )
         // CODE GALLERY SUB MODULE
-        | LoadSection ( Portfolio.PortfolioView.CodeGalleryView ), _ ->
+        | LoadSection ( SharedWebAppViewSections.AppSection.PortfolioAppCodeView ), _ ->
            SharedWebAppModels.Portfolio model, Cmd.ofMsg ( LoadPage ( Page.Portfolio ( Code ( CodeSection.Landing ) ) ) )
         | CodeGalleryMsg CodeGallery.Msg.BackToPortfolio, _ -> 
             SharedWebAppModels.Portfolio model, Cmd.ofMsg ( LoadPage ( Page.Portfolio Landing ) )
         // ART GALLERY SUB MODULE
-        | LoadSection ( Portfolio.PortfolioView.DesignGalleryView ), _ ->
+        | LoadSection ( SharedWebAppViewSections.AppSection.PortfolioAppDesignView ), _ ->
            SharedWebAppModels.Portfolio model, Cmd.ofMsg ( LoadPage ( Page.Portfolio ( Design ) ) )
         | ArtGalleryMsg ArtGallery.Msg.BackToPortfolio, _ -> 
             SharedWebAppModels.Portfolio model, Cmd.ofMsg ( LoadPage ( Page.Portfolio Landing ) )
@@ -85,16 +69,19 @@ let update ( msg: WebAppMsg ) ( model: SharedWebAppModels.Model ): SharedWebAppM
             let portfolioModel, com = Portfolio.update msg model
             SharedWebAppModels.Portfolio portfolioModel, Cmd.map PortfolioMsg com
     
-    // HEADER NAV ROUTING
-    | SwitchToOtherApp string, _ ->
+    // Page Routing
+    | SwitchToOtherApp section, _ ->
         // handles page route for top level
-        match string with
-        | "AboutSection" -> model, Cmd.ofMsg ( LoadPage Page.About )
-        | "Portfolio" -> model, Cmd.ofMsg ( LoadPage ( Page.Portfolio ( Landing ) ) )
-        | "Contact" -> model, Cmd.ofMsg ( LoadPage Page.Contact )
-        | "Welcome"
+        match section with
+        | SharedWebAppViewSections.AppSection.AboutAppView -> model, Cmd.ofMsg ( LoadPage Page.About )
+        | SharedWebAppViewSections.AppSection.PortfolioAppLandingView -> model, Cmd.ofMsg ( LoadPage ( Page.Portfolio ( Landing ) ) )
+        | SharedWebAppViewSections.AppSection.PortfolioAppCodeView -> model, Cmd.ofMsg ( LoadPage ( Page.Portfolio ( Code ( CodeSection.Landing ) ) ) )
+        | SharedWebAppViewSections.AppSection.PortfolioAppDesignView -> model, Cmd.ofMsg ( LoadPage ( Page.Portfolio ( Design ) ) )
+        | SharedWebAppViewSections.AppSection.ContactAppView -> model, Cmd.ofMsg ( LoadPage Page.Contact )
+        | SharedWebAppViewSections.AppSection.WelcomeAppView
         | _ ->
             model, Cmd.ofMsg ( LoadPage Page.Welcome )
+
     | LoadPage page, model ->
         urlUpdate ( Some page ) model
     | _ -> model, Cmd.none
@@ -105,8 +92,22 @@ open Fulma
 
 open FSharp.Reflection
 
-//TODO:
-    // HEADER TITLE AND ITEMS SHOULDN'T SHIFT AROUND WHEN HOVERING MENU SELECTION ITEMS
+// takes union case string, returns an app section
+let areaStringToAppSection string =
+    match string with
+    | "AboutSection" -> SharedWebAppViewSections.AppSection.AboutAppView
+    | "Portfolio" ->  SharedWebAppViewSections.AppSection.PortfolioAppLandingView
+    | "Contact" -> SharedWebAppViewSections.AppSection.ContactAppView
+    | "Welcome"
+    | _ -> SharedWebAppViewSections.AppSection.WelcomeAppView
+
+// returns the current model as an area
+let currentWebAppSection model = 
+    match model with
+    | SharedWebAppModels.Welcome -> SharedWebAppViewSections.AppSection.WelcomeAppView
+    | SharedWebAppModels.AboutSection _ -> SharedWebAppViewSections.AppSection.AboutAppView
+    | SharedWebAppModels.Portfolio _ -> SharedWebAppViewSections.AppSection.PortfolioAppLandingView
+    | SharedWebAppModels.Contact -> SharedWebAppViewSections.AppSection.ContactAppView
 
 // Union cases of the different web app sub modules, in order to create elements
 // and reference the union type in code.
@@ -118,25 +119,21 @@ let contentAreas = FSharpType.GetUnionCases typeof<SharedWebAppModels.Model>
 // of their attention (such as a code example being played, or some art being viewed)
 let headerBlurSelector model = 
     match model with
-    | SharedWebAppModels.Contact ->
-        Container.Props [ ClassName "blurContent" ]
     | SharedWebAppModels.Portfolio model ->
         match model with
-        | SharedPortfolioGallery.PortfolioGallery ->
-            Container.Props [ ClassName "" ]
-        | _ -> 
-            Container.Props [ ClassName "blurContent" ]
-    | _ ->
-        Container.Props [ ClassName "" ]
+        | SharedPortfolioGallery.PortfolioGallery -> Container.Props []
+        | _ -> Container.Props [ ClassName "blurContent" ]
+    | _ -> Container.Props []
 
 // Web App Header Nav content
+//TODO: HEADER TITLE AND ITEMS SHOULDN'T SHIFT AROUND WHEN HOVERING MENU SELECTION ITEMS
 let headerContent ( model: SharedWebAppModels.Model ) dispatch =
     Columns.columns [ Columns.IsVCentered ] [
         Column.column [] [
             Container.container [ headerBlurSelector model ] [
                 Level.level [] [
                     Level.item [] [
-                        a [ OnClick ( fun _ -> SwitchToOtherApp "Welcome" |> dispatch ) ] [
+                        a [ OnClick ( fun _ -> SwitchToOtherApp SharedWebAppViewSections.AppSection.WelcomeAppView |> dispatch ) ] [
                             Level.item [] [ 
                                 Image.image [ Image.Is64x64 ] [ img [ Src "./imgs/icons/Flat logo backless.png"; ] ]
                                 p [ ClassName "headerTitle" ] [ str "Sean Wilken" ]
@@ -144,17 +141,13 @@ let headerContent ( model: SharedWebAppModels.Model ) dispatch =
                         ]
                     ]
                     Level.item [ ] [
-                        Columns.columns [ Columns.IsMobile ] [ // vs IsDesktop
+                        Columns.columns [ Columns.IsMobile ] [
+                            let currentSection = currentWebAppSection model
                             for contentArea in contentAreas do
                                 let areaName = contentArea.Name
-                                let currentContentSection = 
-                                    match model with
-                                    | SharedWebAppModels.Welcome -> "Welcome"
-                                    | SharedWebAppModels.AboutSection _ -> "AboutSection"
-                                    | SharedWebAppModels.Portfolio _ -> "Portfolio"
-                                    | SharedWebAppModels.Contact -> "Contact"
-                                let areaClassName = if currentContentSection = areaName then "selectedNavLink" else "navSectionLink";
-                                Column.column [] [ a [ ClassName areaClassName; OnClick( fun _ -> SwitchToOtherApp areaName |> dispatch ) ] [ str areaName ] ]
+                                let areaAppSection = areaStringToAppSection areaName
+                                let areaClassName = if currentSection = areaAppSection then "selectedNavLink" else "navSectionLink";
+                                Column.column [] [ a [ ClassName areaClassName; OnClick( fun _ -> SwitchToOtherApp areaAppSection |> dispatch ) ] [ str areaName ] ]
                         ]
                     ]
                 ]

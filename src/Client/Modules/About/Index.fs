@@ -10,20 +10,95 @@ open Shared.SharedAboutSection
 // TODO    
     // STATS BUTTON TO PULL UP RESUME (ARTSY STYLE) (DOCUMENT STYLE IN CONTACT ME?)
     // ANIMATE CARD SLIDING WITH ARROW SOMEHOW?
-    // ADD EXTRA DETAIL SECTIONS (WIP)
 
-    // TODO -> CONTENT SECTIONS -> {LARGE HERO STYLE TILE + QUICK DESCRIPT} -> CLICK TO MAKE HERO CONTENT WITH LONG DESCRIPTION / DETAILS
-        // SKILLS & RESUME: Boiled down content sections into a professional resume
-
-    // HOW DO I DRIVE CONTINUOUS USAGE OF THE SITE TO PRGORESS THE USER EXPERIENCE
-       // STYLE AND ANIMATION WISE, NEED A COHESIVE FLOW THROUGH THE SECTIONS OF THE WEBSITE, CURRENT IMPLEMENTATION IS FRAGMENTED IN NAVIGATION COMMANDS (WHERE AND HOW)
+open Shared
 
 type Msg =
     | ToggleModal of int
-    | PreviousSection
-    | NextSection
     | SwitchModal of int
-    // don't break them all down into one single group, browse through each point.
+    | SwitchSection of SharedWebAppViewSections.AppSection 
+
+type DirectoryTileDetails = {
+    Header : string
+    SubHeader : string
+    Image : string option
+}
+
+type DirectoryButton = {
+    ButtonTitle : string
+    ButtonMsg : Msg
+}
+
+// Code Tile
+let codeGalleryDirectoryButtonDetails = Some {
+    Header = "Code Gallery"
+    SubHeader = "Play or review the code that is this site or it's features.."
+    Image = Some "./imgs/Out for Blood.png"
+}
+let codeGalleryDirectoryButton = Some {
+    ButtonTitle = "Code"
+    ButtonMsg = SwitchSection ( SharedWebAppViewSections.PortfolioAppCodeView )
+}
+// Portfolio Landing Tile
+let portfolioDirectoryButtonDetails = Some {
+    Header = "Portfolio"
+    SubHeader = "Check out the code gallery, design gallery or my resume"
+    Image = Some "./imgs/Bowing Bubbles.png"
+}
+let portfolioDirectoryButton = Some {
+    ButtonTitle = "Portfolio"
+    ButtonMsg = SwitchSection ( SharedWebAppViewSections.PortfolioAppLandingView )
+}
+// Art Gallery Tile
+let artGalleryDirectoryButtonDetails = Some {
+    Header = "Design Gallery"
+    SubHeader = "I draw things sometimes, some of which I actually kinda like."
+    Image = Some "./imgs/Misfortune.png"
+}
+let artGalleryDirectoryButton = Some {
+    ButtonTitle = "Designs"
+    ButtonMsg = SwitchSection ( SharedWebAppViewSections.PortfolioAppDesignView )
+}
+
+// General Tile Level
+let aboutGeneralTileDetails = Some {
+    Header = "General"
+    SubHeader = "I wrote this website as a way to demonstrate some of my abilities & explain a little about me."
+    Image = None
+}
+let aboutGeneralTileDirectoryButton = Some {
+    ButtonTitle = "Read More"
+    ButtonMsg = ToggleModal 0
+}
+let aboutGeneralTileImage = Some "./imgs/Out for Blood.png"
+// Professional Tile Level
+let aboutProfessionalTileDetails = Some {
+    Header = "Professional"
+    SubHeader = "I've been working with programming languages for about 5 years. Read More to check out what I've done in that time"
+    Image = None
+}
+let aboutProfessionalTileDirectoryButton = Some {
+    ButtonTitle = "Read More"
+    ButtonMsg = ToggleModal 1
+}
+let aboutProfessionalTileImage = Some "./imgs/Misfortune.png"
+
+// Personal Tile Level
+let aboutPersonalTileDetails = Some {
+    Header = "Personal"
+    SubHeader = "I'm a person just like you (unless you're a bot), who enjoys kicking back and relaxing. Check out some IRL shenanigans pics below."
+    Image = None
+}
+let aboutPersonalTileDirectoryButton = Some {
+    ButtonTitle = "Read More"
+    ButtonMsg = ToggleModal 2
+}
+// Personal Full Tile Level Images
+let aboutPersonalFullTileImages = Some [ 
+    "./imgs/Misfortune.png"
+    "./imgs/Bowing Bubbles.png"
+    "./imgs/Out for Blood.png"
+]
 
 // ADD IMAGES AND THINGS TO MAKE THIS BE A GENERIC LAYOUT PASSED THE CONTENT MODAL / VIEW
 // Switched to single string for now, kind of liked how it looked as list iterated and broken
@@ -88,6 +163,8 @@ let websiteModalContent = {
 
 let aboutModalContentSections = [ generalModalContent; professionalModalContent; personalModalContent ]
 
+// Update lifecycle ---------
+
 // fulma timeline to walk through timeline of events
 let toggleModal model index =
     let activeModal = if ( index <> model.ActiveModalIndex ) then { model with ActiveModalIndex = index } else model
@@ -104,6 +181,8 @@ let update msg model : Model * Cmd<Msg> =
         | -1 -> { model with ActiveModalIndex = model.ActiveModalIndex - 1}, Cmd.none
         | _ -> model, Cmd.none
     | _ -> model, Cmd.none
+
+// View -----------
 
 let aboutModalCard modalContent = 
     div [ ClassName "aboutContentCard" ] [
@@ -122,144 +201,93 @@ let aboutModal model dispatch modalContent =
         ( aboutModalCard modalContent ) 
         ( span [] [] )
 
-let mainAbout dispatch =
-    Tile.ancestor [] [
-        Tile.parent [] [
-            Level.level [] [
-                Tile.child [] []
-                Tile.child [ Tile.Size Tile.Is4 ] [ 
-                    Container.container [ Container.Props [ ClassName "aboutContentCard" ] ] [
-                        Level.level [ Level.Level.Props [ ClassName "contentCardTextBackground" ] ] [
-                            Level.item [] [
-                                Tile.child [] [
-                                    h2 [] [ str "General" ]
-                                    h3 [] [ str "I wrote this website as a way to" ]
-                                    h3 [] [ str "demonstrate some of my abilities &" ]
-                                    h3 [] [ str "explain a little about me." ]
-                                ]
-                            ]
-                        ]
-                        Level.level [ Level.Level.Props [ ClassName "hoverSelectionElement" ] ] [
-                            p [ OnClick ( fun _ -> ToggleModal 0 |> dispatch ) ] [ str "Read More" ]
-                        ]
-                    ]
-                ]
-                Tile.child [ Tile.Size Tile.Is5 ] [ Image.image [] [ img [ Src "./imgs/Out for Blood.png" ] ] ]
-                Tile.child [] []
-            ]
-        ]
-    ]
 
-let secondaryAbout dispatch =
-    Tile.ancestor [] [
-        Tile.parent [] [
-            Level.level [] [
-                Tile.child [] []
-                Tile.child [Tile.Size Tile.Is4] [ 
-                    Container.container [ Container.Props [ ClassName "aboutContentCard" ] ] [
-                        Level.level [ Level.Level.Props [ ClassName "contentCardTextBackground" ] ] [
-                            Level.item [] [
-                                Tile.child [ ] [
-                                    h2 [] [ str "Professional" ]
-                                    p [] [ str """I've been working with programming languages for about 5 years. Read More to check out what I've done in that time""" ]
-                                ]
-                            ]
-                        ]
-                        Level.level [ Level.Level.Props [ ClassName "hoverSelectionElement" ] ] [
-                            p [ OnClick ( fun _ -> ToggleModal 1 |> dispatch ) ] [ str "Read More" ]
-                        ]
-                    ]
-                ]
-                // ADD / UPDATE PIC
-                Tile.child [ Tile.Size Tile.Is5 ] [ Image.image [ ] [ img [Src "./imgs/Misfortune.png" ] ] ]
-                Tile.child [] []
-            ]
-        ]
-    ]
-
-let tertiaryAbout dispatch =
-    Tile.ancestor [] [
-        Tile.parent [] [
-            Level.level [] [
-                Tile.child [] [ 
-                    Container.container [ Container.Props [ ClassName "aboutContentCard" ] ] [
-                        Level.level [ Level.Level.Props [ ClassName "contentCardTextBackground" ] ] [
-                            Level.item [] [
-                                Tile.child [ ] [
-                                    h2 [] [ str "Personal" ]
-                                    p [] [ str """I'm a person just like you (unless you're a bot), who enjoys kicking back and relaxing. Check out some IRL shenanigans pics below.""" ]
-                                ]
-                            ]
-                        ]
-                        Level.level [ Level.Level.Props [ ClassName "hoverSelectionElement" ] ] [
-                            p [ OnClick ( fun _ -> ToggleModal 2 |> dispatch ) ] [ str "Read More" ]
-                        ]
-                    ]
-                    Container.container [ Container.Props [ ClassName "paddedContainer" ] ] [
-                        Columns.columns [] [
-                            // ADD / UPDATE LIFE PICS
-                            Image.image [] [ img [ Src "./imgs/Bowing Bubbles.png" ] ]
-                            Image.image [] [ img [ Src "./imgs/Backstabber.png" ] ]
-                            Image.image [] [ img [ Src "./imgs/Misfortune.png" ] ]
-                        ]
-                    ]
+// tile details
+let aboutTileDetailView tileDetails =
+    match tileDetails with 
+    | Some tileDetails ->
+        Level.level [ Level.Level.Props [ ClassName "contentCardTextBackground" ] ] [
+            Level.item [] [
+                Tile.child [] [
+                    h2 [] [ str tileDetails.Header ]
+                    p [] [ str tileDetails.SubHeader ]
+                    match tileDetails.Image with
+                    | Some image -> Image.image [] [ img [ Src image ] ]
+                    | None -> span [] []
                 ]
             ]
         ]
+    | None -> span [] []
+
+// tile details action button
+let aboutTileButtonView tileButton dispatch =
+    match tileButton with
+    | Some ( dirButton ) ->
+        Level.level [ Level.Level.Props [ ClassName "hoverSelectionElement" ] ] [
+            p [ OnClick ( fun _ -> dirButton.ButtonMsg |> dispatch ) ] [ str dirButton.ButtonTitle ]
+        ]
+    | None -> span [] []
+
+// single tile image
+let aboutTileImageView tileImage =
+    match tileImage with
+    | Some image -> 
+        Tile.child [ Tile.Size Tile.Is5 ] [ Image.image [] [ img [ Src image ] ] ]
+    | None -> span [] []
+
+//full image level
+let aboutTileImagesFullView tileImages =
+    match tileImages with
+    | Some images ->
+        Container.container [ Container.Props [ ClassName "paddedContainer" ] ] [
+            Columns.columns [] [
+                for image in images do
+                    Image.image [] [ img [ Src image ] ]
+            ]
+        ]
+    | None -> span [] []
+
+// share level between details view and image view
+let aboutTileDetailsView tileDetails tileButton dispatch =
+    if tileDetails = None && tileButton = None 
+        then span [] [] 
+        else 
+            Tile.child [ Tile.Size Tile.Is4 ] [
+                Container.container [ Container.Props [ ClassName "aboutContentCard" ] ] [
+                    aboutTileDetailView tileDetails
+                    aboutTileButtonView tileButton dispatch
+                ]
+            ]
+
+// separate level for details view and image view
+let aboutTileDetailsLevel tileDetails tileButton tileImage dispatch =
+    Level.level [] [
+        Tile.child [] []
+        aboutTileDetailsView tileDetails tileButton dispatch
+        aboutTileImageView tileImage
+        Tile.child [] []
     ]
 
+
+let aboutTileDetailsFullView tileDetails tileButton tileImages dispatch =
+    Level.level [] [
+        Tile.child [] [
+            Container.container [ Container.Props [ ClassName "aboutContentCard" ] ] [
+                aboutTileDetailView tileDetails
+                aboutTileButtonView tileButton dispatch
+            ]
+            aboutTileImagesFullView tileImages
+        ]
+    ]
+
+// change you a lil'
 let aboutDirectory dispatch =
     Tile.ancestor [] [
         Tile.parent [] [
             Level.level [] [
-                Tile.child [ Tile.Size Tile.Is4 ] [ 
-                    Container.container [ Container.Props [ ClassName "aboutContentCard" ] ] [
-                        Level.level [ Level.Level.Props [ ClassName "contentCardTextBackground" ] ] [
-                            Level.item [] [
-                                Tile.child [ ] [
-                                    h1 [] [ str "Code Gallery" ]
-                                    h3 [] [ str "Play or review the code that is this site or it's features.." ]
-                                    Image.image [] [ img [ Src "./imgs/Out for Blood.png" ] ]
-                                ]
-                            ]
-                        ]
-                        Level.level [ Level.Level.Props [ ClassName "hoverSelectionElement" ] ] [
-                            p [ OnClick ( fun _ -> ToggleModal 1 |> dispatch ) ] [ str "Read More" ]
-                        ]
-                    ]
-                ]
-                Tile.child [ Tile.Size Tile.Is4 ] [ 
-                    Container.container [ Container.Props [ ClassName "aboutContentCard" ] ] [
-                        Level.level [ Level.Level.Props [ ClassName "contentCardTextBackground" ] ] [
-                            Level.item [] [
-                                Tile.child [] [
-                                    h1 [] [ str "Portfolio" ]
-                                    h3 [] [ str "Check out the code gallery, design gallery or my resume" ]
-                                    Image.image [] [ img [ Src "./imgs/Misfortune.png" ] ]
-                                ]
-                            ]
-                        ]
-                        Level.level [ Level.Level.Props [ ClassName "hoverSelectionElement" ] ] [
-                            p [ OnClick ( fun _ -> ToggleModal 0 |> dispatch ) ] [ str "Read More" ]
-                        ]
-                    ]
-                ]
-                Tile.child [ Tile.Size Tile.Is4 ] [ 
-                    Container.container [ Container.Props [ ClassName "aboutContentCard" ] ] [
-                        Level.level [ Level.Level.Props [ ClassName "contentCardTextBackground" ] ] [
-                            Level.item [] [
-                                Tile.child [ ] [
-                                    h1 [] [ str "Design Gallery" ]
-                                    h3 [] [ str "I draw things sometimes, some of which I actually kinda like." ]
-                                    Image.image [] [ img [ Src "./imgs/Bowing Bubbles.png" ] ]
-                                ]
-                            ]
-                        ]
-                        Level.level [ Level.Level.Props [ ClassName "hoverSelectionElement" ] ] [
-                            p [ OnClick ( fun _ -> ToggleModal 2 |> dispatch ) ] [ str "Read More" ]
-                        ]
-                    ]
-                ]
+                aboutTileDetailsView codeGalleryDirectoryButtonDetails codeGalleryDirectoryButton dispatch
+                aboutTileDetailsView portfolioDirectoryButtonDetails portfolioDirectoryButton dispatch
+                aboutTileDetailsView artGalleryDirectoryButtonDetails artGalleryDirectoryButton dispatch
             ]
         ]
     ]
@@ -269,8 +297,20 @@ let view model dispatch =
         if model.ModalIsActive 
             then aboutModal ( model ) ( dispatch ) ( aboutModalContentSections.Item( model.ActiveModalIndex ) )
             else
-                mainAbout dispatch // change what these are
-                tertiaryAbout dispatch // change what these are
-                secondaryAbout dispatch // change what these are
-                aboutDirectory dispatch
+                aboutTileDetailsLevel
+                    aboutGeneralTileDetails
+                    aboutGeneralTileDirectoryButton
+                    aboutGeneralTileImage 
+                    dispatch
+                aboutTileDetailsFullView
+                    aboutPersonalTileDetails
+                    aboutPersonalTileDirectoryButton
+                    aboutPersonalFullTileImages 
+                    dispatch
+                aboutTileDetailsLevel 
+                    aboutProfessionalTileDetails
+                    aboutProfessionalTileDirectoryButton
+                    aboutProfessionalTileImage 
+                    dispatch
+                aboutDirectory dispatch // change you a lil'
     ]

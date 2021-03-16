@@ -8,13 +8,8 @@ open Fulma
 open Shared
 
 // TODO: RESUME SECTION
-type PortfolioView =
-    | LandingView
-    | CodeGalleryView
-    | DesignGalleryView
-
 type Msg =
-    | LoadSection of PortfolioView
+    | LoadSection of SharedWebAppViewSections.AppSection
     | ArtGalleryMsg of ArtGallery.Msg
     | CodeGalleryMsg of CodeGallery.Msg
 
@@ -28,16 +23,16 @@ let update ( msg: Msg ) ( model: SharedPortfolioGallery.Model ): SharedPortfolio
     match msg, model with
 
     //PORTFOLIO GALLERY
-    | LoadSection LandingView, _ ->
+    | LoadSection SharedWebAppViewSections.AppSection.PortfolioAppLandingView , _ ->
         SharedPortfolioGallery.PortfolioGallery, Cmd.none
     //ART GALLERY
-    | LoadSection DesignGalleryView, _ ->
+    | LoadSection SharedWebAppViewSections.AppSection.PortfolioAppDesignView , _ ->
         SharedPortfolioGallery.DesignGallery (SharedDesignGallery.getInitialModel), Cmd.none
     | ArtGalleryMsg msg, ( SharedPortfolioGallery.DesignGallery model ) -> 
         let artGalleryModel, com = ArtGallery.update msg model
         SharedPortfolioGallery.DesignGallery artGalleryModel, Cmd.map ArtGalleryMsg com
     //CODE GALLERY
-    | LoadSection CodeGalleryView, _ ->
+    | LoadSection SharedWebAppViewSections.AppSection.PortfolioAppCodeView , _ ->
         SharedPortfolioGallery.CodeGallery (SharedCodeGallery.getInitialModel), Cmd.none
     | CodeGalleryMsg msg, SharedPortfolioGallery.CodeGallery model ->
         let codeGalleryModel, com = CodeGallery.update msg model
@@ -49,7 +44,7 @@ let PortfolioSplitView dispatch =
         Tile.ancestor [] [
             Tile.parent [ Tile.Size Tile.Is6 ] [
                 Tile.child [] [
-                    a [ OnClick ( fun _ -> LoadSection ( CodeGalleryView ) |> dispatch ) ] [
+                    a [ OnClick ( fun _ -> LoadSection SharedWebAppViewSections.AppSection.PortfolioAppCodeView |> dispatch ) ] [
                         div [ ClassName "portfolioCodeCard" ] [
                             div [ ClassName "contentCardTextBackground" ] [
                                 h1 [] [ str "CODE" ]
@@ -61,7 +56,7 @@ let PortfolioSplitView dispatch =
             ]
             Tile.parent [ Tile.Size Tile.Is6 ] [
                 Tile.child [] [
-                    a [ OnClick ( fun _ -> LoadSection ( DesignGalleryView ) |> dispatch ) ] [
+                    a [ OnClick ( fun _ -> LoadSection SharedWebAppViewSections.AppSection.PortfolioAppDesignView |> dispatch ) ] [
                         div [ ClassName "portfolioDesignCard" ] [
                             div [ ClassName "contentCardTextBackground" ] [ 
                                     h1 [] [ str "DESIGN" ]
@@ -103,8 +98,8 @@ let view model dispatch =
             div [] [
                 SharedViewModule.sharedSplitView
                     ( SharedViewModule.sharedSplitHeader portfolioHeaderTitle portfolioHeaderBlurbs )
-                    ( portfolioChildSplitTile ( SplitCodeCard ) ( LoadSection CodeGalleryView ) dispatch )
-                    ( portfolioChildSplitTile ( SplitDesignCard ) ( LoadSection DesignGalleryView ) dispatch )
+                    ( portfolioChildSplitTile ( SplitCodeCard ) ( LoadSection SharedWebAppViewSections.AppSection.PortfolioAppCodeView ) dispatch )
+                    ( portfolioChildSplitTile ( SplitDesignCard ) ( LoadSection SharedWebAppViewSections.AppSection.PortfolioAppDesignView ) dispatch )
             ]
         | SharedPortfolioGallery.DesignGallery model ->
             ArtGallery.view model ( ArtGalleryMsg >> dispatch )

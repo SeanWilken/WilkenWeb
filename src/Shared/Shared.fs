@@ -859,6 +859,16 @@ module SharedWebAppModels =
         | Portfolio of SharedPortfolioGallery.Model
         | Contact
 
+
+module SharedWebAppViewSections =
+    type AppSection =
+    | WelcomeAppView
+    | AboutAppView
+    | PortfolioAppLandingView
+    | PortfolioAppCodeView
+    | PortfolioAppDesignView
+    | ContactAppView
+
 // Ensure that the Client and Server use same end-point
 module Route =
     let builder typeName methodName =

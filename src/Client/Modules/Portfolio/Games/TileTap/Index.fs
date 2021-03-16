@@ -29,10 +29,6 @@ type Msg =
     | QuitGame // returns control to the parent, exiting to gallery
 
 // NEED TO IMPLEMENT
-    // End Round ->
-        // Survived -> Time Expired
-        // Lost -> Health = 0
-    // smaller game grid?, doesn't work well on 1080 (ALSO OTHER SECTIONS REVIEW)
     // win and lose conditions and GUI
 
 // LifeCycle & LifeCycle Helper Functions

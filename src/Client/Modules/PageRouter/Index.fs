@@ -35,12 +35,9 @@ let toPath =
     | Some ( Portfolio ( Code ( code ) ) ) -> 
         // match code with
         match code with
-        | GoalRoll ->
-            sprintf "/portfolio-goalRoll" 
-        | TileTap ->
-            sprintf "/portfolio-tileSmash" 
-        | TileSort ->
-            sprintf "/portfolio-tileSort"
+        | GoalRoll -> sprintf "/portfolio-goalRoll" 
+        | TileTap -> sprintf "/portfolio-tileSmash" 
+        | TileSort -> sprintf "/portfolio-tileSort"
         | CodeSection.Landing -> "/portfolio-code"
     | Some ( Portfolio ( Design ) ) ->
         sprintf "/portfolio-design"

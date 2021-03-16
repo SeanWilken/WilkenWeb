@@ -4,9 +4,11 @@ open Fable.React
 open Fable.React.Props
 open Fulma
 
+open Shared
+
 // Message to Load next section, rather than using header nav section.
 type Msg =
-    | NextSection
+    | SwitchSection of SharedWebAppViewSections.AppSection 
  
 // Requires dispatch as send Msg back to top level in order to go to the next page
 let view dispatch =
@@ -25,9 +27,8 @@ let view dispatch =
                             div [ ClassName "contentCardTextBackground" ] [
                                 p [ ] [ str "My name is Sean and this is my personal website." ] 
                                 p [ ] [ str "Written, designed and hosted by yours truly." ] 
-                                p [ ] [ str "Check it out for yourself." ] 
                                 Level.level [ Level.Level.Props [ ClassName "welcomeNextSectionCard" ] ] [
-                                    p [ OnClick ( fun _ -> NextSection |> dispatch ) ] [ str "Learn More" ]
+                                    p [ OnClick ( fun _ -> SwitchSection ( SharedWebAppViewSections.AboutAppView ) |> dispatch ) ] [ str "Check it out for yourself." ]
                                 ]
                             ]
                         ]
