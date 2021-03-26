@@ -96,7 +96,7 @@ html {
     }
 }
 .selectedNavLink {
-    @extend .headerNavLinks;
+    @extend .navSectionLink;
     font-weight: 600;
     color: #FF2843;
 }

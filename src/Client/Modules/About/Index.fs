@@ -81,7 +81,7 @@ let aboutProfessionalTileDirectoryButton = Some {
     ButtonTitle = "Read More"
     ButtonMsg = ToggleModal 1
 }
-let aboutProfessionalTileImage = Some "./imgs/Caution Very Hot Colorless.jpeg"
+let aboutProfessionalTileImage = Some "./imgs/Caution Very Hot.jpeg"
 
 // Personal Tile Level
 let aboutPersonalTileDetails = Some {
