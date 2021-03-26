@@ -33,7 +33,7 @@ type DirectoryButton = {
 let codeGalleryDirectoryButtonDetails = Some {
     Header = "Code Gallery"
     SubHeader = "Play or review the code that is this site or it's features.."
-    Image = Some "./imgs/Out for Blood.png"
+    Image = Some "./imgs/Harlot.jpeg"
 }
 let codeGalleryDirectoryButton = Some {
     ButtonTitle = "Code"
@@ -43,7 +43,7 @@ let codeGalleryDirectoryButton = Some {
 let portfolioDirectoryButtonDetails = Some {
     Header = "Portfolio"
     SubHeader = "Check out the code gallery, design gallery or my resume"
-    Image = Some "./imgs/Bowing Bubbles.png"
+    Image = Some "./imgs/Out for Blood.jpeg"
 }
 let portfolioDirectoryButton = Some {
     ButtonTitle = "Portfolio"
@@ -53,7 +53,7 @@ let portfolioDirectoryButton = Some {
 let artGalleryDirectoryButtonDetails = Some {
     Header = "Design Gallery"
     SubHeader = "I draw things sometimes, some of which I actually kinda like."
-    Image = Some "./imgs/Misfortune.png"
+    Image = Some "./imgs/Bowing Bubbles.jpeg"
 }
 let artGalleryDirectoryButton = Some {
     ButtonTitle = "Designs"
@@ -70,7 +70,7 @@ let aboutGeneralTileDirectoryButton = Some {
     ButtonTitle = "Read More"
     ButtonMsg = ToggleModal 0
 }
-let aboutGeneralTileImage = Some "./imgs/Out for Blood.png"
+let aboutGeneralTileImage = Some "./imgs/Out for Blood.jpeg"
 // Professional Tile Level
 let aboutProfessionalTileDetails = Some {
     Header = "Professional"
@@ -81,7 +81,7 @@ let aboutProfessionalTileDirectoryButton = Some {
     ButtonTitle = "Read More"
     ButtonMsg = ToggleModal 1
 }
-let aboutProfessionalTileImage = Some "./imgs/Misfortune.png"
+let aboutProfessionalTileImage = Some "./imgs/Caution Very Hot Colorless.jpeg"
 
 // Personal Tile Level
 let aboutPersonalTileDetails = Some {
@@ -95,9 +95,9 @@ let aboutPersonalTileDirectoryButton = Some {
 }
 // Personal Full Tile Level Images
 let aboutPersonalFullTileImages = Some [ 
-    "./imgs/Misfortune.png"
-    "./imgs/Bowing Bubbles.png"
-    "./imgs/Out for Blood.png"
+    "./imgs/Harlot.jpeg"
+    "./imgs/Kcuf Em.jpeg"
+    "./imgs/Bowing Bubbles.jpeg"
 ]
 
 // ADD IMAGES AND THINGS TO MAKE THIS BE A GENERIC LAYOUT PASSED THE CONTENT MODAL / VIEW

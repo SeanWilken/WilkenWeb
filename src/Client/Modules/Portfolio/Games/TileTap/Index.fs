@@ -56,22 +56,23 @@ let tileSpawnPosition activeTilePositionList =
 let randomValue ceiling =
     Random().Next(ceiling)
 // return a mapped out TileValue
-let alternateRandValue randVal =
-    if randVal < 10 then TapTileValue.Bomb
-    elif randVal >= 10 && randVal < 45 then TapTileValue.Minor
-    elif randVal >= 45 && randVal < 70 then TapTileValue.Modest
-    elif randVal >= 70 && randVal < 90 then TapTileValue.Major
-    else TapTileValue.Heart
+let randomTapTile randVal =
+    if randVal < 15 then TapTileValue.Bomb, 21
+    elif randVal >= 15 && randVal < 50 then TapTileValue.Minor, 17
+    elif randVal >= 50 && randVal < 75 then TapTileValue.Modest, 13
+    elif randVal >= 75 && randVal < 95 then TapTileValue.Major, 9
+    else TapTileValue.Heart, 9
 
 // Given a Gridboard and desired position,
 // return that Gridboard with a tile @ desired position
 // What about Clock, Heart or Bomb???
 let insertNewTapTile gridBoard position =
     let gridPositions = gridBoard.GridPositions
+    let tapTileValue, tapTileLifeTime = randomTapTile ( randomValue (100) )
     { GridPositions = [
         for i in 0 .. ( gridPositions.Length - 1 ) do
-            if i = position 
-                then TapTile { TapPosition = position; LifeTime = 0; Value = alternateRandValue ( randomValue (100) ) } 
+            if i = position
+                then TapTile { TapPosition = position; LifeTime = tapTileLifeTime; Value = tapTileValue } 
                 else gridPositions.[i]
     ] }
 
@@ -90,7 +91,7 @@ let tickActiveTiles gridBoard =
         gridBoard.GridPositions
         |> List.map ( fun x -> 
             match x with 
-            | TapTile x -> TapTile ( { x with LifeTime = x.LifeTime + 1 } )
+            | TapTile x -> TapTile ( { x with LifeTime = x.LifeTime - 1 } )
             | _ -> Blank
         ) 
     }
@@ -100,7 +101,7 @@ let tickActiveTiles gridBoard =
 let expiredTileFromGrid grid =
     ( List.tryFind ( fun x -> 
         match x with 
-            | TapTile x -> x.LifeTime > 15
+            | TapTile x -> x.LifeTime <= 0
             | _ -> false 
     ) grid.GridPositions )
     |> fun expiredTileOption -> 
@@ -121,6 +122,7 @@ let gridWithoutTile grid tileToRemove =
 
 // Given a tile, based on it's Value
 // returns a score value to increment the score
+// change this for the lifeTime to be reversed from curent implementation..
 let calculateTilePointValue tile =
     match tile.Value with 
     | Minor -> 1 * tile.LifeTime
@@ -269,6 +271,10 @@ let update msg ( model : SharedTileTap.Model ) =
 
 // Module Content & Helpers -
 // divide
+
+
+// MPRTNT ! - change points awarded and count down rather than up
+
 let gameTickClock ticks =
     string (ticks / 4)
 

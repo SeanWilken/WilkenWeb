@@ -20,7 +20,7 @@ let view dispatch =
                         Tile.child [] [ h2 [] [ str "Welcome" ] ]
                         Tile.child [] [
                             Column.column [] [
-                                Container.container [ Container.Props [ ClassName "welcomeHeroImage" ] ] [ Image.image [] [ img [ Src "./imgs/Out for Blood.png" ] ] ] 
+                                Container.container [ Container.Props [ ClassName "welcomeHeroImage" ] ] [ Image.image [] [ img [ Src "./imgs/Out for Blood.jpeg" ] ] ] 
                             ]
                         ]
                         Tile.child [] [

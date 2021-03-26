@@ -92,17 +92,13 @@ html {
     @extend .headerNavLinks;
     color: #69A;
     &:hover {
-        // font-size: x-large;
         color: #FF2843;
     }
 }
 .selectedNavLink {
     @extend .headerNavLinks;
     font-weight: 600;
-    color: #69A69A;
-    // &:hover {
-    //     color: #69A69A;
-    // }
+    color: #FF2843;
 }
 .blurContent {
     -webkit-filter: blur(5px);
@@ -285,7 +281,7 @@ html {
 // **********************
 // ABOUT SECTION CLASSES
 .aboutSectionContainer {
-    background-image: url("../public/imgs/Break\ Rules.png");
+    // background-image: url("../public/imgs/Break\ Rules.png");
     background-size: contain;
     background-repeat: no-repeat;
     background-position: center;
@@ -491,7 +487,7 @@ html {
     border: 1px solid #000000;
     box-shadow: 10px 10px 10px black;
     background: #010E14;
-    background-image: url("../public/imgs/Bricklines.png");
+    background-image: url("../public/imgs/icons/Bricklines.png");
     background-size: contain;
     background-position-x: center;
     font-family: "Exo";

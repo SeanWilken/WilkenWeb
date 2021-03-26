@@ -9,15 +9,13 @@ open Shared
 // name, description tuple for gallery pieces.
 // unable to read out folder file contents, System.IO not compatible with Fable
 let galleryPieces = [
-    "Out for Blood", "The hunt is on.";
-    "BackStabber", "Never saw them comin'";
     "Bowing Bubbles", "What's poppin?";
-    "Break Rules", "Not my rule, not my problem...";
+    "Out for Blood", "The hunt is on.";
+    "Harlot", "Unholy mother of sin...";
+    "Kcuf Em", "Kcuf me? F!#% you.";
     "Misfortune", "It was never in the cards to begin with.";
-    // "Prismatic Bust", "Trippy, ain't she?";
-    // "Smoke em", "Can't take 'em to the grave, amIright?";
-    // "Favorite influencer", "What a bunch of drama queens.";
-    // "Bossy", "Call it like you see it.";
+    "BackStabber", "Never saw them comin'";
+    "Caution Very Hot", "Ya' might get burnt...";
 ]
 
 type Msg =
@@ -55,7 +53,8 @@ let galleryEntryHeaderControls dispatch =
 let galleryEntryContent piece description =
     div [] [
         div [ ClassName "galleryTitleCard" ] [ h1 [] [ str piece ] ]
-        div [ ClassName "galleryImage" ] [ Image.image [] [ img [ Src ( "./imgs/" + piece + ".png" ) ] ] ]
+        // div [ ClassName "galleryImage" ] [ Image.image [] [ img [ Src ( "./imgs/" + piece + ".png" ) ] ] ]
+        div [ ClassName "galleryImage" ] [ Image.image [] [ img [ Src ( "./imgs/" + piece + ".jpeg" ) ] ] ]
         p [ ClassName "galleryDescriptionCard" ] [ str description ]
     ]
 
