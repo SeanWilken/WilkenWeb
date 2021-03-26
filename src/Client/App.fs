@@ -1,6 +1,7 @@
 module App
 
 open Elmish
+open Elmish.Navigation
 open Elmish.React
 open PageRouter
 

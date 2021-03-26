@@ -63,7 +63,7 @@ let pageParser : Parser< Page -> Page,_ > =
         ]
 
 let urlParser location = 
-    printfn "url is: %A" location
+    // printfn "url is: %A" location
     parsePath pageParser location
 
 let urlUpdate ( result: Page option ) ( model: SharedWebAppModels.Model ) =

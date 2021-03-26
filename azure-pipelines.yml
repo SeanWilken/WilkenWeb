@@ -45,8 +45,8 @@ steps:
     restoreSolution: '$(solution)'
 
 # not actually trying to run a local deployment of the code
-# - powershell: |
-#     dotnet fake build --target run
+- powershell: |
+    dotnet fake build -t Azure
 
 # - task: VSBuild@1
 #   inputs:
