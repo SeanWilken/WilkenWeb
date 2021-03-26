@@ -29,7 +29,7 @@ steps:
     
 - task: NodeTool@0 
   inputs:
-    versionSpec: '6.10.3'
+    versionSpec: '6.14.3'
 
 - powershell: |
     cd ..
