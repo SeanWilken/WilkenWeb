@@ -3,6 +3,8 @@
 # Add steps that publish symbols, save build artifacts, and more:
 # https://docs.microsoft.com/azure/devops/pipelines/languages/dotnet-core
 
+# Currently not used, deployment is done via FAKE script
+
 trigger:
 - master
 
@@ -45,8 +47,8 @@ steps:
     restoreSolution: '$(solution)'
 
 # not actually trying to run a local deployment of the code
-- powershell: |
-    dotnet fake build -t Azure
+# - powershell: |
+#     dotnet fake build -t Azure
 
 # - task: VSBuild@1
 #   inputs:

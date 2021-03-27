@@ -290,12 +290,15 @@ let modelValueAsString strin value =
 
 // LEFT -----------
 let tileTapDescriptions = [
-    "Survival Mode:"
-    "- Smash the tile before time runs out."
-    "- Tile timer reaches 0 takes away 1 HP."
-    "- Smash a Heart to gain 1 HP."
-    "- Smashing bombs takes away 2 HP."
+    // "Survival Mode:"
+    "- Tap the tile before it's timer runs out."
+    "- If the tile timer reaches 0 adds 1 mistake."
+    "- Don't tap bombs, they add 3 mistakes."
+    "- Tap a Heart to take away 1 mistake."
+    "- Make it until the round timer ends."
+    "- Hard mode: 1 mistake ends it all, unlimited time."
 ]
+// REPLACE WITH MODULE GISTS!!!
 let sourceCodeLinks = [
     "Model", "https://raw.githubusercontent.com/SeanWilken/WilkenWeb/master/src/Shared/Shared.fs"
     "View", "https://raw.githubusercontent.com/SeanWilken/WilkenWeb/master/src/Client/Modules/Shared/Index.fs"
@@ -303,6 +306,8 @@ let sourceCodeLinks = [
 ]
 
 // ********************************
+
+// Bomb diffuse by clicking a tile sequence around it?
 
 
 // ** IMPORTANT --
@@ -428,7 +433,7 @@ let tileTapModalContent  ( model : SharedTileTap.Model ) dispatch =
     SharedViewModule.gameModalContent ( 
         Column.column [] [
             match model.GameState with
-            | RoundState.Controls -> tileTapModalRight model dispatch
+            | RoundState.Settings -> tileTapModalRight model dispatch
             | Instruction -> SharedViewModule.codeModalInstructionContent tileTapDescriptions
             | Won ->
                 div [ ClassName "levelCompletedCard" ] [ 
@@ -453,12 +458,12 @@ let tileTapModalContent  ( model : SharedTileTap.Model ) dispatch =
 // ----------------
 
 let controlList = [ 
-    "Controls", (SetGameState (RoundState.Controls)) 
+    "Settings", (SetGameState (RoundState.Settings)) 
     "Rules", (SetGameState (Instruction))
 ]
 
 let roundStateToggle ( model : SharedTileTap.Model ) dispatch =
-    let gameRoundStateToggleString = if ( model.DispatchPointer <> 0.0 ) then "Pause" else "Play"
+    let gameRoundStateToggleString = if ( model.DispatchPointer <> 0.0 ) then "Pause" else "Start"
     a [ OnClick ( fun _ -> startGameLoop model dispatch |> ignore ) ] [
         h1 [ ClassName "galleryTitleCard" ] [ str ( gameRoundStateToggleString ) ] 
     ]

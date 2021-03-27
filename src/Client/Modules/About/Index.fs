@@ -29,37 +29,6 @@ type DirectoryButton = {
     ButtonMsg : Msg
 }
 
-// Code Tile
-let codeGalleryDirectoryButtonDetails = Some {
-    Header = "Code Gallery"
-    SubHeader = "Play or review the code that is this site or it's features.."
-    Image = Some "./imgs/Harlot.jpeg"
-}
-let codeGalleryDirectoryButton = Some {
-    ButtonTitle = "Code"
-    ButtonMsg = SwitchSection ( SharedWebAppViewSections.PortfolioAppCodeView )
-}
-// Portfolio Landing Tile
-let portfolioDirectoryButtonDetails = Some {
-    Header = "Portfolio"
-    SubHeader = "Check out the code gallery, design gallery or my resume"
-    Image = Some "./imgs/Out for Blood.jpeg"
-}
-let portfolioDirectoryButton = Some {
-    ButtonTitle = "Portfolio"
-    ButtonMsg = SwitchSection ( SharedWebAppViewSections.PortfolioAppLandingView )
-}
-// Art Gallery Tile
-let artGalleryDirectoryButtonDetails = Some {
-    Header = "Design Gallery"
-    SubHeader = "I draw things sometimes, some of which I actually kinda like."
-    Image = Some "./imgs/Bowing Bubbles.jpeg"
-}
-let artGalleryDirectoryButton = Some {
-    ButtonTitle = "Designs"
-    ButtonMsg = SwitchSection ( SharedWebAppViewSections.PortfolioAppDesignView )
-}
-
 // General Tile Level
 let aboutGeneralTileDetails = Some {
     Header = "General"
@@ -71,22 +40,11 @@ let aboutGeneralTileDirectoryButton = Some {
     ButtonMsg = ToggleModal 0
 }
 let aboutGeneralTileImage = Some "./imgs/Out for Blood.jpeg"
-// Professional Tile Level
-let aboutProfessionalTileDetails = Some {
-    Header = "Professional"
-    SubHeader = "I've been working with programming languages for about 5 years. Read More to check out what I've done in that time"
-    Image = None
-}
-let aboutProfessionalTileDirectoryButton = Some {
-    ButtonTitle = "Read More"
-    ButtonMsg = ToggleModal 1
-}
-let aboutProfessionalTileImage = Some "./imgs/Caution Very Hot.jpeg"
 
 // Personal Tile Level
 let aboutPersonalTileDetails = Some {
     Header = "Personal"
-    SubHeader = "I'm a person just like you (unless you're a bot), who enjoys kicking back and relaxing. Check out some IRL shenanigans pics below."
+    SubHeader = "Who am I? Well I'm a person just like you, unless of course, you're a bot..."
     Image = None
 }
 let aboutPersonalTileDirectoryButton = Some {
@@ -95,10 +53,54 @@ let aboutPersonalTileDirectoryButton = Some {
 }
 // Personal Full Tile Level Images
 let aboutPersonalFullTileImages = Some [ 
-    "./imgs/Harlot.jpeg"
     "./imgs/Kcuf Em.jpeg"
-    "./imgs/Bowing Bubbles.jpeg"
+    "./imgs/Misfortune.jpeg"
 ]
+
+// Professional Tile Level
+let aboutProfessionalTileDetails = Some {
+    Header = "Professional"
+    SubHeader = "This is what it should look like when play time is over.."
+    Image = None
+}
+let aboutProfessionalTileDirectoryButton = Some {
+    ButtonTitle = "Read More"
+    ButtonMsg = ToggleModal 1
+}
+let aboutProfessionalTileImage = Some "./imgs/Caution Very Hot.jpeg"
+
+// Code Tile
+let codeGalleryDirectoryButtonDetails = Some {
+    Header = "Code Gallery"
+    SubHeader = "Check out some simple games and their code.."
+    Image = Some "./imgs/Harlot.jpeg"
+}
+let codeGalleryDirectoryButton = Some {
+    ButtonTitle = "Code"
+    ButtonMsg = SwitchSection ( SharedWebAppViewSections.PortfolioAppCodeView )
+}
+
+// Portfolio Landing Tile
+let portfolioDirectoryButtonDetails = Some {
+    Header = "Portfolio"
+    SubHeader = "Watch your back and check this out."
+    Image = Some "./imgs/Backstabber.jpeg"
+}
+let portfolioDirectoryButton = Some {
+    ButtonTitle = "Portfolio"
+    ButtonMsg = SwitchSection ( SharedWebAppViewSections.PortfolioAppLandingView )
+}
+
+// Art Gallery Tile
+let artGalleryDirectoryButtonDetails = Some {
+    Header = "Design Gallery"
+    SubHeader = "I draw things sometimes, some of which I actually kinda like."
+    Image = Some "./imgs/Bowing Bubbles.jpeg"
+}
+let artGalleryDirectoryButton = Some {
+    ButtonTitle = "Designs"
+    ButtonMsg = SwitchSection ( SharedWebAppViewSections.PortfolioAppDesignView )
+}
 
 // ADD IMAGES AND THINGS TO MAKE THIS BE A GENERIC LAYOUT PASSED THE CONTENT MODAL / VIEW
 // Switched to single string for now, kind of liked how it looked as list iterated and broken
@@ -106,16 +108,14 @@ let aboutPersonalFullTileImages = Some [
 let generalModalContent = {
     Title = "General"
     MainContent =
-        """As a mainly self-taught computer programmer, I am constantly looking for new and interesting aspects of technology.
+        """I wrote all the code from a basic SAFE stack boilerplate, which gets deployed to Azure via a FAKE script.
+          Check out the portfolio section for some example demo's, check out the source code that
+          comprises the different sections and the website itself, or take a peak at some drawings...
           Check back frquently to see what's new, as I plan to update this with new features, games and content. 
-          I wrote all the code from a boilerplate, drew all the icons and designs seen across the website,
-          and am hosting and running continuous deployments for development. 
-          Check out the portfolio section for some example demo's, explore some drawings or check out the source code that 
-          comprises the different sections and the website itself..."""
+          You can find all the code for the site on my Github if you want to review some sections in depth, get an idea
+          of how I leverage the technologies or solve some domain or logistical issues.
+          """
         (*
-         As a mainly self-taught computer programmer, I am constantly looking for new and interesting aspects of technology. Check back frquently to see what's new, as I plan to update this with new features, games and content.
-        I wrote all the code from a boilerplate, drew all the icons and graphic designs seen across the website, and am hosting and running continuous deployments for development.
-        Check out the portfolio section for some example demo's, explore some drawings or check out the source code that comprises the different sections and the website itself
         *)
     PreviousLabel = "Welcome"
     NextLabel = "Professional"
@@ -125,7 +125,7 @@ let professionalModalContent = {
     MainContent =
         (*
         I've worked: with mid and small team sizes, working well with others or alone, with custom solutions, open source projects, many late nights tinkering, 
-        fixing bugs, deploying new code and putting out the fires, with clients to come up with solutions for problems and bottlenecks being faced. 
+        searching for and fixing bugs, deploying new code and putting out the fires, working with clients to come up with solutions for problems and bottlenecks being faced.
         Source requirements, come up with timelines, architecture and logical solutions for such work and implemented the final custom solutions that get deployed 
         into production environments.
         In that time, I've been a: full-stack developer, tester, help-desk / support, 
@@ -133,31 +133,19 @@ let professionalModalContent = {
         I've professionally developed, implemented and maintained things like custom data processors
         / data integrations / themes / websites / projects & solutions, and created many more personal hobby projects (such as this site, Unity projects, etc..) and scripts.
         *)
-        """I've worked as a full stack developer, tester, requirement gatherer, technical support assistance. 
-        I enjoy learning & discussing new languages, practices and design patterns, thinking critically and creatively to solve issues, etc.. blah blah."""
+        """As a mainly self-taught computer programmer, I am constantly looking for new and interesting aspects of technology. 
+        I've worked in a variety of positions and dealt with a number of duites that a full stack developer or software engineer may have to go through. 
+        With daily duties ranging from addressing clients directly to source requirements or troubleshoot issues, to implementing custom integrations and solutions.
+        I enjoy expanding my skill set by learning new languages, practices and design patterns and having the freedom to solve complex issues by thinking critically and creatively."""
     PreviousLabel = "General"
     NextLabel = "Personal"
 }
 let personalModalContent = {
     Title = "Personal"
     MainContent =
-        (*
-        I'm pretty laid back and enjoy living life in the momement, learning and experiencing new things, overcoming challenges and being creative. 
-        Check out some of my drawings & let me know what you think. 
-        *)
-        """Fun fact: I've sailed the carribean sea back to the states and driven across the United States cross twice..."""
+        """I'm pretty laid back and enjoy living life in the momement, learning and experiencing new things. I like being challenged and adapting
+        to problems that present themselves along the way. Fun fact: I've sailed across the Carribean Sea back to the states and driven across the United States cross twice..."""
     PreviousLabel = "Professional"
-    NextLabel = "Portfolio"
-}
-let websiteModalContent = {
-    Title = "The Site Stack"
-    MainContent =
-    (*
-    ...and am hosting and running continuous 
-    deployments for development. .Link to SAFE Stack about.
-    *)
-        """I wrote all the code from a SAFE Stack boilerplate..."""
-    PreviousLabel = "Personal"
     NextLabel = "Portfolio"
 }
 
@@ -240,7 +228,7 @@ let aboutTileImagesFullView tileImages =
     match tileImages with
     | Some images ->
         Container.container [ Container.Props [ ClassName "paddedContainer" ] ] [
-            Columns.columns [] [
+            Columns.columns [ Columns.IsVCentered ] [
                 for image in images do
                     Image.image [] [ img [ Src image ] ]
             ]
@@ -298,5 +286,5 @@ let view model dispatch =
         aboutTileDetailsLevel aboutGeneralTileDetails aboutGeneralTileDirectoryButton aboutGeneralTileImage dispatch
         aboutTileDetailsFullView aboutPersonalTileDetails aboutPersonalTileDirectoryButton aboutPersonalFullTileImages dispatch
         aboutTileDetailsLevel aboutProfessionalTileDetails aboutProfessionalTileDirectoryButton aboutProfessionalTileImage dispatch
-        aboutDirectory dispatch // change you a lil'
+        aboutDirectory dispatch
     ]

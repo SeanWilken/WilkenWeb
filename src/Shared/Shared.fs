@@ -43,7 +43,7 @@ module GridGame =
     // Represents a given game state
     type RoundState =
         | Instruction
-        | Controls
+        | Settings
         | Paused // change to idle (no game active)
         | Playing // there is an active round
         | Won // Round ended, model contains round details

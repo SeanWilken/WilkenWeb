@@ -14,7 +14,7 @@ let galleryPieces = [
     "Harlot", "Unholy mother of sin...";
     "Kcuf Em", "Kcuf me? F!#% you.";
     "Misfortune", "It was never in the cards to begin with.";
-    "BackStabber", "Never saw them comin'";
+    "BackStabber", "Never saw them comin'.";
     "Caution Very Hot", "Ya' might get burnt...";
 ]
 
@@ -47,13 +47,12 @@ let getGalleryCardByIndex ( index: int ) =
 let galleryEntryHeaderControls dispatch =
     div [] [
         a [ ClassName "closeModal"; OnClick ( fun _ -> BackToPortfolio |> dispatch ) ] [ Image.image [ Image.Is64x64 ] [ img [ Src "./imgs/icons/X-it.png" ] ] ]
-        span [ ClassName "modalExternalLink" ] [ a [ Href "https://www.instagram.com/xeroeffort/" ] [ Image.image [ Image.Is64x64 ] [ img [ Src "./imgs/icons/IG.png" ] ]; ] ] //p [] [ str "Instagram" ] 
+        span [ ClassName "modalExternalLink" ] [ a [ Href "https://www.instagram.com/xeroeffort/" ] [ Image.image [ Image.Is64x64 ] [ img [ Src "./imgs/icons/IG.png" ] ]; ] ]
     ]
 
 let galleryEntryContent piece description =
     div [] [
         div [ ClassName "galleryTitleCard" ] [ h1 [] [ str piece ] ]
-        // div [ ClassName "galleryImage" ] [ Image.image [] [ img [ Src ( "./imgs/" + piece + ".png" ) ] ] ]
         div [ ClassName "galleryImage" ] [ Image.image [] [ img [ Src ( "./imgs/" + piece + ".jpeg" ) ] ] ]
         p [ ClassName "galleryDescriptionCard" ] [ str description ]
     ]

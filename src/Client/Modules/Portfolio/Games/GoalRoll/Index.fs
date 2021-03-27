@@ -170,7 +170,7 @@ let goalRollDescriptions = [
     "- There must be space for the movement arrow in order to roll."
     "- Have the ball stop on the goal to win."
 ]
-// external links
+// REPLACE WITH MODULE GISTS!!!
 let sourceCodeLinks = [
     "Model", "https://raw.githubusercontent.com/SeanWilken/WilkenWeb/master/src/Shared/Shared.fs"
     "View", "https://raw.githubusercontent.com/SeanWilken/WilkenWeb/master/src/Client/Modules/Shared/Index.fs"
@@ -187,7 +187,7 @@ let gameControls = [
 
 let controlList = [ 
     "Play", (SetGameState (Playing))
-    "Controls", (SetGameState (Controls)) 
+    "Settings", (SetGameState (Settings)) 
     "Rules", (SetGameState (Instruction))
 ]
 
@@ -252,7 +252,7 @@ let goalRollLevelCreator ( goalRollModel : SharedGoalRoll.Model) dispatch =
 let goalRollModalContent ( model : SharedGoalRoll.Model ) dispatch =
     SharedViewModule.gameModalContent (
         match model.GameState with 
-        | Controls -> SharedViewModule.codeModalControlsContent gameControls dispatch
+        | Settings -> SharedViewModule.codeModalControlsContent gameControls dispatch
         | Instruction -> SharedViewModule.codeModalInstructionContent goalRollDescriptions
         | Won -> div [ ClassName "levelCompletedCard" ] [ str "Level Completed!!!" ]
         | Paused

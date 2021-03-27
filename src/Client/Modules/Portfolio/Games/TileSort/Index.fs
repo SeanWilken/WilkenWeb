@@ -96,10 +96,12 @@ let decodeDifficultyByString string =
 // VIEW
 
 let tileSortDescriptions = [ 
-    "- Rearrange the tiles in correct ascending order, starting with the top left position being the lowest number."
+    "- Rearrange the tiles in correct ascending order, starting @ the top left position."
     "- Select one of the tiles adjacent to the empty space to slide that tile into the blank."
     "- The blank space must match the missing number." 
 ]
+
+// REPLACE WITH MODULE GISTS!!!
 let sourceCodeLinks = [
     "Model", "https://raw.githubusercontent.com/SeanWilken/WilkenWeb/master/src/Shared/Shared.fs"
     "View", "https://raw.githubusercontent.com/SeanWilken/WilkenWeb/master/src/Client/Modules/Shared/Index.fs"
@@ -134,7 +136,7 @@ let tileSortGameBoard model dispatch =
 let tileSortModalContent model dispatch =
     SharedViewModule.gameModalContent ( 
         match model.GameState with 
-        | Shared.GridGame.Controls -> SharedViewModule.codeModalControlsContent gameControls dispatch
+        | Shared.GridGame.Settings -> SharedViewModule.codeModalControlsContent gameControls dispatch
         | Shared.GridGame.Instruction -> SharedViewModule.codeModalInstructionContent tileSortDescriptions
         | Shared.GridGame.Won -> div [ ClassName "levelCompletedCard" ] [ str "Congrats, you win!!!" ]
         | Shared.GridGame.Playing
@@ -145,7 +147,7 @@ let tileSortModalContent model dispatch =
 
 open Shared.GridGame
 
-let controlList = [ "Play", (SetGameState (Playing)); "Controls", (SetGameState (Controls)); "Rules", (SetGameState (Instruction)) ]
+let controlList = [ "Play", (SetGameState (Playing)); "Settings", (SetGameState (Settings)); "Rules", (SetGameState (Instruction)) ]
 
 // main view
 let view model dispatch =

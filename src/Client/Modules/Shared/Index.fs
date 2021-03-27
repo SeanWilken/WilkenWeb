@@ -60,8 +60,8 @@ let codeModalControlSelections controlActions dispatch =
 
 // Goal Roll + Tile Sort | TileTap Overridden for special window.setInterval dispatch
 let codeModalControlsContent controlList dispatch =
-        Columns.columns [ Columns.IsVCentered ] [ 
-            Column.column [] [ 
+        Column.column [] [ 
+            Columns.columns [ Columns.IsVCentered ] [ 
                 Tile.child [] [ 
                     div [ ClassName "modalAltContent" ] [
                         Container.container [] [
@@ -132,7 +132,7 @@ let sharedSplitHeader title contentBlurb =
     ]
 // Portfolio Landing | Contact
 let sharedSplitView header childLeft childRight =
-    div [ Style [ PaddingTop 50 ] ] [
+    div [ ClassName "paddedContainerHeader" ] [
         header
         Tile.ancestor [] [
             // use more verticalSpace on above tablet viewPorts

@@ -32,7 +32,7 @@ let update ( msg: Msg ) ( model: SharedCodeGallery.Model ): SharedCodeGallery.Mo
     | LoadSection GoalRoll, _ ->
         let goalRollModel, com = GoalRoll.init()
         SharedCodeGallery.GoalRoll  ( goalRollModel ), Cmd.map GoalRollMsg com
-    | GoalRollMsg GoalRoll.Msg.QuitGame, _-> // any model ?? was Goal Roll
+    | GoalRollMsg GoalRoll.Msg.QuitGame, SharedCodeGallery.GoalRoll model ->
         SharedCodeGallery.CodeGallery, Cmd.none
     | GoalRollMsg msg, SharedCodeGallery.GoalRoll model ->
         let goalRollModel, com = GoalRoll.update msg model
@@ -52,7 +52,7 @@ let update ( msg: Msg ) ( model: SharedCodeGallery.Model ): SharedCodeGallery.Mo
     | LoadSection TileSort, _ ->
         let tileSortModel, com = TileSort.init()
         SharedCodeGallery.TileSort tileSortModel, Cmd.map TileSortMsg com
-    | TileSortMsg TileSort.Msg.QuitGame, _ -> // any model ?? was Tile Sort -- issue?
+    | TileSortMsg TileSort.Msg.QuitGame, SharedCodeGallery.TileSort model ->
         SharedCodeGallery.CodeGallery, Cmd.none
     | TileSortMsg msg, SharedCodeGallery.TileSort model ->
         let tileSortModel, com = TileSort.update msg model
@@ -66,8 +66,7 @@ let CodeGalleryHeader dispatch =
         Container.container [] [
             SharedViewModule.backToGallery BackToPortfolio dispatch
             h1 [] [ str "Code Gallery" ]
-            h2 [] [ str "Select one of the below to try out or view the source code." ]
-
+            h2 [] [ str "Select a game module to try out, configure the round using the Settings section." ]
         ]
     ]
 
@@ -88,7 +87,7 @@ let makeCodeGalleryEntryItem title description msg dispatch =
 let tileSortSelection dispatch =
     makeCodeGalleryEntryItem 
         "Tile Sort"
-        "Arrange the tiles in the correct order, with the missing number being the empty."
+        "Arrange the tiles in the correct order, with the empty space being the missing number."
         (LoadSection TileSort)
         dispatch
 
@@ -108,19 +107,17 @@ let goalRollSelection dispatch =
 
 
 let view model dispatch =
-    Container.container [] [
-        match model with
-        | SharedCodeGallery.CodeGallery ->
-            Container.container [] [
-                CodeGalleryHeader dispatch
-                goalRollSelection dispatch
-                tileSortSelection dispatch
-                tileTapSelection dispatch
-            ]
-        | SharedCodeGallery.GoalRoll model ->
-            GoalRoll.view model ( GoalRollMsg >> dispatch )
-        | SharedCodeGallery.TileSort model ->
-            TileSort.view model ( TileSortMsg >> dispatch )
-        | SharedCodeGallery.TileTap model ->
-            TileTap.view ( model ) ( TileTapMsg >> dispatch )
-    ]
+    match model with
+    | SharedCodeGallery.CodeGallery ->
+        Container.container [ Container.CustomClass "paddedContainerHeader" ] [
+            CodeGalleryHeader dispatch
+            goalRollSelection dispatch
+            tileSortSelection dispatch
+            tileTapSelection dispatch
+        ]
+    | SharedCodeGallery.GoalRoll model ->
+        GoalRoll.view model ( GoalRollMsg >> dispatch )
+    | SharedCodeGallery.TileSort model ->
+        TileSort.view model ( TileSortMsg >> dispatch )
+    | SharedCodeGallery.TileTap model ->
+        TileTap.view ( model ) ( TileTapMsg >> dispatch )
