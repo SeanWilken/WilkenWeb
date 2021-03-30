@@ -247,8 +247,7 @@ html {
     border: 1px solid #000000;
     box-shadow: 10px 10px 10px black;
     margin: auto;
-    max-height: fit-content;
-    max-width: fit-content;
+    max-width: 50vh;
 }
 .hoverSelectionElement {
     @extend .contentCardTextBackground;
@@ -329,8 +328,6 @@ html {
     z-index: 40;
     width: 80%;
     overflow: auto;
-    // max-height: calc(100vh - 40px);
-    // margin: 0 auto;
 }
 // overrides the fulma background
 //rgba(10, 10, 10, .86)
@@ -340,9 +337,7 @@ html {
 .modalAltContent {
     @extend .contentCard;
     margin: 10px;
-    background-size: cover;
-    background-position: center;
-    background-image: url("../public/imgs/unsplash/spaceSunset.jpg");
+    background-color:rgba(10, 50, 50, .5);
     align-content: center;
     .container {
         @extend .contentCardTextBackground;
@@ -369,22 +364,29 @@ html {
     font-size: xx-large;
     color: #69A69A;
     font-family: "Exo";
-    font-style: italic;
     text-align: center;
     h1 { font-weight: 600; }
+}
+.modalControls{
+    @extend .galleryTitleCard;
+    font-family: "Ubuntu";
+    color: #FF2843;
+    text-decoration-color: #69A69A;
+    text-decoration-line: underline;
 }
 // DESIGN GALLERY CLASSES
 .galleryDescriptionCard {
     font-size: larger;
     color: #69A69A;
     font-family: "Exo";
+    font-weight: 500;
     text-align: center;
 }
 .galleryImage {
     border: 1px solid #000000;
     background-color: #ffffff;
     text-align: center;
-    max-width: 80%;
+    max-width: 80v;
     margin: auto;
 }
 // DESIGN MODAL BUTTONS
@@ -458,7 +460,7 @@ html {
 }
 .ballLaneObject {
     @extend .genericGameTile;
-    background-color: #555;
+    background-color: #69A69A;
 }
 .movementArrowLaneObject {
     @extend .genericGameTile;
@@ -467,7 +469,7 @@ html {
 .blankTile {
     @extend .genericGameTile;
     border: 1px solid white;
-    background-color: #FF2843;
+    background-color: #050505;
 }
 .gameTile {
     @extend .genericGameTile;

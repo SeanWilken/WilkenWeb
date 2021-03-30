@@ -120,21 +120,24 @@ let init (): SharedGoalRoll.Model * Cmd<Msg> =
 let update ( msg: Msg ) ( model: SharedGoalRoll.Model ): SharedGoalRoll.Model * Cmd<Msg> =
     match msg, model with
     | SetGameState gameState, model ->
-        { model with GameState = gameState; }, Cmd.none
+        if model.GameState = Won
+            then { model with GameState = gameState; MovesMade = 0 }, Cmd.none
+            else { model with GameState = gameState }, Cmd.none
     | RollBall direction, model ->
+        let roundMoves = model.MovesMade + 1
         match direction with
         | Up ->
             let boardAfterRoll = rollBallInGridDirection model.CurrentGrid Up
-            { model with CurrentGrid = boardAfterRoll }, Cmd.ofMsg CheckSolution
+            { model with CurrentGrid = boardAfterRoll; MovesMade = roundMoves }, Cmd.ofMsg CheckSolution
         | Down ->
             let boardAfterRoll = rollBallInGridDirection model.CurrentGrid Down
-            { model with CurrentGrid = boardAfterRoll }, Cmd.ofMsg CheckSolution
+            { model with CurrentGrid = boardAfterRoll; MovesMade = roundMoves }, Cmd.ofMsg CheckSolution
         | Left ->
             let boardAfterRoll = rollBallInGridDirection model.CurrentGrid Left
-            { model with CurrentGrid = boardAfterRoll }, Cmd.ofMsg CheckSolution
+            { model with CurrentGrid = boardAfterRoll; MovesMade = roundMoves }, Cmd.ofMsg CheckSolution
         | Right ->
             let boardAfterRoll = rollBallInGridDirection model.CurrentGrid Right
-            { model with CurrentGrid = boardAfterRoll }, Cmd.ofMsg CheckSolution
+            { model with CurrentGrid = boardAfterRoll; MovesMade = roundMoves }, Cmd.ofMsg CheckSolution
     | LoadRound levelIndex, model ->
         let newRound = SharedGoalRoll.loadRound levelIndex
         let newRoundModel : SharedGoalRoll.Model = { 
@@ -144,6 +147,7 @@ let update ( msg: Msg ) ( model: SharedGoalRoll.Model ): SharedGoalRoll.Model * 
             BallPositionIndex = SharedGoalRoll.getBallPositionIndex newRound
             GoalPositionIndex = SharedGoalRoll.getGoalPositionIndex newRound
             GameState = Playing
+            MovesMade = 0
         }
         newRoundModel, Cmd.none
     | ResetRound, model ->
@@ -152,11 +156,14 @@ let update ( msg: Msg ) ( model: SharedGoalRoll.Model ): SharedGoalRoll.Model * 
             CurrentGrid = resetRound;
             BallPositionIndex = SharedGoalRoll.getBallPositionIndex resetRound
             GameState = Playing
+            MovesMade = 0
         }, Cmd.none 
-    | CheckSolution, model -> 
+    | CheckSolution, model ->
+        let resetRound = model.InitialGrid
+        let resetBallPosition = SharedGoalRoll.getBallPositionIndex resetRound
         if SharedGoalRoll.getBallPositionIndex model.CurrentGrid = model.GoalPositionIndex
             then
-                { model with GameState = Won }, Cmd.none
+                { model with CurrentGrid = resetRound; BallPositionIndex = resetBallPosition; GameState = Won }, Cmd.none
             else
                 model, Cmd.none
     | QuitGame, model -> model, Cmd.ofMsg QuitGame
@@ -191,7 +198,6 @@ let controlList = [
     "Rules", (SetGameState (Instruction))
 ]
 
-
 // main content
 // // Assign positions to view elements
 let goalRollRowCreator ( rowPositions: LaneObject list ) dispatch =
@@ -222,7 +228,7 @@ let goalRollRowCreator ( rowPositions: LaneObject list ) dispatch =
                 | MoveArrow Right -> 
                     Box.box' [ Props [ ClassName "movementArrowLaneObject"; OnClick( fun _ -> RollBall Right |> dispatch ) ] ] [ Image.image [] [ img [ Src "./imgs/icons/RightArrow.png"] ] ]
                 | _ -> 
-                    Box.box' [ Props [ ClassName "genericLaneObject" ] ] [ Image.image [] [ img [ Src ""] ] ]
+                    Box.box' [ Props [ ClassName "blankTile" ] ] [ Image.image [] [ img [ Src "./imgs/icons/Ball.png" ] ] ]
             ]
     ]
     
@@ -254,7 +260,7 @@ let goalRollModalContent ( model : SharedGoalRoll.Model ) dispatch =
         match model.GameState with 
         | Settings -> SharedViewModule.codeModalControlsContent gameControls dispatch
         | Instruction -> SharedViewModule.codeModalInstructionContent goalRollDescriptions
-        | Won -> div [ ClassName "levelCompletedCard" ] [ str "Level Completed!!!" ]
+        | Won -> SharedViewModule.roundCompleteContent (string model.LevelIndex) (string model.MovesMade)
         | Paused
         | Playing -> goalRollLevelCreator model dispatch
     )

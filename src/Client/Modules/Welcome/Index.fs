@@ -15,15 +15,12 @@ let view dispatch =
     div [ ClassName "welcomeSectionContainer" ] [
         Level.level [] [
             Level.item [] [
-                Tile.ancestor [ Tile.Props [ ClassName "welcomeContentCard" ] ] [
-                    Tile.parent [Tile.IsVertical] [
-                        Tile.child [] [ h2 [] [ str "Welcome" ] ]
-                        Tile.child [] [
-                            Column.column [] [
-                                Container.container [ Container.Props [ ClassName "welcomeHeroImage" ] ] [ Image.image [] [ img [ Src "./imgs/Out for Blood.jpeg" ] ] ] 
-                            ]
+                Container.container [ Container.CustomClass "welcomeContentCard" ] [
+                        Column.column [] [ h2 [] [ str "Welcome" ] ]
+                        Column.column [] [
+                           Container.container [ Container.Props [ ClassName "welcomeHeroImage" ] ] [ Image.image [Image.Props [ Style [ ] ] ] [ img [ Src "./imgs/Out for Blood.jpeg" ] ] ] 
                         ]
-                        Tile.child [] [
+                        Column.column [] [
                             div [ ClassName "contentCardTextBackground" ] [
                                 p [ ] [ str "My name is Sean and this is my personal website." ] 
                                 p [ ] [ str "Written, designed and hosted by yours truly." ] 
@@ -32,7 +29,6 @@ let view dispatch =
                                 ]
                             ]
                         ]
-                    ]
                 ]
             ]
         ]

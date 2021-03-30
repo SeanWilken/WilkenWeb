@@ -48,3 +48,8 @@ but find it highly inteeresting, rewarding and fun. This is currently a work in 
 This is not in a completed state and is currently a WIP. There is still quite a lot left that I still need to do, like implement some of the games like pivot points & 
 tile smash, add other apps and language script examples, finish up styling and then correctly override them through Fulma, add more pages for the about section to 
 expand those cards and give full details, put in meaningful details, and add comment and clean up other comments, etc, etc....
+
+
+- Currently deployed as an azure website for testing purposes, which can be found at: seanwilken.azurewebsites.net
+- There is currently no server routing, so the extra path's after the above URL won't be server reachable. 
+- Reload the base link and renavigate to your desired section of the site.

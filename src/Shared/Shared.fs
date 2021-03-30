@@ -110,7 +110,7 @@ module SharedGoalRoll =
             InitialGrid: GridGame.GridBoard
             CurrentGrid: GridGame.GridBoard
             GameState: GridGame.RoundState
-            // MovementsMade: MovementDirection list
+            MovesMade: int
         }
 
     // --------------------------------------
@@ -195,6 +195,7 @@ module SharedGoalRoll =
             BallPositionIndex = getBallPositionIndex round;
             GoalPositionIndex = getGoalPositionIndex round;
             GameState = Playing;
+            MovesMade = 0;
         }
         initialModel
 
@@ -211,6 +212,8 @@ module SharedTileTap =
         | Intermediate
         | Hard
 
+    // KINDA USELESS IMPLEMENTATION CURRENTLY, 
+    // NEEDS MORE TWEAKS
     type TileTapGameMode =
         | Survival
         | TimeAttack
@@ -247,6 +250,20 @@ module SharedTileTap =
             // RT > 0 = Timer value in seconds, checks against ( GameClock ticks / 4 )
                 // RoundTimer < ( GameClock / 4 ) then RoundEnd
 
+    type TileTapRoundDetails = {
+        RoundMistakes: int // How many mistakes were made that Round
+        TilesSpawned: int // Current # of tiles spawned on the board 
+        TilesSmashed: int // # of tiles destroyed by the player
+        RoundScore: int // Score of tiles destroyed within Round
+    }
+
+    let emptyTileTapRoundDetails = {
+        RoundMistakes = 0
+        TilesSpawned = 0
+        TilesSmashed = 0
+        RoundScore = 0
+    }
+
     type Model = {
         TileTapGridBoard: GridBoard // grid board that will contain the various tiles
         LastSpawnInterval: int // Cooldown of new Tile being placed into the GameGrid
@@ -257,10 +274,8 @@ module SharedTileTap =
         RoundTimer: int // Max allowable seconds for this Round on GameClock
         AllowableRoundMistakes: int // max # of mistakes allowed before the round is considered 'lost' and will end
         // RoundTileLifeTime: int // How many GameTicks the tile will live for // tie into Value?
-        RoundMistakes: int // How many mistakes were made that Round
-        TilesSpawned: int // Current # of tiles spawned on the board 
-        TilesSmashed: int // # of tiles destroyed by the player
-        RoundScore: int // Score of tiles destroyed within Round
+        CurrentRoundDetails: TileTapRoundDetails
+        CompletedRoundDetails: TileTapRoundDetails
     }
 
     let levelCeiling = 1
@@ -271,6 +286,7 @@ module SharedTileTap =
                     Blank
             ]
         }
+
     let initModel = {
         TileTapGridBoard = generateEmptyTileTapGrid gridDimension
         LastSpawnInterval = 2
@@ -281,29 +297,29 @@ module SharedTileTap =
         RoundTimer = 30
         AllowableRoundMistakes = 5
         // RoundTileLifeTime = 15 (just under 4 seconds)
-        RoundMistakes = 0
-        TilesSpawned = 0
-        TilesSmashed = 0
-        RoundScore = 0
+        CurrentRoundDetails = emptyTileTapRoundDetails
+        CompletedRoundDetails = emptyTileTapRoundDetails
     }
+
     let endRound model =
         { model with
             TileTapGridBoard = generateEmptyTileTapGrid gridDimension
             GameState = Won
             DispatchPointer = 0.0
+            CurrentRoundDetails = emptyTileTapRoundDetails
+            CompletedRoundDetails = model.CurrentRoundDetails
         }
+
     let resetRound model = 
         { model with
             TileTapGridBoard = generateEmptyTileTapGrid gridDimension
             LastSpawnInterval = 2
-            RoundMistakes = 0
             GameClock = 0
             GameState = Paused
             DispatchPointer = 0.0
-            TilesSpawned = 0
-            TilesSmashed = 0
-            RoundScore = 0
+            CurrentRoundDetails = emptyTileTapRoundDetails
         }
+
     // When ChangeDifficulty Msg is dispatched,
     // returns model with different round parameters
     // based on requested TileTapDifficulty

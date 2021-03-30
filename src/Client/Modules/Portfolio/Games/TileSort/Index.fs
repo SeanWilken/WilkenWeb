@@ -40,7 +40,6 @@ let init (): Shared.SharedTileSort.Model * Cmd<Msg> =
 let update ( msg: Msg ) ( model: Shared.SharedTileSort.Model ): Shared.SharedTileSort.Model * Cmd<Msg> =
     match msg with
     | SetGameState gameState ->
-        // TEMP, REVIEW
         { model with GameState = gameState }, Cmd.none
     | NewRound ->
         let newRound = createNewRound model
@@ -63,7 +62,7 @@ let update ( msg: Msg ) ( model: Shared.SharedTileSort.Model ): Shared.SharedTil
         let newDiff = changeDifficulty difficulty model
         let newRound = createNewRound newDiff
         newRound, Cmd.none
-    | ChangeView -> // TOGGLE VIEW
+    | ChangeView -> // REMOVE?
         let swappedViewModel = 
             if model.ContentView = Modal 
                 then { model with ContentView = Card } 
@@ -72,10 +71,10 @@ let update ( msg: Msg ) ( model: Shared.SharedTileSort.Model ): Shared.SharedTil
     | CheckSolution ->
         match winValidator model.CurrentTiles with
         | true -> 
-            model, Cmd.ofMsg Solved
+            { model with GameState = Shared.GridGame.Won }, Cmd.none
         | false -> model, Cmd.none
-    | Solved -> { model with GameState = Shared.GridGame.Won }, Cmd.none // Should do more
-    | QuitGame -> model, Cmd.none//Cmd.ofMsg QuitGame 
+    | Solved -> { model with GameState = Shared.GridGame.Won }, Cmd.none // Was used as a test state for button
+    | QuitGame -> model, Cmd.none
 
 open Fable.React
 open Fable.React.Props
@@ -92,7 +91,7 @@ let decodeDifficultyByString string =
     | "Medium" -> Medium
     | "Hard" -> Hard
     | _ -> Simple
-
+  
 // VIEW
 
 let tileSortDescriptions = [ 
@@ -132,13 +131,21 @@ let tileSortGameBoard model dispatch =
     let tileRows = Shared.SharedTileSort.getTilesAsRows model.CurrentTiles model.Difficulty
     div [] [ for row in tileRows do tileSortRowCreator row dispatch ]
     
+
+let difficultyToString difficulty =
+  match difficulty with
+    | Simple -> "3x3 - Simple"
+    | Easy -> "4x4 - Easy"
+    | Medium -> "5x5 - Medium"
+    | Hard -> "6x6 - Hard"
+
 // modal content container
 let tileSortModalContent model dispatch =
     SharedViewModule.gameModalContent ( 
         match model.GameState with 
         | Shared.GridGame.Settings -> SharedViewModule.codeModalControlsContent gameControls dispatch
         | Shared.GridGame.Instruction -> SharedViewModule.codeModalInstructionContent tileSortDescriptions
-        | Shared.GridGame.Won -> div [ ClassName "levelCompletedCard" ] [ str "Congrats, you win!!!" ]
+        | Shared.GridGame.Won -> SharedViewModule.roundCompleteContent ( difficultyToString (model.Difficulty) ) ( string model.Turns.Length )
         | Shared.GridGame.Playing
         | Shared.GridGame.Paused -> tileSortGameBoard model dispatch 
     )

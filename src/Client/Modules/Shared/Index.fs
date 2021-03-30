@@ -72,6 +72,16 @@ let codeModalControlsContent controlList dispatch =
             ]
         ]
 
+let roundCompleteContent levelId moveCount =
+    div [ ClassName "levelCompletedCard" ] [ 
+        Container.container [ Container.Props [ Style [ Padding 20 ] ] ] [ str "ROUND OVER!" ]
+        Container.container [ Container.Props [ Style [ FontSize 20; Padding 20] ] ] [
+            h2 [ Style [ FontSize 50; Color "#FF2843" ] ] [ str "Details: "]
+            div [ Style [ Padding 5; Color "#69A69A" ] ] [ str ( "Round ID: " + levelId ) ]
+            div [ Style [ Padding 5; Color "#69A69A" ] ] [ str ( "# of Moves: " + moveCount ) ]
+        ]
+    ]
+
 // Games
 let codeModalInstructionContent instructionList =
     Column.column [] [
@@ -93,7 +103,7 @@ let codeModalFooter controlList dispatch =
         Level.level [Level.Level.IsMobile; Level.Level.Props [ Style [ PaddingTop 10 ] ] ] [
             for controlTitle, controlMsg in controlList do    
                 Level.item [] [
-                    div [ ClassName "galleryTitleCard"; OnClick ( fun _ -> controlMsg |> dispatch ) ] [ h1 [] [ str controlTitle ] ]
+                    div [ ClassName "modalControls"; OnClick ( fun _ -> controlMsg |> dispatch ) ] [ h1 [] [ str controlTitle ] ]
                 ]
         ]
     ]
