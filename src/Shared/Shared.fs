@@ -11,17 +11,20 @@ module GridGame =
         | Down
         | Left
         | Right
+
     type TapTileValue =
         | Minor
         | Modest
         | Major
         | Heart
         | Bomb
+
     type TapTile = {
         TapPosition: int
         LifeTime: int
         Value: TapTileValue
     }
+
     // Object that can be in any given space
     // THIS SHOULD BE MADE GENERIC WHERE THE SUB IMPLEMENTS
     type LaneObject =
@@ -36,10 +39,12 @@ module GridGame =
         | MoveArrow of MovementDirection
         | ValueTile of int option
         | TapTile of TapTile
+
     // List of LaneObjects that occupy a Grid Position
     type GridBoard = {
         GridPositions: LaneObject list
     }
+
     // Represents a given game state
     type RoundState =
         | Instruction
@@ -199,8 +204,46 @@ module SharedGoalRoll =
         }
         initialModel
 
-// module SharedPivotPoints = 
-// TODO
+module SharedPivotPoint = 
+    open GridGame
+
+    type LaneOrientation =
+        | LaneRow
+        | LaneColumn
+
+    type Model = {
+        GameBoard : GridBoard // the playing game board
+        BoardOrientation: LaneOrientation
+        GameState : RoundState
+        DispatchPointer: float
+        RollInterval: int
+        BallDirection: MovementDirection // direction of ball's momentum
+        BallPosition: int // position of the ball currently
+        CoinPosition: int // position of the coin to collect
+    }
+
+    let demoGameBoard = { 
+        GridPositions = [
+            Blocker; Blank; Blank; Blank; Blank; Blocker; Blank; Blank;
+            Blank; Blocker; Blank; Blank; Blank; Blank; Blank; Blank;
+            Blank; Blank; Blank; Blank; Blank; Blank; Blocker; Blank;
+            Blank; Blocker; Blank; Blank; Blank; Blank; Blank; Blank;
+            Blank; Blank; Blocker; Blank; Goal; Blank; Blank; Blank;
+            Blank; Blank; Blocker; Blank; Blank; Blank; Blank; Blank;
+            Ball; Blank; Blank; Blank; Blank; Blocker; Blank; Blank;
+            Blank; Blank; Blank; Blank; Blank; Blank; Blank; Blocker; 
+        ] }
+
+    let initModel = {
+        GameBoard = demoGameBoard
+        GameState = Paused
+        BoardOrientation = LaneColumn
+        RollInterval = 0
+        DispatchPointer = 0.0
+        BallDirection = Right
+        BallPosition = 11
+        CoinPosition = 37
+    }
 
 module SharedTileTap =
 
@@ -813,6 +856,7 @@ module SharedCodeGallery =
         | GoalRoll of SharedGoalRoll.Model
         | TileTap of SharedTileTap.Model
         | TileSort of SharedTileSort.Model
+        | PivotPoint of SharedPivotPoint.Model
         //COMMENTED CODE - VIEW CODE BUTTON TO DROP DOWN LIKE GITHUB / FIDDLES
         // | WebAppExample // THIS SITE 
         // | JavaScriptExamples

@@ -42,8 +42,6 @@ let checkNormalizedArrowPosition normalizedArrowPosition direction =
 let gridWithoutMoveArrows positions =
     let thing = List.map (fun x -> match x with | MoveArrow _ -> Blank | _ -> x ) positions.GridPositions
     { GridPositions = thing }
-let gridWithGoal positions goalPosition =
-    updatePositionWithObject positions Goal goalPosition
 let gridWithMovementArrow positions direction =
     let ballPositionIndex = SharedGoalRoll.getBallPositionIndex positions
     let normalizedBallPositionIndex = ballPositionIndex + 1
@@ -56,6 +54,8 @@ let gridWithMovementArrow positions direction =
                 then updatePositionWithObject positions (MoveArrow direction) thing
                 else positions
         else positions
+let gridWithGoal positions goalPosition =
+    updatePositionWithObject positions Goal goalPosition
 
 // this should really check for some kind of rollable bit to indicate can roll through / over 
 let checkDirectionForRollable positions arrowlessGrid ballRollPositionIndex ballPositionIndex direction =
