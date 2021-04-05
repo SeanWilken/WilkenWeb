@@ -216,6 +216,7 @@ module SharedPivotPoint =
         BoardOrientation: LaneOrientation
         GameState : RoundState
         DispatchPointer: float
+        GameClock: int
         RollInterval: int
         BallDirection: MovementDirection // direction of ball's momentum
         BallPosition: int // position of the ball currently
@@ -238,6 +239,7 @@ module SharedPivotPoint =
         GameBoard = demoGameBoard
         GameState = Paused
         BoardOrientation = LaneColumn
+        GameClock = 0
         RollInterval = 0
         DispatchPointer = 0.0
         BallDirection = Right
@@ -298,6 +300,7 @@ module SharedTileTap =
         TilesSpawned: int // Current # of tiles spawned on the board 
         TilesSmashed: int // # of tiles destroyed by the player
         RoundScore: int // Score of tiles destroyed within Round
+        GameClock: int
     }
 
     let emptyTileTapRoundDetails = {
@@ -305,6 +308,7 @@ module SharedTileTap =
         TilesSpawned = 0
         TilesSmashed = 0
         RoundScore = 0
+        GameClock = 0
     }
 
     type Model = {
@@ -313,7 +317,7 @@ module SharedTileTap =
         GameMode: TileTapGameMode
         GameState: GridGame.RoundState
         DispatchPointer: float // the float pointer to the GameLoop's dispatch
-        GameClock: int // Total ticks from the Round that occurred.
+        // GameClock: int // Total ticks from the Round that occurred.
         RoundTimer: int // Max allowable seconds for this Round on GameClock
         AllowableRoundMistakes: int // max # of mistakes allowed before the round is considered 'lost' and will end
         // RoundTileLifeTime: int // How many GameTicks the tile will live for // tie into Value?
@@ -336,7 +340,7 @@ module SharedTileTap =
         GameMode = Survival
         GameState = Paused
         DispatchPointer = 0.0
-        GameClock = 0 // +1 increment per 250 ms
+        // GameClock = 0 // +1 increment per 250 ms
         RoundTimer = 30
         AllowableRoundMistakes = 5
         // RoundTileLifeTime = 15 (just under 4 seconds)
@@ -357,7 +361,7 @@ module SharedTileTap =
         { model with
             TileTapGridBoard = generateEmptyTileTapGrid gridDimension
             LastSpawnInterval = 2
-            GameClock = 0
+            // GameClock = 0
             GameState = Paused
             DispatchPointer = 0.0
             CurrentRoundDetails = emptyTileTapRoundDetails

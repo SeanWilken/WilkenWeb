@@ -190,16 +190,24 @@ let update msg ( model : SharedPivotPoint.Model ) : SharedPivotPoint.Model * Cmd
         // increase game clock if using one...
         // spawn coin if none on the board
         // roll the ball
+        let tickedClock = model.GameClock + 1
         let rollInterval = model.RollInterval + 1
         if rollInterval > 2
-            then { model with RollInterval = 0 }, Cmd.ofMsg RollBall
-            else { model with RollInterval = rollInterval }, Cmd.none
+            then { model with RollInterval = 0; GameClock = tickedClock }, Cmd.ofMsg RollBall
+            else { model with RollInterval = rollInterval; GameClock = tickedClock }, Cmd.none
+
     | SetDispatchPointer pointer ->
         // RIPPED FROM TILETAP
-        if pointer <> 0.0 then Playing else Paused
-        |> fun gameRoundState -> { model with GameState = gameRoundState; DispatchPointer = pointer }, Cmd.none
+        if model.GameState = Won 
+            then SharedPivotPoint.initModel, Cmd.none
+            else
+                if pointer <> 0.0 then Playing else Paused
+                |> fun gameRoundState -> { model with GameState = gameRoundState; DispatchPointer = pointer }, Cmd.none
+
     | SetGameState gameState ->
-        { model with GameState = gameState }, Cmd.none
+        if model.GameState = Won 
+            then { SharedPivotPoint.initModel with GameState = gameState; GameClock = 0}, Cmd.none
+            else { model with GameState = gameState }, Cmd.none
     
     | PivotBall pivotDirection ->
         // direction on model
@@ -227,16 +235,19 @@ let update msg ( model : SharedPivotPoint.Model ) : SharedPivotPoint.Model * Cmd
             else { model with GameBoard = rolledBallGrid }, Cmd.none
     
     | ResetRound ->
-        model, Cmd.none
+        if (model.DispatchPointer <> 0.0) then stopGameLoop(model.DispatchPointer)
+        SharedPivotPoint.initModel, Cmd.none
 
     | EndRound ->
         stopGameLoop model.DispatchPointer
-        { model with DispatchPointer = 0.0; GameState = Won }, Cmd.none
+        { model with GameBoard = SharedPivotPoint.demoGameBoard; DispatchPointer = 0.0; GameState = Won }, Cmd.none
     
     | ExitGameLoop ->
+        if (model.DispatchPointer <> 0.0) then stopGameLoop(model.DispatchPointer)
         model, Cmd.none
     
     | QuitGame ->
+        if (model.DispatchPointer <> 0.0) then stopGameLoop(model.DispatchPointer)
         model, Cmd.none
     
     | _ -> model, Cmd.none
@@ -369,24 +380,59 @@ let pivotPointsColumnCreator (laneStyle : LaneDetails option) ( rowPositions: La
             ]
         ]
 
+
+
+let lowestLane = [
+    None
+    Some { Style = [ BackgroundColor "#00f" ]; Message = PivotBall PivotDirection.Ascend }
+    Some { Style = [ BackgroundColor "#00f" ]; Message = PivotBall PivotDirection.Ascend }
+    Some { Style = [ BackgroundColor "#00f" ]; Message = PivotBall PivotDirection.Ascend }
+    Some { Style = [ BackgroundColor "#00f" ]; Message = PivotBall PivotDirection.Ascend }
+    Some { Style = [ BackgroundColor "#00f" ]; Message = PivotBall PivotDirection.Ascend }
+    Some { Style = [ BackgroundColor "#00f" ]; Message = PivotBall PivotDirection.Ascend }
+    Some { Style = [ BackgroundColor "#f00" ]; Message = PivotBall PivotDirection.Descend }
+]
+let ceilingLane = [
+    Some { Style = [ BackgroundColor "#00f" ]; Message = PivotBall PivotDirection.Ascend }
+    Some { Style = [ BackgroundColor "#f00" ]; Message = PivotBall PivotDirection.Descend }
+    Some { Style = [ BackgroundColor "#f00" ]; Message = PivotBall PivotDirection.Descend }
+    Some { Style = [ BackgroundColor "#f00" ]; Message = PivotBall PivotDirection.Descend }
+    Some { Style = [ BackgroundColor "#f00" ]; Message = PivotBall PivotDirection.Descend }
+    Some { Style = [ BackgroundColor "#f00" ]; Message = PivotBall PivotDirection.Descend }
+    Some { Style = [ BackgroundColor "#f00" ]; Message = PivotBall PivotDirection.Descend }
+    None
+]
+
+
+let laneStyleCenterPositions ceiling position =
+    [ for i in 0 .. ceiling - 1 do
+        if i < position then Some { Style = [ BackgroundColor "#f00" ]; Message = PivotBall PivotDirection.Descend }
+        elif i > position then Some { Style = [ BackgroundColor "#00f" ]; Message = PivotBall PivotDirection.Ascend }
+        else None ]
+
+
 let pivotPointsBoardView (model : SharedPivotPoint.Model) dispatch =
     let gridBoard = model.GameBoard
     match model.BallDirection with 
     | MovementDirection.Left
     | MovementDirection.Right ->
-        let board = GridGame.getPositionsAsRows gridBoard 8
+        let ceiling = 8
+        let board = GridGame.getPositionsAsRows gridBoard ceiling
         let ballLaneIndex = findBallLaneIndex board
-        // if rowIndex = 0 then 7 = RED
-        // if rowIndex = 7 then 0 = BLUE
-        // else -1
-        Container.container [] [ 
-            for i in 0 .. board.Length - 1 do
-                let laneStyle  = 
+
+        let laneStyles = 
+            if ballLaneIndex = 0 then lowestLane
+            elif ballLaneIndex = 7 then ceilingLane
+            else
+                [ for i in 0 .. ceiling - 1 do
                     if i < ballLaneIndex then Some { Style = [ BackgroundColor "#f00" ]; Message = PivotBall PivotDirection.Descend }
                     elif i > ballLaneIndex then Some { Style = [ BackgroundColor "#00f" ]; Message = PivotBall PivotDirection.Ascend }
-                    else None
-                pivotPointsRowCreator laneStyle (board.Item(i)) dispatch
+                    else None ]
+        Container.container [] [ 
+            for i in 0 .. ceiling - 1 do
+                pivotPointsRowCreator (laneStyles.Item(i)) (board.Item(i)) dispatch
         ]
+
     | MovementDirection.Up
     | MovementDirection.Down ->
         let board = GridGame.getPositionsAsColumns gridBoard 8
@@ -404,7 +450,9 @@ let pivotPointsBoardView (model : SharedPivotPoint.Model) dispatch =
                     pivotPointsColumnCreator laneStyle (board.Item(i)) dispatch
             ]
         ]
-
+    
+let gameTickClock ticks =
+    string (ticks / 4)
 
 // modal content container
 let pivotPointsModalContent ( model : SharedPivotPoint.Model ) dispatch =
@@ -421,7 +469,7 @@ let pivotPointsModalContent ( model : SharedPivotPoint.Model ) dispatch =
                     Container.container [ Container.Props [ Style [ FontSize 20; Padding 20] ] ] [
                         h2 [ Style [ FontSize 50; Color "#FF2843" ] ] [ str "Round Stats: "]  
                         div [ Style [ Padding 5; Color "#69A69A" ] ] [ str "over 9000!" ] //( modelValueAsString "Round Score: " model.CompletedRoundDetails.RoundScore ) ]
-                        // div [ Style [ Padding 5; Color "#69A69A" ] ] [ str ( "Round Timer: " + ( gameTickClock model.GameClock ) + modelValueAsString " / " model.RoundTimer) ]
+                        div [ Style [ Padding 5; Color "#69A69A" ] ] [ str ( "Round Timer: " + ( gameTickClock model.GameClock ) ) ]
                     ]
                     // Container.container [ Container.Props [ Style [ FontSize 20; Padding 20 ] ] ] [
                     //     h2 [ Style [ FontSize 50; Color "#FF2843" ] ] [ str "Details: "]

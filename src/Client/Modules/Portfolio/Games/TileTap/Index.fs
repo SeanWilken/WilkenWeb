@@ -140,11 +140,11 @@ let gameModeRoundMistake ( model : SharedTileTap.Model ) ( mistakeValue : int ) 
                     else Cmd.none
             { model with CurrentRoundDetails = { model.CurrentRoundDetails with RoundMistakes = totalRoundMistakes } }, com
         else
-            let currentTimeExpired = model.GameClock + ( mistakeValue * 4 )
+            let currentTimeExpired = model.CurrentRoundDetails.GameClock + ( mistakeValue * 4 )
             let com = if ( model.RoundTimer * 4 <= currentTimeExpired ) then Cmd.ofMsg EndRound else Cmd.none
             { model with 
-                GameClock = currentTimeExpired; 
-                CurrentRoundDetails = { model.CurrentRoundDetails with RoundMistakes = model.CurrentRoundDetails.RoundMistakes + 1 } 
+                // GameClock = currentTimeExpired; 
+                CurrentRoundDetails = { model.CurrentRoundDetails with RoundMistakes = model.CurrentRoundDetails.RoundMistakes + 1; GameClock = currentTimeExpired } 
             }, com
 
 // implement?
@@ -156,6 +156,10 @@ let gameModeRoundMistake ( model : SharedTileTap.Model ) ( mistakeValue : int ) 
 //     | SharedTileTap.TileTapDifficulty.Intermediate -> 2
 //     | SharedTileTap.TileTapDifficulty.Hard -> 1
 
+let modelValueAsString strin value =
+    if value = -1 
+        then strin + "\u221E";
+        else strin + string value
 
 // Initialize the modules model
 // No command dispatched currently
@@ -189,11 +193,12 @@ let update msg ( model : SharedTileTap.Model ) =
         // spawn a new tile if the spawn interval is matched or exceeded
     | GameLoopTick -> // this should check against Round 'Allowances'
         // If more than mistakes are made than the difficulty on the model allows
+        printfn "%i" model.CurrentRoundDetails.RoundMistakes
         if ( model.AllowableRoundMistakes > 0 ) && ( model.CurrentRoundDetails.RoundMistakes >= model.AllowableRoundMistakes ) then model, Cmd.ofMsg EndRound
         // End the round when the GameClock exceeds the RoundTimer.  ( -1 : no round timer)
-        elif ( model.RoundTimer > 0 ) && ( ( model.GameClock / 4 ) >= model.RoundTimer ) then model, Cmd.ofMsg EndRound
+        elif ( model.RoundTimer > 0 ) && ( ( model.CurrentRoundDetails.GameClock / 4 ) >= model.RoundTimer ) then model, Cmd.ofMsg EndRound
         // No conditions to end round met, batch check grid and spawn tile commands
-        else { model with GameClock = model.GameClock + 1 }, Cmd.batch [ Cmd.ofMsg ( CheckGridboardTiles ); Cmd.ofMsg ( SpawnNewActiveTile ) ]
+        else { model with CurrentRoundDetails = { model.CurrentRoundDetails with GameClock = model.CurrentRoundDetails.GameClock + 1 } }, Cmd.batch [ Cmd.ofMsg ( CheckGridboardTiles ); Cmd.ofMsg ( SpawnNewActiveTile ) ]
     // If there hasn't been a new tile placed onto the Gridboard
     // but the interval is matched or exceeded, generate the Gridboard with a new tile added
     // otherwise increment the LastSpawnInterval by one
@@ -272,6 +277,7 @@ let update msg ( model : SharedTileTap.Model ) =
     | EndRound -> 
         if (model.DispatchPointer <> 0.0) then stopGameLoop(model.DispatchPointer)
         SharedTileTap.endRound model, Cmd.none
+        // SharedTileTap.initModel, Cmd.none
     // Resets the values for a round aside 
     // from it's difficulty parameters
     | ResetRound ->
@@ -300,10 +306,6 @@ let update msg ( model : SharedTileTap.Model ) =
 let gameTickClock ticks =
     string (ticks / 4)
 
-let modelValueAsString strin value =
-    if value = -1 
-        then strin + "\u221E";
-        else strin + string value
 // ----------------
 
 // *********************************
@@ -375,7 +377,7 @@ let tileTapBoardView gridPositions dispatch =
   
 let roundOverString ( model : SharedTileTap.Model ) =
     Container.container [ Container.Props [ Style [ FontSize 30; Color "#FFFFFF" ] ] ] [
-        h1 [ Style [ Padding 10; Color "#69A69A" ] ] [ str ( "The round lasted " + ( gameTickClock ( model.GameClock ) ) + " second(s)," ) ]
+        h1 [ Style [ Padding 10; Color "#69A69A" ] ] [ str ( "The round lasted " + ( gameTickClock ( model.CompletedRoundDetails.GameClock ) ) + " second(s)," ) ]
         h1 [ Style [ Padding 10; Color "#69A69A" ] ] [ str ( "You smashed " + string ( model.CompletedRoundDetails.TilesSmashed ) + " tiles and made " + string ( model.CompletedRoundDetails.RoundMistakes ) + " mistakes," ) ]
         h1 [ Style [ Padding 10; Color "#69A69A" ] ] [ str ( " This results in a final score of:" ) ]
         h1 [ Style [ Padding 20; Color "#00ff00"; FontSize 50 ] ] [ str ( string ( model.CompletedRoundDetails.RoundScore ) ) ]
@@ -439,7 +441,7 @@ let tileTapModalRight model dispatch =
                         Container.container [] [
                             h2 [] [ str "Round Stats: "] 
                             div [] [ str ( modelValueAsString "Round Score: " model.CurrentRoundDetails.RoundScore ) ]
-                            div [] [ str ( "Round Timer: " + ( gameTickClock model.GameClock ) + modelValueAsString " / " model.RoundTimer) ]
+                            div [] [ str ( "Round Timer: " + ( gameTickClock model.CurrentRoundDetails.GameClock ) + modelValueAsString " / " model.RoundTimer) ]
                             div [] [ str ( modelValueAsString "Round Mistakes: " model.CurrentRoundDetails.RoundMistakes + modelValueAsString " / " model.AllowableRoundMistakes) ]
                         ]
                     ]
@@ -465,7 +467,7 @@ let tileTapModalContent  ( model : SharedTileTap.Model ) dispatch =
                     Container.container [ Container.Props [ Style [ FontSize 20; Padding 20] ] ] [
                         h2 [ Style [ FontSize 50; Color "#FF2843" ] ] [ str "Round Stats: "] 
                         div [ Style [ Padding 5; Color "#69A69A" ] ] [ str ( modelValueAsString "Round Score: " model.CompletedRoundDetails.RoundScore ) ]
-                        div [ Style [ Padding 5; Color "#69A69A" ] ] [ str ( "Round Timer: " + ( gameTickClock model.GameClock ) + modelValueAsString " / " model.RoundTimer) ]
+                        div [ Style [ Padding 5; Color "#69A69A" ] ] [ str ( "Round Timer: " + ( gameTickClock model.CompletedRoundDetails.GameClock ) + modelValueAsString " / " model.RoundTimer) ]
                         div [ Style [ Padding 5; Color "#69A69A" ] ] [ str ( modelValueAsString "Round Mistakes: " model.CompletedRoundDetails.RoundMistakes + modelValueAsString " / " model.AllowableRoundMistakes) ]
                     ]
                     Container.container [ Container.Props [ Style [ FontSize 20; Padding 20 ] ] ] [
