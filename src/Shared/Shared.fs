@@ -221,6 +221,7 @@ module SharedPivotPoint =
         BallDirection: MovementDirection // direction of ball's momentum
         BallPosition: int // position of the ball currently
         CoinPosition: int // position of the coin to collect
+        CoinsCollected: int // # of coins obtained
     }
 
     let demoGameBoard = { 
@@ -245,6 +246,7 @@ module SharedPivotPoint =
         BallDirection = Right
         BallPosition = 11
         CoinPosition = 37
+        CoinsCollected = 0
     }
 
 module SharedTileTap =
@@ -317,7 +319,6 @@ module SharedTileTap =
         GameMode: TileTapGameMode
         GameState: GridGame.RoundState
         DispatchPointer: float // the float pointer to the GameLoop's dispatch
-        // GameClock: int // Total ticks from the Round that occurred.
         RoundTimer: int // Max allowable seconds for this Round on GameClock
         AllowableRoundMistakes: int // max # of mistakes allowed before the round is considered 'lost' and will end
         // RoundTileLifeTime: int // How many GameTicks the tile will live for // tie into Value?
@@ -340,7 +341,6 @@ module SharedTileTap =
         GameMode = Survival
         GameState = Paused
         DispatchPointer = 0.0
-        // GameClock = 0 // +1 increment per 250 ms
         RoundTimer = 30
         AllowableRoundMistakes = 5
         // RoundTileLifeTime = 15 (just under 4 seconds)
@@ -348,6 +348,7 @@ module SharedTileTap =
         CompletedRoundDetails = emptyTileTapRoundDetails
     }
 
+    // doesn't fucking work, pissing me the fuck off
     let endRound model =
         { model with
             TileTapGridBoard = generateEmptyTileTapGrid gridDimension
@@ -357,11 +358,11 @@ module SharedTileTap =
             CompletedRoundDetails = model.CurrentRoundDetails
         }
 
+
     let resetRound model = 
         { model with
             TileTapGridBoard = generateEmptyTileTapGrid gridDimension
             LastSpawnInterval = 2
-            // GameClock = 0
             GameState = Paused
             DispatchPointer = 0.0
             CurrentRoundDetails = emptyTileTapRoundDetails
