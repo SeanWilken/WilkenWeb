@@ -82,6 +82,19 @@ let roundCompleteContent levelId moveCount =
         ]
     ]
 
+
+
+
+
+open Browser
+
+let stopGameLoop loopFloat = window.clearInterval(loopFloat)
+
+let gameTickClock ticks =
+    string (ticks / 4)
+
+
+
 // Games
 let codeModalInstructionContent instructionList =
     Column.column [] [
