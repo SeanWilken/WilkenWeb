@@ -21,38 +21,48 @@ type PivotDirection =
     | Descend
 
 type Msg =
-    // game + state
+    // Game State
     | GameLoopTick
     | SetGameState of RoundState
     | SetDispatchPointer of float
-    // ball movement 
-    | RollBall // will be called on certain game ticks to move the balls position
-    | PivotBall of PivotDirection // pivot to either ascend or descend
-    // score message
-    | CollectPoints of int
+    // Arrow Movement
+    | MoveArrow // will be called on certain game ticks to move the balls position
+    | PivotArrow of PivotDirection // pivot to either ascend or descend
     // round messages
-    | Ignore // I really don't like this, how to return NO message?
-    | ResetRound
-    | EndRound
-    | ExitGameLoop
-    | QuitGame
+    | Ignore // I really don't like this, how to assign NO message..need separate funcs
+    | ResetRound // resets the board and player round details
+    | EndRound // you crashed and will be brought to game over screen
+    | ExitGameLoop // Call to ensure no window intervals running when game is exited
+    | QuitGame // Leave this game and return to the code gallery
+
+type LaneDetails = {
+    Style : CSSProp list
+    Message : Msg
+}
 
 // content descriptions
 let pivotPointsDescriptions = [
-    "- Select Start to begin game." 
-    "- Once the ball begins to roll, it can't be stopped, only steered."
-    "- Pivot the ball from it's current lane position to either direction of the intersecting lane."
-    "- Red will pivot the ball to ascend the intersecting lane (right in a row, down in a column)"
-    "- Blue will pivot the ball to descend the intersecting lane (left in a row, up in a column)"
-    "- Roll the ball over the flag to collect points."
+    "- Select Start to begin the game." 
+    "- Arrow will continue to move in the direction it is pointing in intervals."
+    "- Pivot the arrow from it's current direction to either direction of the intersecting lane."
+    "- Red will pivot the arrow to descend the intersecting lane (left in a row, up in a column)"
+    "- Blue will pivot the arrow to ascend the intersecting lane (right in a row, down in a column)"
     "- Avoid crashing into the lane blockers, or it's game over."
-    // "- The ball roll interval scales with time / points???"
+    "- Guide the arrow to the flags to collect points."
+    // "- The more points you get, the faster the movement interval scale gets." // - Need to implement
 ]
 
 let controlList = [ 
     "Settings", (SetGameState (RoundState.Settings)) 
     "Rules", (SetGameState (Instruction))
 ]
+
+let ascendLane = Some { Style = [ BackgroundColor "#801515" ]; Message = PivotArrow PivotDirection.Ascend }
+let descendLane = Some { Style = [ BackgroundColor "#143054" ]; Message = PivotArrow PivotDirection.Descend }
+let floorLane = [ None; ascendLane; ascendLane; ascendLane; ascendLane; ascendLane; ascendLane; descendLane; ]
+let ceilingLane = [ ascendLane; descendLane; descendLane; descendLane; descendLane; descendLane; descendLane; None ]
+
+// Update functions ---------
 
 let getBallRollPositionIndex ballPosition direction =
     match direction with
@@ -62,7 +72,9 @@ let getBallRollPositionIndex ballPosition direction =
     | MovementDirection.Right -> (ballPosition + 1)
 
 // REFACTOR ME PLEASE
-let rollBallForward ( model : SharedPivotPoint.Model) =
+// need to cleanup the wording on these functions
+// shared between goal roll and pivot points...
+let moveArrowForward ( model : SharedPivotPoint.Model) =
     let gameBoard = model.GameBoard
     let ballPositionIndex = SharedGoalRoll.getBallPositionIndex gameBoard
     if ballPositionIndex = -1
@@ -159,12 +171,13 @@ let coinSpawnPosition ( gridBoard : GridBoard ) =
 
 //----------------
 
+// Lifecycle -------------
+
 let init(): SharedPivotPoint.Model * Cmd<Msg> =
     SharedPivotPoint.initModel, Cmd.none
 
 let update msg ( model : SharedPivotPoint.Model ) : SharedPivotPoint.Model * Cmd<Msg> = 
     match msg with
-
     | GameLoopTick ->
         let coinPoints = 
             match getObjectPositionIndex model.GameBoard Goal with
@@ -180,16 +193,14 @@ let update msg ( model : SharedPivotPoint.Model ) : SharedPivotPoint.Model * Cmd
         let tickedClock = model.GameClock + 1
         let rollInterval = model.RollInterval + 1
         if rollInterval > 2
-            then { model with GameBoard = gridWithCoinUpdate; RollInterval = 0; GameClock = tickedClock; CoinsCollected = model.CoinsCollected + coinPoints }, Cmd.ofMsg RollBall
+            then { model with GameBoard = gridWithCoinUpdate; RollInterval = 0; GameClock = tickedClock; CoinsCollected = model.CoinsCollected + coinPoints }, Cmd.ofMsg MoveArrow
             else { model with GameBoard = gridWithCoinUpdate; RollInterval = rollInterval; GameClock = tickedClock; CoinsCollected = model.CoinsCollected + coinPoints }, Cmd.none
-
     | SetDispatchPointer pointer ->
         if model.GameState = Won 
             then SharedPivotPoint.initModel, Cmd.none
             else
                 if pointer <> 0.0 then Playing else Paused
                 |> fun gameRoundState -> { model with GameState = gameRoundState; DispatchPointer = pointer }, Cmd.none
-
     | SetGameState gameState ->
         if gameState <> Playing && model.DispatchPointer <> 0.0 
             then 
@@ -197,8 +208,7 @@ let update msg ( model : SharedPivotPoint.Model ) : SharedPivotPoint.Model * Cmd
                 { model with DispatchPointer = 0.0; GameState = gameState; }, Cmd.none
             else
                 { model with GameState = gameState }, Cmd.none
-    
-    | PivotBall pivotDirection ->
+    | PivotArrow pivotDirection ->
         match model.BallDirection with
         | MovementDirection.Up
         | MovementDirection.Down ->
@@ -214,49 +224,26 @@ let update msg ( model : SharedPivotPoint.Model ) : SharedPivotPoint.Model * Cmd
                 { model with BallDirection = Down; BoardOrientation = SharedPivotPoint.LaneOrientation.LaneColumn }, Cmd.none
             | Descend ->
                 { model with BallDirection = Up; BoardOrientation = SharedPivotPoint.LaneOrientation.LaneColumn }, Cmd.none
-
-
-    | RollBall ->
-        let rolledBallGrid = rollBallForward model
-        if rolledBallGrid = model.GameBoard
+    | MoveArrow ->
+        let movedArrowGrid = moveArrowForward model
+        if movedArrowGrid = model.GameBoard
             then model, Cmd.ofMsg EndRound
-            else { model with GameBoard = rolledBallGrid }, Cmd.none
-    
+            else { model with GameBoard = movedArrowGrid }, Cmd.none
     | ResetRound ->
         if (model.DispatchPointer <> 0.0) then SharedViewModule.stopGameLoop(model.DispatchPointer)
         SharedPivotPoint.initModel, Cmd.none
-
     | EndRound ->
         SharedViewModule.stopGameLoop model.DispatchPointer
         { model with GameBoard = SharedPivotPoint.demoGameBoard; DispatchPointer = 0.0; GameState = Won }, Cmd.none
-    
     | ExitGameLoop ->
         if (model.DispatchPointer <> 0.0) then SharedViewModule.stopGameLoop(model.DispatchPointer)
         model, Cmd.none
-    
     | QuitGame ->
         if (model.DispatchPointer <> 0.0) then SharedViewModule.stopGameLoop(model.DispatchPointer)
         model, Cmd.none
-    
     | _ -> model, Cmd.none
 
-// MISC HELPERS
-
-let findBallLaneIndex (gridLanes: (LaneObject list) list ) =
-    let laneIndexes = 
-        [ for i in 0 .. gridLanes.Length - 1 do
-            if ( List.contains (Ball) ( gridLanes.Item(i)))
-                then Some i
-                else None
-        ]
-    let ballLaneIndex = List.tryFind ( fun x -> x <> None ) laneIndexes
-    match ballLaneIndex with
-    | Some (Some i) -> i
-    | _ -> -1
-
-//----------------
-
-
+// --------------------------
 
 // VIEW FUNCTIONS 
 
@@ -310,19 +297,6 @@ let modalGameInstructionView model controlList dispatch =
 
 // Game Board
 
-// refactor these into one call that can determine based on the board orientation
-type LaneDetails = {
-    Style : CSSProp list
-    Message : Msg
-}
-
-let parseLaneDetails details =
-    match details with
-    | Some laneDetail ->
-        laneDetail.Style, laneDetail.Message
-    | None ->   
-        [], Ignore // don't like ignore
-
 let directionArrowImage direction =
     match direction with
     | MovementDirection.Up -> "UpArrow"
@@ -342,6 +316,12 @@ let pivotPointTileView rollDirection positionObject style message dispatch =
     | _ ->
         Box.box' [ Props [ ClassName "genericLaneObject"; Style style; OnClick (fun _ -> message |> dispatch) ] ] [ Image.image [] [ img [ Src "./imgs/icons/Key.png" ] ] ]
 
+let parseLaneDetails details =
+    match details with
+    | Some laneDetail ->
+        laneDetail.Style, laneDetail.Message
+    | None ->   
+        [], Ignore // don't like ignore
 
 let pivotPointsRowCreator rollDirection (laneStyle : LaneDetails option) ( rowPositions: LaneObject list ) dispatch =
     let style, message = parseLaneDetails laneStyle
@@ -361,16 +341,30 @@ let pivotPointsColumnCreator rollDirection (laneStyle : LaneDetails option) ( ro
             ]
         ]
 
-
-let ascendLane = Some { Style = [ BackgroundColor "#801515" ]; Message = PivotBall PivotDirection.Ascend }
-let descendLane = Some { Style = [ BackgroundColor "#143054" ]; Message = PivotBall PivotDirection.Descend }
-let floorLane = [ None; ascendLane; ascendLane; ascendLane; ascendLane; ascendLane; ascendLane; descendLane; ]
-let ceilingLane = [ ascendLane; descendLane; descendLane; descendLane; descendLane; descendLane; descendLane; None ]
 let laneStyleCenterPositions ceiling position =
     [ for i in 0 .. ceiling - 1 do
-        if i < position then Some { Style = [ BackgroundColor "#801515" ]; Message = PivotBall PivotDirection.Descend }
-        elif i > position then Some { Style = [ BackgroundColor "#143054" ]; Message = PivotBall PivotDirection.Ascend }
+        if i < position then Some { Style = [ BackgroundColor "#801515" ]; Message = PivotArrow PivotDirection.Descend }
+        elif i > position then Some { Style = [ BackgroundColor "#143054" ]; Message = PivotArrow PivotDirection.Ascend }
         else None ]
+
+let laneStyleCreator ballLaneIndex ceiling = 
+    if ballLaneIndex = 0 then floorLane
+    elif ballLaneIndex = 7 then ceilingLane
+    else laneStyleCenterPositions ceiling ballLaneIndex
+
+let findBallLaneIndex (gridLanes: (LaneObject list) list ) =
+    let laneIndexes = 
+        [ for i in 0 .. gridLanes.Length - 1 do
+            if ( List.contains (Ball) ( gridLanes.Item(i)))
+                then Some i
+                else None
+        ]
+    let ballLaneIndex = List.tryFind ( fun x -> x <> None ) laneIndexes
+    match ballLaneIndex with
+    | Some (Some i) -> i
+    | _ -> -1
+
+//----------------
 
 let pivotPointsBoardView (model : SharedPivotPoint.Model) dispatch =
     let gridBoard = model.GameBoard
@@ -380,10 +374,7 @@ let pivotPointsBoardView (model : SharedPivotPoint.Model) dispatch =
     | MovementDirection.Right ->
         let board = GridGame.getPositionsAsRows gridBoard ceiling
         let ballLaneIndex = findBallLaneIndex board
-        let laneStyles = 
-            if ballLaneIndex = 0 then floorLane
-            elif ballLaneIndex = 7 then ceilingLane
-            else laneStyleCenterPositions ceiling ballLaneIndex
+        let laneStyles = laneStyleCreator ballLaneIndex ceiling
         Container.container [] [ 
             for i in 0 .. ceiling - 1 do
                 pivotPointsRowCreator model.BallDirection (laneStyles.Item(i)) (board.Item(i)) dispatch
@@ -392,10 +383,7 @@ let pivotPointsBoardView (model : SharedPivotPoint.Model) dispatch =
     | MovementDirection.Down ->
         let board = GridGame.getPositionsAsColumns gridBoard ceiling
         let ballLaneIndex = findBallLaneIndex board
-        let laneStyles = 
-            if ballLaneIndex = 0 then floorLane
-            elif ballLaneIndex = 7 then ceilingLane
-            else laneStyleCenterPositions ceiling ballLaneIndex
+        let laneStyles = laneStyleCreator ballLaneIndex ceiling
         Container.container [] [ 
             Level.level [] [
                 for i in 0 .. board.Length - 1 do

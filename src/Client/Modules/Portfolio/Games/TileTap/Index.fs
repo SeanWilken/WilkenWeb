@@ -9,6 +9,21 @@ open Fable.React.Props
 open Fulma
 open Browser
 
+(*
+
+// Bomb diffuse by clicking a tile sequence around it?
+
+// implement?
+// store this on the model?
+// let roundDifficultySpawnInterval difficulty =
+//     match difficulty with
+//     | SharedTileTap.TileTapDifficulty.Simple -> 6
+//     | SharedTileTap.TileTapDifficulty.Easy -> 4
+//     | SharedTileTap.TileTapDifficulty.Intermediate -> 2
+//     | SharedTileTap.TileTapDifficulty.Hard -> 1
+
+*)
+
 type Msg =
     // GAME LOOP
     | SetGameState of RoundState
@@ -28,8 +43,26 @@ type Msg =
     | ExitGameLoop // stops the setInterval loop from running while not within this sub-module.
     | QuitGame // returns control to the parent, exiting to gallery
 
-// NEED TO IMPLEMENT
-    // win and lose conditions and GUI
+// *********************************
+
+// Module Content & Helpers -
+
+let tileTapDescriptions = [
+    // "Survival Mode:"
+    "- Tap the tile before it's timer runs out."
+    "- If the tile timer reaches 0 adds 1 mistake."
+    "- Don't tap bombs, they add 3 mistakes."
+    "- Tap a Heart to take away 1 mistake."
+    "- Make it until the round timer ends."
+    "- Hard mode: 1 mistake ends it all, unlimited time."
+]
+
+let controlList = [ 
+    "Settings", (SetGameState (RoundState.Settings)) 
+    "Rules", (SetGameState (Instruction))
+]
+
+// ********************************
 
 // LifeCycle & LifeCycle Helper Functions
 
@@ -118,7 +151,7 @@ let gridWithoutTile grid tileToRemove =
 // Given a tile, based on it's Value
 // returns a score value to increment the score
 // change this for the lifeTime to be reversed from curent implementation..
-let calculateTilePointValue tile =
+let calculateTilePointValue ( tile : TapTile )=
     match tile.Value with 
     | Minor -> 1 * tile.LifeTime
     | Modest -> 2 * tile.LifeTime
@@ -142,15 +175,6 @@ let gameModeRoundMistake ( model : SharedTileTap.Model ) ( mistakeValue : int ) 
                 CurrentRoundDetails = { model.CurrentRoundDetails with RoundMistakes = model.CurrentRoundDetails.RoundMistakes + 1; GameClock = currentTimeExpired } 
             }, com
 
-// implement?
-// store this on the model?
-// let roundDifficultySpawnInterval difficulty =
-//     match difficulty with
-//     | SharedTileTap.TileTapDifficulty.Simple -> 6
-//     | SharedTileTap.TileTapDifficulty.Easy -> 4
-//     | SharedTileTap.TileTapDifficulty.Intermediate -> 2
-//     | SharedTileTap.TileTapDifficulty.Hard -> 1
-
 let modelValueAsString strin value =
     if value = -1 
         then strin + "\u221E";
@@ -161,28 +185,17 @@ let modelValueAsString strin value =
 let init(): SharedTileTap.Model * Cmd<Msg> =
     SharedTileTap.initModel, Cmd.none
 
-
-
-// game is paused when first entered
-
-    // Start button sets dispatch loop, doesn't affect state....
-
-
-
-
-
-
-
-
-
-
 // Handles the various different messages that
 // can be dispatched throughout the use and
 // interaction of this module
 let update msg ( model : SharedTileTap.Model ) =
     match msg with
-
-
+    // 'Tick' Interval in which the module operates.
+    // this is dispatched through the browser windows setInterval function
+    // Checks against Round 'Allowances' to see if the round should be stopped.
+    // If round is still in play, then it will dispatch 
+    // to check for expired tiles
+    // spawn a new tile if the spawn interval is matched or exceeded
     | GameLoopTick -> // this should check against Round 'Allowances'
         // If more than mistakes are made than the difficulty on the model allows
         printfn "%i" model.CurrentRoundDetails.RoundMistakes
@@ -191,8 +204,6 @@ let update msg ( model : SharedTileTap.Model ) =
         elif ( model.RoundTimer > 0 ) && ( ( model.CurrentRoundDetails.GameClock / 4 ) >= model.RoundTimer ) then model, Cmd.ofMsg EndRound
         // No conditions to end round met, batch check grid and spawn tile commands
         else { model with CurrentRoundDetails = { model.CurrentRoundDetails with GameClock = model.CurrentRoundDetails.GameClock + 1 } }, Cmd.batch [ Cmd.ofMsg ( CheckGridboardTiles ); Cmd.ofMsg ( SpawnNewActiveTile ) ]
-
-
     // Game starts
     | SetDispatchPointer flt ->
         // if I set the float as any float that isn't zero, you are playing
@@ -200,13 +211,9 @@ let update msg ( model : SharedTileTap.Model ) =
             then Playing 
             else Paused // if it is zero you are paused (or other state)
         |> fun gameRoundState -> { model with GameState = gameRoundState; DispatchPointer = flt }, Cmd.none
-    
-    
     | SetGameState gameState ->
         if model.DispatchPointer <> 0.0 then SharedViewModule.stopGameLoop model.DispatchPointer
         { model with GameState = gameState; DispatchPointer = 0.0 }, Cmd.none
-    
-    
     // Change Round Parameters based on requested difficulty
     | ChangeGameMode gameMode ->
         SharedTileTap.updateModelGameMode model gameMode, Cmd.ofMsg ResetRound
@@ -214,17 +221,6 @@ let update msg ( model : SharedTileTap.Model ) =
         if model.GameMode = SharedTileTap.TileTapGameMode.Survival
             then SharedTileTap.updateSurvivalModeDifficulty model difficulty, Cmd.ofMsg ResetRound
             else SharedTileTap.updateTimeAttackModeDifficulty model difficulty, Cmd.ofMsg ResetRound
-    // 'Tick' Interval in which the module operates.
-    // this is dispatched through the browser windows setInterval function
-    // Checks against Round 'Allowances' to see if the round should be stopped.
-    // If round is still in play, then it will dispatch 
-        // to check for expired tiles
-        // spawn a new tile if the spawn interval is matched or exceeded
-    
-    
-    
-    
-    
     // If there hasn't been a new tile placed onto the Gridboard
     // but the interval is matched or exceeded, generate the Gridboard with a new tile added
     // otherwise increment the LastSpawnInterval by one
@@ -321,48 +317,8 @@ let update msg ( model : SharedTileTap.Model ) =
 
 // --------------------------------------
 
-
-// *********************************
-
-// Module Content & Helpers -
-
-// ----------------
-
-// *********************************
-
-// *********************************
-
-// LEFT -----------
-let tileTapDescriptions = [
-    // "Survival Mode:"
-    "- Tap the tile before it's timer runs out."
-    "- If the tile timer reaches 0 adds 1 mistake."
-    "- Don't tap bombs, they add 3 mistakes."
-    "- Tap a Heart to take away 1 mistake."
-    "- Make it until the round timer ends."
-    "- Hard mode: 1 mistake ends it all, unlimited time."
-]
-// REPLACE WITH MODULE GISTS!!!
-let sourceCodeLinks = [
-    "Model", "https://raw.githubusercontent.com/SeanWilken/WilkenWeb/master/src/Shared/Shared.fs"
-    "View", "https://raw.githubusercontent.com/SeanWilken/WilkenWeb/master/src/Client/Modules/Shared/Index.fs"
-    "Logic", "https://raw.githubusercontent.com/SeanWilken/WilkenWeb/master/src/Client/Modules/Portfolio/Games/TileTap/Index.fs"
-]
-
-// ********************************
-
-// Bomb diffuse by clicking a tile sequence around it?
-
-
-// ** IMPORTANT --
-// NEED TO MAKE SURE IF CARD VIEW IS USED (CAN CLICK ON HEADER)
-    // Ignore Message, as if App gets a ChangeSection message, 
-    // it wouldn't stop the game dispatch loop interval
-
-    // Ensure that message will always find it's way down to clear the interval
-
 // CONTENT --------
-let colorForTile tile =
+let colorForTile ( tile : TapTile ) =
     match tile.Value with
     | TapTileValue.Bomb -> "#FF2843"
     | TapTileValue.Heart -> "#000000"
@@ -413,12 +369,7 @@ let roundOverString ( model : SharedTileTap.Model ) =
 // Tried with subscriptions, but as implemented it would be firing off regardless of the current
     // model that was being used / viewed by the User.
         // launch a sub-program with the subscriptions being fired off when that module is launched?
-
-// Currently hacked around the Elmish dispatch loop - not ideal
-
-
-
-
+// Currently hacked around the Elmish dispatch loop
 
 // Time drives main game state, as things happen in intervals contained within the main loop
 let startGameLoop ( model : SharedTileTap.Model ) dispatch =
@@ -430,17 +381,11 @@ let startGameLoop ( model : SharedTileTap.Model ) dispatch =
             window.clearInterval(model.DispatchPointer)
             dispatch ( SetDispatchPointer 0.0 )
 
-
-
-
 let roundStateToggleString ( model : SharedTileTap.Model ) = 
     if model.GameState = Won || model.GameState = Instruction || model.GameState = Settings
         then "Play"
         elif ( model.DispatchPointer <> 0.0 ) then "Pause" 
         else "Start"
-
-
-
 
 // custom non-shared right modal, needs to handle functions outside update loop to dispatch messages
 let tileTapGameLoopToggle ( model : SharedTileTap.Model ) dispatch =
@@ -516,11 +461,6 @@ let tileTapModalContent  ( model : SharedTileTap.Model ) dispatch =
 
 // ----------------
 
-let controlList = [ 
-    "Settings", (SetGameState (RoundState.Settings)) 
-    "Rules", (SetGameState (Instruction))
-]
-
 let roundStateToggle ( model : SharedTileTap.Model ) dispatch =
     let toggleString = roundStateToggleString model
     a [ OnClick ( fun _ -> startGameLoop model dispatch |> ignore ) ] [
@@ -532,7 +472,7 @@ let codeModalFooterOverride model controlList dispatch =
     div [] [
         Level.level [Level.Level.IsMobile; Level.Level.Props [ Style [ PaddingTop 10 ] ] ] [
             Level.item [] [ roundStateToggle model dispatch ]
-            for controlTitle, controlMsg in controlList do    
+            for controlTitle, controlMsg in controlList do
                 Level.item [] [
                     a [ OnClick ( fun _ -> controlMsg |> dispatch ) ] [
                         h1 [ ClassName "modalControls"; ] [ str controlTitle ]

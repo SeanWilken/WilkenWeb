@@ -2,6 +2,8 @@ module TileSort
 
 open Elmish
 open Shared.SharedTileSort
+open Shared.GridGame
+open Shared
 
 // CURRENTLY BROKEN WHEN USING SHARED, AS I TRIED TO UPDATE TO USE GRIDGAME AND BROKE STUFF
 // TODO:
@@ -16,12 +18,11 @@ type Msg =
     | NewRound // Starts a New Round, initializing the board again with the selected difficulty
     | ResetRound // Resets the round to the same initial configuration
     | RewindMove // Undo the last tile move made by the user
-    | MoveTile of GameTile//GridGame.LaneObject // Move the selected tile to the empty space
+    | MoveTile of TileSortValueTile
     | UpdateDifficulty of Shared.SharedTileSort.TileSortDifficulty // Change the current difficulty for the given one
     | CheckSolution // Run the current board through the win validation check logic
     | Solved // Board is in the winning configuration
     | QuitGame // Quits back one level, exiting the game.
-    | ChangeView // TOGGLE CARD AND MODAL
 //---------------------
 
 let init (): Shared.SharedTileSort.Model * Cmd<Msg> =
@@ -33,7 +34,6 @@ let init (): Shared.SharedTileSort.Model * Cmd<Msg> =
         InitialTiles = initialRound
         Turns = []
         GameState = Shared.GridGame.Playing
-        ContentView = Modal
     }
     model, Cmd.none
 //---------------------
@@ -47,27 +47,18 @@ let update ( msg: Msg ) ( model: Shared.SharedTileSort.Model ): Shared.SharedTil
     | ResetRound ->
         resetRound model, Cmd.none
     | MoveTile gameTile ->
-        let gameTileValue = 
-            match gameTile.Value with
-            | Some i ->
-                let tilesAfterMove = canSwapSelectedTileWithBlank model.CurrentTiles ( Some i ) model.Difficulty
-                if( tilesAfterMove = model.CurrentTiles ) then model, Cmd.ofMsg CheckSolution
-                else { model with CurrentTiles = tilesAfterMove; Turns = (i) :: model.Turns }, Cmd.ofMsg CheckSolution
-            | None ->
-                model, Cmd.none
-        gameTileValue
+        match gameTile.Value with
+        | Some i ->
+            let gridAfterTileMove = selectedCanSwapWithBlank model.CurrentTiles ( TileSortLaneObject gameTile ) ( getGridDimension model.Difficulty )
+            { model with CurrentTiles = gridAfterTileMove}, Cmd.none
+        | None ->
+            model, Cmd.none
     | RewindMove ->
         rewindCurrentTiles model, Cmd.none
     | UpdateDifficulty difficulty ->
         let newDiff = changeDifficulty difficulty model
         let newRound = createNewRound newDiff
         newRound, Cmd.none
-    | ChangeView -> // REMOVE?
-        let swappedViewModel = 
-            if model.ContentView = Modal 
-                then { model with ContentView = Card } 
-                else { model with ContentView = Modal }
-        swappedViewModel, Cmd.none
     | CheckSolution ->
         match winValidator model.CurrentTiles with
         | true -> 
@@ -93,19 +84,12 @@ let decodeDifficultyByString string =
     | _ -> Simple
   
 // VIEW
-
 let tileSortDescriptions = [ 
     "- Rearrange the tiles in correct ascending order, starting @ the top left position."
     "- Select one of the tiles adjacent to the empty space to slide that tile into the blank."
     "- The blank space must match the missing number." 
 ]
 
-// REPLACE WITH MODULE GISTS!!!
-let sourceCodeLinks = [
-    "Model", "https://raw.githubusercontent.com/SeanWilken/WilkenWeb/master/src/Shared/Shared.fs"
-    "View", "https://raw.githubusercontent.com/SeanWilken/WilkenWeb/master/src/Client/Modules/Shared/Index.fs"
-    "Logic", "https://raw.githubusercontent.com/SeanWilken/WilkenWeb/master/src/Client/Modules/Portfolio/Games/TileSort/Index.fs"
-]
 let gameControls = [
     "New Round", NewRound
     "Reset Round", ResetRound
@@ -114,21 +98,31 @@ let gameControls = [
     "4 x 4", UpdateDifficulty Easy
     "5 x 5", UpdateDifficulty Medium
     "6 x 6", UpdateDifficulty Hard
-    "Toggle View", ChangeView
 ]
 
-// main content
-let tileSortRowCreator ( tileRow: GameTile list ) ( dispatch: Msg -> unit ) =
-    Level.level [Level.Level.IsMobile] [
-        for tile in tileRow do // RESTYLE THESE
+let laneObjectToTileSortTile tile dispatch = 
+    match tile with
+    | TileSortLaneObject tileValue ->
             Tile.child [] [ 
                 let displayValue = convertValueToProperString ( getValueOrZeroFromGameTile tile )
-                let tileClass = if ( displayValue <> "" ) then "valueTile" else "emptyTile"
-                Box.box' [ Props [ ClassName tileClass; OnClick( fun _ -> MoveTile tile |> dispatch ) ]  ] [ Image.image [] []; str displayValue ] 
+                let tileClass = "valueTile"
+                Box.box' [ Props [ ClassName tileClass; OnClick( fun _ -> MoveTile ( tileValue ) |> dispatch ) ]  ] [ Image.image [] []; str displayValue ] 
             ]
+    | _ ->
+            Tile.child [] [ 
+                let tileClass = "emptyTile"
+                Box.box' [ Props [ ClassName tileClass; OnClick( fun _ -> MoveTile { Value = None } |> dispatch ) ]  ] [ Image.image [] [] ] 
+            ]
+
+// main content
+let tileSortRowCreator ( tileRow: LaneObject list ) ( dispatch: Msg -> unit ) =
+    Level.level [ Level.Level.IsMobile ] [
+        for tile in tileRow do
+            laneObjectToTileSortTile tile dispatch
     ]
+
 let tileSortGameBoard model dispatch =
-    let tileRows = Shared.SharedTileSort.getTilesAsRows model.CurrentTiles model.Difficulty
+    let tileRows = getPositionsAsRows model.CurrentTiles ( getGridDimension model.Difficulty )
     div [] [ for row in tileRows do tileSortRowCreator row dispatch ]
     
 
