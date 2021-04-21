@@ -49,7 +49,7 @@ let xeContactEmailAnchor =
 // should fill more of the screen vertically when on desktop views....
 let contactChildSplitTile title ( tileBullets: ( string * AnchorLink option ) list ) =
     Tile.child [] [
-        div [ ClassName "viewTitleCard" ] [
+        div [ ClassName "generalViewTitleCard" ] [
             Container.container [] [
                 h1 [] [ str title ]    
                 if not tileBullets.IsEmpty then br []

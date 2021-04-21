@@ -11,76 +11,41 @@
 
 // TEST SANDBOX STYLES *******************
 
-// USEFUL LINKS:
-// https://convertacolor.com/
-// https://paletton.com/#uid=1000u0kllllaFw0g0qFqFg0w0aF
-
-// THEME COLORS
-// Light-Blue-Slate (plain text) 
-// HEX: #69A69A // RGB: (105,166,154)
-// Blue-Slate (html background fade)
-// HEX: #0f2e3b // RGB: (15,46,59)
-// Dark-Blue-Slate (game grid container)
-// HEX: #010E14 // RGB: (1,14,20)
-// IS-SUCCESS (Win condition)
-// HEX: #00ff00 // RGB: (0,255,0)
-// COMMENT GREEN #0A5A00 // NOT USED CURRENTLY
-// IS-DANGER (Action items / text)
-// Red Pink: 
-// HEX: #FF2843 // RBG: (255,40,67)
-
-// PALETTON CHOICES:
-// BLUE
-// 1E4150
-// LIGHT RANGE: // HEX: #325665 // RGB: (50, 86, 101)
-// MID RANGE: // HEX: #0f2e3b // RGB: (15,46,59)
-// DARK RANGE: // HEX: #010E14 // RGB: (1,14,20)
-
-// ORANGE
-// LIGHT RANGE: // HEX: #FF5B41 //161, 141, 75
-// MID RANGE: // HEX: #FF2A09 //94, 76, 20
-// DARK RANGE: // HEX: #CD1C00 //61, 47, 4
-// DARKEST RANGE: // HEX: #991500 //31, 24, 0
-
-// COMPLIMENT RED
-// LIGHT RANGE: // HEX: #A14B4B //161, 75, 75
-// MID RANGE: // HEX: #5E1414 //94, 20, 20 *******
-// DARK RANGE: // HEX: #3D0404 //61, 4, 4
-// DARKEST RANGE: // HEX: #1F0000 //31, 0, 0
-
 // UNSPLASH PHOTOS
 // I DID NOT MAKE TAKE OR MAKE THESE!!
 // CREDIT GOES TO ACCOUNT LINK ABOVE
 // CHECK THEM OUT
+// https://unsplash.com/@walkator on Unsplash
+// background-image: url("../public/imgs/unsplash/walkator-code-unsplash.jpg");
+// https://unsplash.com/@jdiegoph on Unsplash
+// background-image: url("../public/imgs/unsplash/diego-ph-design-unsplash.jpg");
+// https://unsplash.com/@wilstewart3
+// background-image: url("../public/imgs/unsplash/space.jpg");
+
+// https://unsplash.com/@carlosandres11
+// background-image: url("../public/imgs/unsplash/moonFade.jpg");
 // https://unsplash.com/@aperturevintage
 // background-image: url("../public/imgs/unsplash/spaceSunset.jpg");
 // https://unsplash.com/@n8rayfield
 // background-image: url("../public/imgs/unsplash/spaceTreeRadiate.jpg");
-// https://unsplash.com/@wilstewart3
-// background-image: url("../public/imgs/unsplash/space.jpg");
-//https://unsplash.com/@carlosandres11
-// background-image: url("../public/imgs/unsplash/moonFade.jpg");
-//https://unsplash.com/@walkator on Unsplash
-// background-image: url("../public/imgs/unsplash/walkator-code-unsplash.jpg");
-//https://unsplash.com/@jdiegoph on Unsplash
-// background-image: url("../public/imgs/unsplash/diego-ph-design-unsplash.jpg");
-//https://unsplash.com/@cbarbalis
+// https://unsplash.com/@cbarbalis
 // background-image: url("../public/imgs/unsplash/blurSun.jpg");
 
 // END TEST SANDBOX STYLES *******************
 
 // **********************
-// GENERAL CLASSES
+// CLASSES
 // **********************
 html {
     background-image: url("../public/imgs/unsplash/space.jpg");
-    padding: 10px;
+    padding: 5px;
 }
-// Header Nav Classes
 .headerTitle {
     color: #69A69A;
+    color: white;
     font-family: "Exo";
-    font-weight: 200;
+    font-family: "Ubuntu";
+    text-align: center;
     font-size: 50px;
     padding-left: 10px;
 }
@@ -99,6 +64,7 @@ html {
     @extend .navSectionLink;
     font-weight: 600;
     color: #FF2843;
+    color: #777;
 }
 .blurContent {
     -webkit-filter: blur(5px);
@@ -108,99 +74,10 @@ html {
         filter: blur(0px);
     }
 }
-// **********************
 // *************************
 // BASE EXTENSIBLE SECTION CLASSES
-// *************************
-.contentCard {
-    padding: 10px;
-    // border: 1px solid #000000;
-    // border: 1px solid white;
-    border: 1px solid #444;
-    box-shadow: 10px 10px 10px black;
-    color: #69A69A;
-    font-family: "Exo";
-    text-align: center;
-    h1 {
-        font-size: xx-large;
-        font-weight: 600;
-    }
-    h2 {
-        font-size: medium;
-        font-weight: 600;
-        font-style: italic;
-        color: #dddddd;
-    }
-    h3 { font-weight: 500; }
-    p {
-        font-size: 20px;
-        font-weight: 400;
-        color: #dddddd;
-    }
-    a {
-        color: #FF2843;
-        font-family: "Ubuntu";
-        font-size: medium;
-    }
-}
-.hoverActionSectionCard  {
-    display: block;
-    position: static;
-    padding: 50px;
-    color: #69A69A;
-    font-family: "Exo";
-    font-style: normal;
-    text-align: center;
-    h1 {
-        font-size: xx-large;
-        font-weight: 600;
-    }
-    h2 {
-        display: none;
-        color: #FF2843;
-        font-family: "Ubuntu";
-        font-size: 30px;
-    }
-    p {
-        font-size: 20px;
-        font-weight: 200;
-    }
-    &:hover {
-        border: 2px solid #FF2843; 
-        h1 {
-            display: none;
-        }
-        h2 {
-            display: block;
-            font-family: "Ubuntu";
-            color: #FF2843;
-        }
-    }
-}
-.viewTitleCard {
-    @extend .contentCard;
-    padding: 20px;
-    background-color: rgba(0, 0, 0, .65);
-    border: 1px solid #444;
-    h1 { 
-        font-size: xx-large; 
-        font-weight: 400;
-    }
-    h2 { 
-        font-size: larger; 
-        font-weight: 200;
-    }
-    p { font-size: large; }
-    .level {
-        background-color: rgba(0, 0, 0, .75);
-    }
-}
-.contentCardTextBackground {
-    background-color: rgba(0, 0, 0, .6);
-    border: 1px solid #444;
-    padding: 25px;
-    margin: 5px;
-}
+// ***
+.centered { text-align: center; }
 .paddedContainer { padding: 50px; }
 .paddedContainerHeader { padding-top: 50px; }
 .relativeBackButton {
@@ -208,139 +85,165 @@ html {
     top: 0;
     right: 0;
 }
-
-// **********************
-
 // **********************
 // SHARED VIEW CLASSES
-// bigNavButton
 .bigSectionNavigationButton { 
     padding: 50px;
     background-color: rgba(50,50,50,.5);
     &:hover { font-size: 20px; }
 }
-//bigNavButton
 .sectionNavButtonCols {
     display: flex;
     flex-direction:  column;
     font-family: "Bungee"; 
     color: #FF2843;
 }
-// **********************
-
-// **********************
-// WELCOME PAGE CLASSES
-.welcomeSectionContainer {
-    text-align: center;
-}
-.welcomeContentCard {
-    @extend .contentCard;
-    background-color: rgba(0, 0, 0, .5);
-    border: 1px solid #444;
-    h2 { 
-        color: #69A69A;
-        font-size: xx-large; 
-    }
-}
-.welcomeHeroImage {
-    background: #ddd;
-    border: 1px solid #000000;
-    box-shadow: 10px 10px 10px black;
-    margin: auto;
-    max-width: 50vh;
-}
-.hoverSelectionElement {
-    @extend .contentCardTextBackground;
-    @extend .hoverActionSectionCard;
-    background: rgba(0, 0, 0, .75);
-    box-shadow: none;
-    padding: 0px;
-    font-weight: 100;
-    p { color: #FF2843; }
+.flatButton {
+    font-family: "Exo";
+    font-size: 20px;
+    background-color: #FF2843;
+    background-color: black;
+    color: #777;
+    border: 1px solid #777;
+    color: white;
+    border: 1px solid white;
+    border-radius: 50px;
+    padding: 15px;
+    margin: 25px;
     &:hover {
-        p { 
-            color: #FF2843; 
-            font-weight: 600;
-        }
+        color: #FF2843;
+        border: 1px solid #FF2843;
     }
 }
-.welcomeNextSectionCard  {
-    @extend .hoverSelectionElement;
-    background: rgba(0, 0, 0, .6);
+// **********************
+// CURRENTLY IN USE -- REVIEW
+.generalContentCard {
+    padding: 10px;
+    margin: auto;
+    margin-top: 20px;
+    margin-bottom: 20px;
+    background-color: rgba(0, 0, 0, .5);
+    border: 1px solid #777;
+    box-shadow: 10px 10px 10px black;
+    color: white;
+    text-align: center;
+    h1 { 
+        font-family: "Ubuntu";
+        font-size: 50px; 
+    }
+    h2 {
+        font-size: 30px; 
+        font-weight: normal;
+        font-family: "Exo";
+    }
+    h3 { font-weight: 500; }
+    p {
+        font-size: 20px;
+        font-family: "Exo";
+        font-weight: normal;
+    }
+    a {
+        color: #FF2843;
+        font-family: "Ubuntu";
+        font-size: medium;
+    }
+}
+.galleryEntryContentCard {
+    @extend .generalContentCard;
+    .image {
+        border: 1px solid #000000;
+        text-align: center;
+        max-width: 80vh;
+        margin: 20px;
+    }
+}
+.generalViewTitleCard {
+    @extend .generalContentCard;
+    padding: 20px;
+    background-color: rgba(0, 0, 0, .65);
     border: 1px solid #444;
-    box-shadow: 15px 10px 10px black;
-    background-size: cover;
-}
-// **********************
-
-// **********************
-// ABOUT SECTION CLASSES
-.aboutSectionContainer {
-    // background-image: url("../public/imgs/Break\ Rules.png");
-    background-size: contain;
-    background-repeat: no-repeat;
-    background-position: center;
-}
-.aboutContentCard {
-    @extend .contentCard;
-    border: none;
-    box-shadow: none;
-    h2 { 
-        color: #69A69A;
-        font-size: xx-large; 
-    }
-    h3 {
-        color:#ffffff;
-        font-size: large;
+    color: white;
+    .level {
+        background-color: rgba(0, 0, 0, .75);
     }
 }
-// **********************
-
-// **********************
-// PORTFOLIO CLASSES
-
-// LANDING SELECTION CLASSES
-.portfolioSectionHoverSelection  {
-    @extend .hoverActionSectionCard;
+.welcomeGreeting {
+    font-size: 40px;
+    word-wrap: normal;
+    font-family: "Ubuntu";
+    color: #fff;
+    margin: auto;
+}
+.generalContentCardTextBackground {
+    background-color: rgba(0, 0, 0, .6);
+    border: 1px solid #777;
+    padding: 25px;
+    margin: 5px;
+}
+.generalSplitSectionTileHoverSelection  {
+    color: white;
     background-size: cover;
     background-position: center;
-    border: 1px solid #000000;
+    border: 1px solid #777;
     box-shadow: 15px 10px 10px black;
-    padding: 50px;
+    font-family: "Ubuntu";
+    font-size: 40px;
+    text-align: center;
+    padding: 10vh;
     margin: 10px;
     &:hover {
-        .contentCardTextBackground {
+        .generalContentCardTextBackground {
             border: 1px solid #FF2843;
         }
+        color: #FF2843;
     }
 }
-.portfolioCodeCard {
-    @extend .portfolioSectionHoverSelection;
+.generalPortfolioCodeCard {
+    @extend .generalSplitSectionTileHoverSelection;
     background-image: url("../public/imgs/unsplash/walkator-code-unsplash.jpg");
     
 }
-.portfolioDesignCard {
-    @extend .portfolioSectionHoverSelection;
+.generalPortfolioDesignCard {
+    @extend .generalSplitSectionTileHoverSelection;
     background-image: url("../public/imgs/unsplash/diego-ph-design-unsplash.jpg");
 }
+.generalSelectionTile {
+    border: 1px solid #777;
+    box-shadow: 5px 5px 5px black;
+    background: rgba(0, 0, 0, .65); 
+    text-align: center;
+    padding: 20px;
+    p {
+        font-family: "Exo";
+        font-size: 20px;
+        color: #fff;
+    }
+    h1 {
+        font-family: "Ubuntu";
+        font-size: 30px;
+        color: #FF2843;
+    }
+    &:hover {
+        border: 2px solid #FF2843;
+    }
+}
+// **********************
 // MODAL
 .modalContent { 
     z-index: 40;
     width: 80%;
     overflow: auto;
 }
-// overrides the fulma background
-//rgba(10, 10, 10, .86)
 .modal-background {
     background-color: rgba(0, 0, 0, .95)
 }
 .modalAltContent {
-    @extend .contentCard;
+    @extend .generalContentCard;
     margin: 10px;
     background-color:rgba(10, 50, 50, .5);
     align-content: center;
     .container {
-        @extend .contentCardTextBackground;
+        @extend .generalContentCardTextBackground;
     }
     h2 { 
         color:#FF2843;
@@ -358,37 +261,15 @@ html {
     left: 15px;
     p { color: #FF2843; }
 }
-// **********************
-// PORTFOLIO GALLERY CLASSES
-.galleryTitleCard {
-    font-size: xx-large;
-    color: #69A69A;
-    font-family: "Exo";
-    text-align: center;
-    h1 { font-weight: 600; }
-}
 .modalControls{
-    @extend .galleryTitleCard;
+    @extend .headerTitle;
     font-family: "Ubuntu";
     color: #FF2843;
+    font-size: 40px;
     text-decoration-color: #69A69A;
     text-decoration-line: underline;
 }
-// DESIGN GALLERY CLASSES
-.galleryDescriptionCard {
-    font-size: larger;
-    color: #69A69A;
-    font-family: "Exo";
-    font-weight: 500;
-    text-align: center;
-}
-.galleryImage {
-    border: 1px solid #000000;
-    background-color: #ffffff;
-    text-align: center;
-    max-width: 80v;
-    margin: auto;
-}
+// **********************
 // DESIGN MODAL BUTTONS
 .leftButton {
     position: fixed;
@@ -408,32 +289,9 @@ html {
     @extend .rightButton;
     bottom: 30%;
 }
-// CODE GALLERY CLASSES
 // *****************
-.selectionTile {
-    // border: 1px solid #fff;
-    border: 1px solid #444;
-    box-shadow: 5px 5px 5px black;
-    background: rgba(0, 0, 0, .65); 
-    text-align: center;
-    padding: 20px;
-    p {
-        font-family: "Exo";
-        font-size: large;
-        color: #fff;
-    }
-    h1 {
-        color: #FF2843;
-        font-size: xx-large;
-        font-family: "Ubuntu";
-        font-weight: 400;
-    }
-    &:hover {
-        border: 2px solid #FF2843;
-    }
-}
+// CODE GALLERY CLASSES
 .gameGridContainer { .level { margin: auto; } }
-// Grid Game Tiles
 .genericGameTile {
     font-size: xx-large;
     text-align: center; 
@@ -477,34 +335,6 @@ html {
     border: 1px solid white;
     font-family:  "Ubuntu";
 }
-
-
-// REVIEW + MOVE STYLES TO HERE
-.gameGridControlBar {
-    margin: 5px;
-    border: 1px solid #000000;
-    box-shadow: 10px 10px 10px black;
-    background: #010E14;
-    // background-image: url("../public/imgs/icons/Bricklines.png");
-    background-size: contain;
-    background-position-x: center;
-    font-family: "Exo";
-    font-size: 20px;
-    font-size: small;
-    text-align: center;
-    h1 { font-size: 45px; }
-    p {
-        padding: 10px;
-        color: #69A69A;
-        font-style: italic;
-        font-weight: 600;
-    }
-    a {
-        color: #FF2843;
-        &:hover { font-size: 30px; }
-    }
-    .level-item { padding: 10px; }
-}
 .levelCompletedCard {
     background: #010E14; 
     border: 2px solid #00ff00;
@@ -519,3 +349,269 @@ html {
 }
 
 // **********************
+
+// **********************
+
+// .contentCard {
+//     padding: 10px;
+//     // border: 1px solid #000000;
+//     // border: 1px solid white;
+//     border: 1px solid #444;
+//     box-shadow: 10px 10px 10px black;
+//     color: #69A69A;
+//     font-family: "Exo";
+//     text-align: center;
+//     h1 {
+//         font-size: xx-large;
+//         font-weight: 600;
+//     }
+//     h2 {
+//         font-size: medium;
+//         font-weight: 600;
+//         font-style: italic;
+//         color: #dddddd;
+//     }
+//     h3 { font-weight: 500; }
+//     p {
+//         font-size: 20px;
+//         font-weight: 400;
+//         color: #dddddd;
+//     }
+//     a {
+//         color: #FF2843;
+//         font-family: "Ubuntu";
+//         font-size: medium;
+//     }
+// }
+// **********************
+
+// .hoverActionSectionCard  {
+//     display: block;
+//     position: static;
+//     padding: 50px;
+//     color: #69A69A;
+//     font-family: "Exo";
+//     font-style: normal;
+//     text-align: center;
+//     h1 {
+//         font-size: xx-large;
+//         font-weight: 600;
+//     }
+//     h2 {
+//         display: none;
+//         color: #FF2843;
+//         font-family: "Ubuntu";
+//         font-size: 30px;
+//     }
+//     p {
+//         font-size: 20px;
+//         font-weight: 200;
+//     }
+//     &:hover {
+//         border: 2px solid #FF2843; 
+//         h1 {
+//             display: none;
+//         }
+//         h2 {
+//             display: block;
+//             font-family: "Ubuntu";
+//             color: #FF2843;
+//         }
+//     }
+// }
+// .viewTitleCard {
+//     @extend .contentCard;
+//     padding: 20px;
+//     background-color: rgba(0, 0, 0, .65);
+//     border: 1px solid #444;
+//     h1 { 
+//         font-size: xx-large; 
+//         font-weight: 400;
+//     }
+//     h2 { 
+//         font-size: larger; 
+//         font-weight: 200;
+//     }
+//     p { font-size: large; }
+//     .level {
+//         background-color: rgba(0, 0, 0, .75);
+//     }
+// }
+// .contentCardTextBackground {
+//     background-color: rgba(0, 0, 0, .6);
+//     border: 1px solid #444;
+//     padding: 25px;
+//     margin: 5px;
+// }
+// **********************
+// WELCOME PAGE CLASSES
+// .welcomeSectionContainer {
+    // text-align: center;
+    // temp addition
+    // width: 100%;
+// }
+// .welcomeContentCard {
+//     @extend .contentCard;
+//     background-color: rgba(0, 0, 0, .5);
+//     border: 1px solid #444;
+//     // OVERRIDE TEMP
+//     border: 1px solid #fff;
+//     h2 { 
+//         color: #69A69A;
+//         font-size: xx-large; 
+//     }
+// }
+// .welcomeHeroImage {
+//     background: #ddd;
+//     border: 1px solid #000000;
+//     box-shadow: 10px 10px 10px black;
+//     margin: auto;
+//     max-width: 50vh;
+// }
+// .hoverSelectionElement {
+//     @extend .contentCardTextBackground;
+//     @extend .hoverActionSectionCard;
+//     background: rgba(0, 0, 0, .75);
+//     box-shadow: none;
+//     padding: 0px;
+//     font-weight: 100;
+//     p { color: #FF2843; }
+//     &:hover {
+//         p { 
+//             color: #FF2843; 
+//             font-weight: 600;
+//         }
+//     }
+// }
+// .welcomeNextSectionCard  {
+//     @extend .hoverSelectionElement;
+//     background: rgba(0, 0, 0, .6);
+//     border: 1px solid #444;
+//     box-shadow: 15px 10px 10px black;
+//     background-size: cover;
+// }
+// **********************
+
+// **********************
+// ABOUT SECTION CLASSES
+// .aboutSectionContainer {
+//     // background-image: url("../public/imgs/Break\ Rules.png");
+//     background-size: contain;
+//     background-repeat: no-repeat;
+//     background-position: center;
+// }
+// .aboutContentCard {
+//     @extend .contentCard;
+//     border: none;
+//     box-shadow: none;
+//     h2 { 
+//         color: #69A69A;
+//         font-size: xx-large; 
+//     }
+//     h3 {
+//         color:#ffffff;
+//         font-size: large;
+//     }
+// }
+// **********************
+
+
+// .galleryTitleCard {
+//     font-size: xx-large;
+//     color: #69A69A;
+//     font-family: "Exo";
+//     text-align: center;
+//     h1 { font-weight: 600; }
+// }
+// DESIGN GALLERY CLASSES
+// .galleryDescriptionCard {
+//     font-size: larger;
+//     color: #69A69A;
+//     font-family: "Exo";
+//     font-weight: 500;
+//     text-align: center;
+// }
+// .galleryImage {
+//     border: 1px solid #000000;
+//     background-color: #ffffff;
+//     text-align: center;
+//     max-width: 80vh;
+//     margin: 20px;
+// }
+
+// LANDING SELECTION CLASSES
+// .portfolioSectionHoverSelection  {
+//     @extend .hoverActionSectionCard;
+//     background-size: cover;
+//     background-position: center;
+//     border: 1px solid #000000;
+//     box-shadow: 15px 10px 10px black;
+//     padding: 50px;
+//     margin: 10px;
+//     &:hover {
+//         .contentCardTextBackground {
+//             border: 1px solid #FF2843;
+//         }
+//     }
+// }
+// .portfolioCodeCard {
+//     @extend .portfolioSectionHoverSelection;
+//     background-image: url("../public/imgs/unsplash/walkator-code-unsplash.jpg");
+    
+// }
+// .portfolioDesignCard {
+//     @extend .portfolioSectionHoverSelection;
+//     background-image: url("../public/imgs/unsplash/diego-ph-design-unsplash.jpg");
+// }
+
+// overrides the fulma background
+//rgba(10, 10, 10, .86)
+
+// .selectionTile {
+//     // border: 1px solid #fff;
+//     border: 1px solid #444;
+//     box-shadow: 5px 5px 5px black;
+//     background: rgba(0, 0, 0, .65); 
+//     text-align: center;
+//     padding: 20px;
+//     p {
+//         font-family: "Exo";
+//         font-size: large;
+//         color: #fff;
+//     }
+//     h1 {
+//         color: #FF2843;
+//         font-size: xx-large;
+//         font-family: "Ubuntu";
+//         font-weight: 400;
+//     }
+//     &:hover {
+//         border: 2px solid #FF2843;
+//     }
+// }
+
+// .gameGridControlBar {
+//     margin: 5px;
+//     border: 1px solid #000000;
+//     box-shadow: 10px 10px 10px black;
+//     background: #010E14;
+//     // background-image: url("../public/imgs/icons/Bricklines.png");
+//     background-size: contain;
+//     background-position-x: center;
+//     font-family: "Exo";
+//     font-size: 20px;
+//     font-size: small;
+//     text-align: center;
+//     h1 { font-size: 45px; }
+//     p {
+//         padding: 10px;
+//         color: #69A69A;
+//         font-style: italic;
+//         font-weight: 600;
+//     }
+//     a {
+//         color: #FF2843;
+//         &:hover { font-size: 30px; }
+//     }
+//     .level-item { padding: 10px; }
+// }

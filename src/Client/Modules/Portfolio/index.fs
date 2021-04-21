@@ -39,56 +39,24 @@ let update ( msg: Msg ) ( model: SharedPortfolioGallery.Model ): SharedPortfolio
         SharedPortfolioGallery.CodeGallery codeGalleryModel, Cmd.map CodeGalleryMsg com
     | _ -> SharedPortfolioGallery.PortfolioGallery, Cmd.none
 
-let PortfolioSplitView dispatch =
-    div [] [
-        Tile.ancestor [] [
-            Tile.parent [ Tile.Size Tile.Is6 ] [
-                Tile.child [] [
-                    a [ OnClick ( fun _ -> LoadSection SharedWebAppViewSections.AppSection.PortfolioAppCodeView |> dispatch ) ] [
-                        div [ ClassName "portfolioCodeCard" ] [
-                            div [ ClassName "contentCardTextBackground" ] [
-                                h1 [] [ str "CODE" ]
-                                h2 [] [ str "CODE" ]
-                            ]
-                        ]
-                    ]
-                ]
-            ]
-            Tile.parent [ Tile.Size Tile.Is6 ] [
-                Tile.child [] [
-                    a [ OnClick ( fun _ -> LoadSection SharedWebAppViewSections.AppSection.PortfolioAppDesignView |> dispatch ) ] [
-                        div [ ClassName "portfolioDesignCard" ] [
-                            div [ ClassName "contentCardTextBackground" ] [ 
-                                    h1 [] [ str "DESIGN" ]
-                                    h2 [] [ str "DESIGN" ]
-                            ]
-                        ]       
-                    ]       
-                ]
-            ]
-        ]
-    ]
-
 type PortfolioSplitCardStyle =
     | SplitCodeCard
     | SplitDesignCard
 
 let styleCardBySplitStyle cardStyle =
     match cardStyle with
-    | SplitCodeCard -> "CODE", "portfolioCodeCard"
-    | SplitDesignCard -> "DESIGN", "portfolioDesignCard"
+    | SplitCodeCard -> "CODE", "generalPortfolioCodeCard"
+    | SplitDesignCard -> "DESIGN", "generalPortfolioDesignCard"
 
-let portfolioChildSplitTile cardStyle msg  dispatch =
+let portfolioChildSplitTile cardStyle msg descrip dispatch =
     let title, style = styleCardBySplitStyle cardStyle
-    Tile.child [] [
+    Tile.child [ Tile.IsVertical ] [
         a [ OnClick ( fun _ -> msg |> dispatch ) ] [
             div [ ClassName style ] [
-                div [ ClassName "contentCardTextBackground" ] [ 
-                        h1 [] [ str title ]
-                        h2 [] [ str title ]
-                ]
-            ]       
-        ]       
+                div [ ClassName "generalContentCardTextBackground" ] [ h1 [] [ str title ] ]
+            ]  
+        ]
+        div [ ClassName "generalContentCard" ] [ h2 [] [ str descrip ] ]
     ]
 
 let view model dispatch =
@@ -98,8 +66,8 @@ let view model dispatch =
             div [] [
                 SharedViewModule.sharedSplitView
                     ( SharedViewModule.sharedSplitHeader portfolioHeaderTitle portfolioHeaderBlurbs )
-                    ( portfolioChildSplitTile ( SplitCodeCard ) ( LoadSection SharedWebAppViewSections.AppSection.PortfolioAppCodeView ) dispatch )
-                    ( portfolioChildSplitTile ( SplitDesignCard ) ( LoadSection SharedWebAppViewSections.AppSection.PortfolioAppDesignView ) dispatch )
+                    ( portfolioChildSplitTile ( SplitCodeCard ) ( LoadSection SharedWebAppViewSections.AppSection.PortfolioAppCodeView ) "Play some games & link to read their github gists." dispatch )
+                    ( portfolioChildSplitTile ( SplitDesignCard ) ( LoadSection SharedWebAppViewSections.AppSection.PortfolioAppDesignView ) "Some drawings and designs I've done, or making." dispatch )
             ]
         | SharedPortfolioGallery.DesignGallery model ->
             ArtGallery.view model ( ArtGalleryMsg >> dispatch )

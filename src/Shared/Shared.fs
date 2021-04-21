@@ -721,7 +721,7 @@ module SharedWebAppModels =
     // Contact -> How to get in touch with the entity the web app represents
     type Model =
         | Welcome
-        | AboutSection of SharedAboutSection.Model
+        | About of SharedAboutSection.Model
         | Portfolio of SharedPortfolioGallery.Model
         | Contact
 
@@ -734,6 +734,15 @@ module SharedWebAppViewSections =
     | PortfolioAppCodeView
     | PortfolioAppDesignView
     | ContactAppView
+
+    let appSectionStringTitle appSection =
+        match appSection with
+        | WelcomeAppView -> "Welcome"
+        | AboutAppView -> "About"
+        | PortfolioAppLandingView -> "Portfolio"
+        | PortfolioAppCodeView -> "Code"
+        | PortfolioAppDesignView -> "Design"
+        | ContactAppView -> "Contact"
 
 // Ensure that the Client and Server use same end-point
 module Route =

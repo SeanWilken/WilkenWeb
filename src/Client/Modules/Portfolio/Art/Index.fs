@@ -51,10 +51,10 @@ let galleryEntryHeaderControls dispatch =
     ]
 
 let galleryEntryContent piece description =
-    div [] [
-        div [ ClassName "galleryTitleCard" ] [ h1 [] [ str piece ] ]
-        div [ ClassName "galleryImage" ] [ Image.image [] [ img [ Src ( "./imgs/" + piece + ".jpeg" ) ] ] ]
-        p [ ClassName "galleryDescriptionCard" ] [ str description ]
+    div [ClassName "galleryEntryContentCard"] [
+        h1 [] [ str piece ]
+        Image.image [] [ img [ Src ( "./imgs/" + piece + ".jpeg" ) ] ]
+        p [] [ str description ]
     ]
 
 let galleryEntryDesktopFooterControls dispatch =

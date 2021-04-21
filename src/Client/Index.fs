@@ -44,9 +44,9 @@ let update ( msg: WebAppMsg ) ( model: SharedWebAppModels.Model ): SharedWebAppM
     // ABOUT PAGE
     | AboutMsg ( AboutSection.SwitchSection appSection ), model ->
         model, Cmd.ofMsg (SwitchToOtherApp appSection)
-    | AboutMsg msg, SharedWebAppModels.Model.AboutSection ( model ) ->
+    | AboutMsg msg, SharedWebAppModels.Model.About ( model ) ->
         let updateModel, com = AboutSection.update msg model
-        SharedWebAppModels.AboutSection updateModel, Cmd.none
+        SharedWebAppModels.About updateModel, Cmd.none
 
     // PORTFOLIO PAGE
     | PortfolioMsg msg, SharedWebAppModels.Portfolio model ->
@@ -95,7 +95,7 @@ open FSharp.Reflection
 // takes union case string, returns an app section
 let areaStringToAppSection string =
     match string with
-    | "AboutSection" -> SharedWebAppViewSections.AppSection.AboutAppView
+    | "About" -> SharedWebAppViewSections.AppSection.AboutAppView
     | "Portfolio" ->  SharedWebAppViewSections.AppSection.PortfolioAppLandingView
     | "Contact" -> SharedWebAppViewSections.AppSection.ContactAppView
     | "Welcome"
@@ -105,7 +105,7 @@ let areaStringToAppSection string =
 let currentWebAppSection model = 
     match model with
     | SharedWebAppModels.Welcome -> SharedWebAppViewSections.AppSection.WelcomeAppView
-    | SharedWebAppModels.AboutSection _ -> SharedWebAppViewSections.AppSection.AboutAppView
+    | SharedWebAppModels.About _ -> SharedWebAppViewSections.AppSection.AboutAppView
     | SharedWebAppModels.Portfolio _ -> SharedWebAppViewSections.AppSection.PortfolioAppLandingView
     | SharedWebAppModels.Contact -> SharedWebAppViewSections.AppSection.ContactAppView
 
@@ -160,7 +160,7 @@ let view ( model : SharedWebAppModels.Model ) ( dispatch : WebAppMsg -> unit ) =
         headerContent model dispatch
         Container.container [] [
             match model with
-            | SharedWebAppModels.AboutSection model -> AboutSection.view model ( AboutMsg >> dispatch )
+            | SharedWebAppModels.About model -> AboutSection.view model ( AboutMsg >> dispatch )
             | SharedWebAppModels.Welcome -> Welcome.view ( WelcomeMsg >> dispatch )
             | SharedWebAppModels.Portfolio SharedPortfolioGallery.PortfolioGallery -> Portfolio.view SharedPortfolioGallery.PortfolioGallery ( PortfolioMsg >> dispatch )
             | SharedWebAppModels.Portfolio ( SharedPortfolioGallery.DesignGallery model ) -> Portfolio.view ( SharedPortfolioGallery.DesignGallery model ) ( PortfolioMsg >> dispatch )

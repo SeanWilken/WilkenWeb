@@ -39,21 +39,17 @@ let update ( msg: Msg ) ( model: SharedCodeGallery.Model ): SharedCodeGallery.Mo
     | GoalRollMsg msg, SharedCodeGallery.GoalRoll model ->
         let goalRollModel, com = GoalRoll.update msg model
         SharedCodeGallery.GoalRoll goalRollModel, Cmd.map GoalRollMsg com
-    
     // Pivot Points
     | LoadSection PivotPoint, _ ->
         let pivotPointsModel, com = PivotPoints.init()
         SharedCodeGallery.PivotPoint pivotPointsModel, Cmd.map PivotPointMsg com
-
     | PivotPointMsg PivotPoints.Msg.QuitGame, SharedCodeGallery.PivotPoint model ->
         // kill dispatch interval
         PivotPoints.update ( PivotPoints.Msg.ExitGameLoop ) model |> ignore 
         SharedCodeGallery.CodeGallery, Cmd.none
-
     | PivotPointMsg msg, SharedCodeGallery.PivotPoint model ->
         let pivotPointsModel, com = PivotPoints.update msg model
         SharedCodeGallery.PivotPoint pivotPointsModel, Cmd.map PivotPointMsg com
-    
     // TILE TAP
     | LoadSection TileTap, _ ->
         let tileSmashModel, com = TileTap.init()
@@ -79,7 +75,7 @@ let update ( msg: Msg ) ( model: SharedCodeGallery.Model ): SharedCodeGallery.Mo
         model, Cmd.none
 
 let CodeGalleryHeader dispatch =
-    Container.container [ Container.Props [ ClassName "viewTitleCard" ] ] [
+    Container.container [ Container.Props [ ClassName "generalViewTitleCard" ] ] [
         Container.container [] [
             SharedViewModule.backToGallery BackToPortfolio dispatch
             h1 [] [ str "Code Gallery" ]
@@ -92,7 +88,7 @@ let makeCodeGalleryEntryItem title description msg dispatch =
         Columns.columns [ Columns.IsCentered ] [
             Column.column [ Column.Width ( Screen.All, Column.Is10 ) ] [
                 a [ OnClick ( fun _ -> msg |> dispatch ) ] [ 
-                    div [ ClassName "selectionTile"] [
+                    div [ ClassName "generalSelectionTile"] [
                         h1 [] [ str title ]
                         p [] [ str description ] 
                     ]

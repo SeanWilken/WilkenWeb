@@ -32,7 +32,7 @@ type DirectoryButton = {
 // General Tile Level
 let aboutGeneralTileDetails = Some {
     Header = "General"
-    SubHeader = "I wrote this website as a way to demonstrate some of my abilities & explain a little about me."
+    SubHeader = "I wrote, designed, deployed and am hosting this website as a way to demonstrate some of my abilities & explain a little about me, in case you don't already know."
     Image = None
 }
 let aboutGeneralTileDirectoryButton = Some {
@@ -111,7 +111,7 @@ let generalModalContent = {
         """I wrote all the code from a basic SAFE stack boilerplate, which gets deployed to Azure via a FAKE script.
           Check out the portfolio section for some example demo's, check out the source code that
           comprises the different sections and the website itself, or take a peak at some drawings...
-          Check back frquently to see what's new, as I plan to update this with new features, games and content. 
+          Check back frquently to see what's new, as I plan to update this with new features, games and content.
           You can find all the code for the site on my Github if you want to review some sections in depth, get an idea
           of how I leverage the technologies or solve some domain or logistical issues.
           """
@@ -173,8 +173,8 @@ let update msg model : Model * Cmd<Msg> =
 // View -----------
 
 let aboutModalCard modalContent = 
-    div [ ClassName "aboutContentCard" ] [
-        div [ ClassName "contentCardTextBackground" ] [
+    div [ ClassName "generalContentCard" ] [
+        div [] [
             p [] [ str modalContent.MainContent ]
         ]
     ]
@@ -194,11 +194,11 @@ let aboutModal model modalContent dispatch =
 let aboutTileDetailView tileDetails =
     match tileDetails with 
     | Some tileDetails ->
-        Level.level [ Level.Level.Props [ ClassName "contentCardTextBackground" ] ] [
+        Level.level [ Level.Level.Props [ ClassName "generalContentCardTextBackground" ] ] [
             Level.item [] [
                 Tile.child [] [
-                    h2 [] [ str tileDetails.Header ]
-                    p [] [ str tileDetails.SubHeader ]
+                    h1 [ ClassName "welcomeGreeting"; Style [ FontSize "50px" ] ] [ str tileDetails.Header ]
+                    h1 [ ClassName "welcomeGreeting"; Style [ FontSize "20px"; FontFamily "Exo"; FontWeight "normal" ] ] [ str tileDetails.SubHeader ]
                     match tileDetails.Image with
                     | Some image -> Image.image [] [ img [ Src image ] ]
                     | None -> span [] []
@@ -210,10 +210,7 @@ let aboutTileDetailView tileDetails =
 // tile details action button
 let aboutTileButtonView tileButton dispatch =
     match tileButton with
-    | Some ( dirButton ) ->
-        Level.level [ Level.Level.Props [ ClassName "hoverSelectionElement" ] ] [
-            p [ OnClick ( fun _ -> dirButton.ButtonMsg |> dispatch ) ] [ str dirButton.ButtonTitle ]
-        ]
+    | Some ( dirButton ) -> SharedViewModule.sharedSwitchSectionButton dirButton.ButtonMsg dirButton.ButtonTitle dispatch
     | None -> span [] []
 
 // single tile image
@@ -240,31 +237,52 @@ let aboutTileDetailsView tileDetails tileButton dispatch =
     if tileDetails = None && tileButton = None 
         then span [] [] 
         else 
-            Tile.child [ Tile.Size Tile.Is4 ] [
-                Container.container [ Container.Props [ ClassName "aboutContentCard" ] ] [
+            Tile.child [ Tile.Size Tile.Is4; Tile.Props [ Style [ Margin "auto" ] ] ] [
+                Container.container [ Container.Props [ ClassName "centered" ] ] [
+                // Container.container [ Container.Props [ ClassName "aboutContentCard" ] ] [
                     aboutTileDetailView tileDetails
                     aboutTileButtonView tileButton dispatch
                 ]
             ]
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 // separate level for details view and image view
 let aboutTileDetailsLevel tileDetails tileButton tileImage dispatch =
-    Level.level [] [
-        Tile.child [] []
-        aboutTileDetailsView tileDetails tileButton dispatch
-        aboutTileImageView tileImage
-        Tile.child [] []
+    div [ ClassName "generalContentCard" ] [
+        Level.level [] [
+            Tile.child [] []
+            aboutTileImageView tileImage
+            Tile.child [] []
+            aboutTileDetailsView tileDetails tileButton dispatch
+            Tile.child [] []
+        ]
     ]
 
 
 let aboutTileDetailsFullView tileDetails tileButton tileImages dispatch =
-    Level.level [] [
-        Tile.child [] [
-            Container.container [ Container.Props [ ClassName "aboutContentCard" ] ] [
-                aboutTileDetailView tileDetails
-                aboutTileButtonView tileButton dispatch
+    div [ ClassName "generalContentCard" ] [
+        Level.level [] [
+            Tile.child [] [
+                Container.container [ Container.Props [ ClassName "centered" ] ] [
+                // Container.container [ Container.Props [ ClassName "aboutContentCard" ] ] [
+                    aboutTileDetailView tileDetails
+                    aboutTileButtonView tileButton dispatch
+                ]
+                aboutTileImagesFullView tileImages
             ]
-            aboutTileImagesFullView tileImages
         ]
     ]
 
@@ -281,7 +299,7 @@ let aboutDirectory dispatch =
     ]
 
 let view model dispatch =
-    div [ ClassName "aboutSectionContainer" ] [
+    div [] [
         aboutModal model ( aboutModalContentSections.Item( model.ActiveModalIndex ) ) dispatch
         aboutTileDetailsLevel aboutGeneralTileDetails aboutGeneralTileDirectoryButton aboutGeneralTileImage dispatch
         aboutTileDetailsFullView aboutPersonalTileDetails aboutPersonalTileDirectoryButton aboutPersonalFullTileImages dispatch

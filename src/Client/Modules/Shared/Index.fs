@@ -25,6 +25,10 @@ let bigNavButton clickFunc ( name: string ) dispatch =
         ]
     ]
 
+
+let sharedSwitchSectionButton msg buttonString dispatch =
+    button [ ClassName "flatButton"; OnClick ( fun _ -> msg |> dispatch ) ] [ str buttonString ]  
+
 // Modal-----
 // Games
 let gameModalContent content =
@@ -38,9 +42,7 @@ let sharedModalHeader gameTitle msg dispatch =
                 // a [] [ Image.image [ Image.Is64x64 ] [ img [ Src "./imgs/icons/X-it.png" ] ] ]
                 // span [ ClassName "modalExternalLink" ] [ a [ Href "github" ] [ Image.image [ Image.Is64x64 ] [ img [ Src "./imgs/icons/Github.png" ] ]; ] ] //p [] [ str "GitHub" ] 
             ]
-            Level.item [] [
-                div [ ClassName "galleryTitleCard"; ] [ h1 [] [ str gameTitle ] ]
-            ]
+            Level.item [] [ div [ ClassName "headerTitle"; ] [ h1 [] [ str gameTitle ] ] ]
             Level.right [] [
                 a [ OnClick ( fun _ -> msg |> dispatch ) ] [ Image.image [ Image.Is64x64 ] [ img [ Src "./imgs/icons/X-it.png" ] ] ]
             ]
@@ -139,7 +141,7 @@ let sharedSplitHeader title contentBlurb =
     Tile.ancestor [] [
         Tile.parent [] [
             Tile.child [ Tile.Size Tile.Is12 ] [
-                div [ ClassName "viewTitleCard" ] [ 
+                div [ ClassName "generalViewTitleCard" ] [ 
                     h1 [] [ str title ]
                     for blurb in contentBlurb do
                         h2 [] [ str blurb ]
