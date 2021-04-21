@@ -386,8 +386,10 @@ let pivotPointsBoardView (model : SharedPivotPoint.Model) dispatch =
         let laneStyles = laneStyleCreator ballLaneIndex ceiling
         Container.container [] [ 
             Level.level [] [
-                for i in 0 .. board.Length - 1 do
-                    pivotPointsColumnCreator model.BallDirection (laneStyles.Item(i)) (board.Item(i)) dispatch
+                Level.item [] [
+                    for i in 0 .. board.Length - 1 do
+                        pivotPointsColumnCreator model.BallDirection (laneStyles.Item(i)) (board.Item(i)) dispatch
+                ]
             ]
         ]
 
