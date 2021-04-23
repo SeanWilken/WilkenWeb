@@ -49,7 +49,6 @@ module GridGame =
 
     // Represents a given game state
     type RoundState =
-        | Instruction
         | Settings
         | Paused // change to idle (no game active)
         | Playing // there is an active round
@@ -110,6 +109,64 @@ module GridGame =
                         }
                 })
         })
+
+    let modelValueAsString strin value =
+        if value = -1 
+            then strin + "\u221E";
+            else strin + string value
+
+module RollableGridGameHelpers =
+
+    open GridGame
+
+    let getPiecePositionIndex ( gameGridPositions: GridBoard ) positionObject =
+        getObjectPositionIndex gameGridPositions positionObject
+        |> unwrapIndex
+
+    let getRolledBallPositionIndex wrapped ballPosition direction =
+        match wrapped, direction with
+        | false, MovementDirection.Up -> (ballPosition - 8)
+        | true, MovementDirection.Up ->  ballPosition + 56
+        | false, MovementDirection.Down -> (ballPosition + 8)
+        | true, MovementDirection.Down ->  ballPosition - 56
+        | false, MovementDirection.Left -> (ballPosition - 1)
+        | true, MovementDirection.Left ->  ballPosition + 7
+        | false, MovementDirection.Right -> (ballPosition + 1)
+        | true, MovementDirection.Right ->  ballPosition - 7
+
+    let checkDirectionalBound ballRollPositionIndex direction =
+        match direction with
+        | MovementDirection.Up -> ballRollPositionIndex >= 0
+        | MovementDirection.Down -> ballRollPositionIndex <= 63
+        | MovementDirection.Right -> ((ballRollPositionIndex) % 8) <> 0
+        | MovementDirection.Left -> ((ballRollPositionIndex + 1) % 8) >= 1
+
+    let checkGridBoardPositionForBlocker gridBoard positionIndex =
+        gridBoard.GridPositions.Item ( positionIndex ) = Blocker
+
+    let updateGameBoardMovedPosition gameBoard piecePosition movedPiecePosition =
+        let ballToBlankGrid = updatePositionWithObject (gameBoard) Blank (piecePosition)
+        updatePositionWithObject ballToBlankGrid Ball movedPiecePosition
+
+    let nonWrappingPieceMovementPositionIndex ballPosition direction = 
+        getRolledBallPositionIndex false ballPosition direction
+
+    let wrappablePieceMovementPositionIndex ballPosition direction = 
+        checkDirectionalBound ( getRolledBallPositionIndex false ballPosition direction ) direction
+        |> fun x -> getRolledBallPositionIndex ( not x ) ballPosition direction 
+    
+    let checkDirectionMovementWithFunction movementPositionFunc ballPosition direction gameBoard =
+        let updatedPiecePosition = movementPositionFunc ballPosition direction
+        if checkGridBoardPositionForBlocker gameBoard updatedPiecePosition
+            then gameBoard
+            else updateGameBoardMovedPosition gameBoard ballPosition updatedPiecePosition
+
+    let checkRollableDirectionMovement ballPosition direction gameBoard =
+        checkDirectionMovementWithFunction nonWrappingPieceMovementPositionIndex ballPosition direction gameBoard
+    
+    let checkDirectionMovement ballPosition direction gameBoard =
+        checkDirectionMovementWithFunction wrappablePieceMovementPositionIndex ballPosition direction gameBoard
+
 
 module SharedGoalRoll =
 

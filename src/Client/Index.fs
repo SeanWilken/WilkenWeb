@@ -122,7 +122,7 @@ let headerBlurSelector model =
     | SharedWebAppModels.Portfolio model ->
         match model with
         | SharedPortfolioGallery.PortfolioGallery -> Container.Props []
-        | _ -> Container.Props [ ClassName "blurContent" ]
+        | _ -> Container.Props [ ClassName "blurContent" ] //[ Style [ Display DisplayOptions.None ] ] //[ ClassName "blurContent" ]
     | _ -> Container.Props []
 
 // Web App Header Nav content

@@ -59,7 +59,7 @@ let aboutPersonalFullTileImages = Some [
 
 // Professional Tile Level
 let aboutProfessionalTileDetails = Some {
-    Header = "Professional"
+    Header = "Industry"
     SubHeader = "This is what it should look like when play time is over.."
     Image = None
 }
@@ -118,10 +118,10 @@ let generalModalContent = {
         (*
         *)
     PreviousLabel = "Welcome"
-    NextLabel = "Professional"
+    NextLabel = "Industry"
 }
 let professionalModalContent = {
-    Title = "Professional"
+    Title = "Industry"
     MainContent =
         (*
         I've worked: with mid and small team sizes, working well with others or alone, with custom solutions, open source projects, many late nights tinkering, 
@@ -145,7 +145,7 @@ let personalModalContent = {
     MainContent =
         """I'm pretty laid back and enjoy living life in the momement, learning and experiencing new things. I like being challenged and adapting
         to problems that present themselves along the way. Fun fact: I've sailed across the Carribean Sea back to the states and driven across the United States cross twice..."""
-    PreviousLabel = "Professional"
+    PreviousLabel = "Industry"
     NextLabel = "Portfolio"
 }
 
@@ -239,7 +239,6 @@ let aboutTileDetailsView tileDetails tileButton dispatch =
         else 
             Tile.child [ Tile.Size Tile.Is4; Tile.Props [ Style [ Margin "auto" ] ] ] [
                 Container.container [ Container.Props [ ClassName "centered" ] ] [
-                // Container.container [ Container.Props [ ClassName "aboutContentCard" ] ] [
                     aboutTileDetailView tileDetails
                     aboutTileButtonView tileButton dispatch
                 ]
@@ -277,7 +276,6 @@ let aboutTileDetailsFullView tileDetails tileButton tileImages dispatch =
         Level.level [] [
             Tile.child [] [
                 Container.container [ Container.Props [ ClassName "centered" ] ] [
-                // Container.container [ Container.Props [ ClassName "aboutContentCard" ] ] [
                     aboutTileDetailView tileDetails
                     aboutTileButtonView tileButton dispatch
                 ]

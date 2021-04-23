@@ -89,8 +89,9 @@ html {
 // SHARED VIEW CLASSES
 .bigSectionNavigationButton { 
     padding: 50px;
-    background-color: rgba(50,50,50,.5);
-    &:hover { font-size: 20px; }
+    background-color: rgba(10,10,10,.9);
+    font-size: 20px;
+    &:hover { font-size: 25px; }
 }
 .sectionNavButtonCols {
     display: flex;
@@ -150,10 +151,11 @@ html {
 }
 .galleryEntryContentCard {
     @extend .generalContentCard;
+    width: 59vh;
     .image {
         border: 1px solid #000000;
         text-align: center;
-        max-width: 80vh;
+        // height: 80vh;
         margin: 20px;
     }
 }
@@ -234,9 +236,11 @@ html {
     width: 80%;
     overflow: auto;
 }
-.modal-background {
-    background-color: rgba(0, 0, 0, .95)
-}
+// .modal-background {
+//     width: 10vw;
+//     height: 100vh;
+//     background-color: rgba(0, 0, 0, .95)
+// }
 .modalAltContent {
     @extend .generalContentCard;
     margin: 10px;
@@ -249,16 +253,21 @@ html {
         color:#FF2843;
         font-weight: 600;
     }
+    p {
+        font-size: 18px;
+    }
 }
 .closeModal {
     position: fixed;
-    right: 15px;
-    top: 15px;
+    position: absolute;
+    right: 0px;
+    top: 0px;
 }
 .modalExternalLink {
-    position: fixed;
-    top: 15px;
-    left: 15px;
+    // position: fixed;
+    position: absolute;
+    left: 0px;
+    top: 0px;
     p { color: #FF2843; }
 }
 .modalControls{
@@ -266,19 +275,19 @@ html {
     font-family: "Ubuntu";
     color: #FF2843;
     font-size: 40px;
-    text-decoration-color: #69A69A;
-    text-decoration-line: underline;
+    // text-decoration-color: #69A69A;
+    // text-decoration-line: underline;
 }
 // **********************
 // DESIGN MODAL BUTTONS
 .leftButton {
     position: fixed;
-    bottom: 5%;
+    bottom: 1%;
     left: 0;
 }
 .rightButton {
     position: fixed;
-    bottom: 5%;
+    bottom: 1%;
     right: 0;
 }
 .leftButtonDesktop {
@@ -297,9 +306,10 @@ html {
     text-align: center; 
     border: 1px solid black;
     border-radius: 6px;        
-    max-width: 64px; 
-    max-height: 64px; 
-    margin: auto;
+    // max-width: 64px;
+    // max-height: 64px;
+    width: 8vh;
+    height: auto;
 }
 .valueTile {
     @extend .genericGameTile;
@@ -341,7 +351,7 @@ html {
     box-shadow: 15px 10px 10px black;
     text-align: center;
     font-family: "Bungee";
-    font-size: 60px;
+    font-size: 50px;
     color: #00ff00;
     margin: 20px;
     padding: 20px;

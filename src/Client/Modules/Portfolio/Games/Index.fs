@@ -77,9 +77,11 @@ let update ( msg: Msg ) ( model: SharedCodeGallery.Model ): SharedCodeGallery.Mo
 let CodeGalleryHeader dispatch =
     Container.container [ Container.Props [ ClassName "generalViewTitleCard" ] ] [
         Container.container [] [
-            SharedViewModule.backToGallery BackToPortfolio dispatch
-            h1 [] [ str "Code Gallery" ]
-            h2 [] [ str "Select a game module to try out, configure the round using the Settings section." ]
+            // SharedViewModule.backToGallery BackToPortfolio dispatch
+            div [] [
+                h1 [] [ str "Code Gallery" ]
+                h2 [] [ str "Select a game module to try out, configure the round using the Settings section." ]
+            ]
         ]
     ]
 
@@ -130,6 +132,7 @@ let view model dispatch =
     match model with
     | SharedCodeGallery.CodeGallery ->
         Container.container [ Container.CustomClass "paddedContainerHeader" ] [
+            SharedViewModule.galleryHeaderControls "" "" BackToPortfolio dispatch
             CodeGalleryHeader dispatch
             goalRollSelection dispatch
             tileSortSelection dispatch

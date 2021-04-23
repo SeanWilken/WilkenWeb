@@ -6,6 +6,11 @@ open Fable.React.Props
 open Fulma
 open Shared
 
+
+type Msg =
+    | BackToPortfolio
+    | SetCurrentPieceIndex of int
+
 // name, description tuple for gallery pieces.
 // unable to read out folder file contents, System.IO not compatible with Fable
 let galleryPieces = [
@@ -17,10 +22,6 @@ let galleryPieces = [
     "BackStabber", "Never saw them comin'.";
     "Caution Very Hot", "Ya' might get burnt...";
 ]
-
-type Msg =
-    | BackToPortfolio
-    | SetCurrentPieceIndex of int
 
 let init () =
     SharedDesignGallery.getInitialModel, Cmd.none
@@ -71,10 +72,10 @@ let galleryEntryMobileFooterControls dispatch =
 
 let view ( model: SharedDesignGallery.Model ) dispatch =
     let piece, description = getGalleryCardByIndex model.CurrentPieceIndex
-    SharedViewModule.sharedViewModal
-        true
+    Container.container [ Container.CustomClass "paddedContainerHeader" ] [
         ( galleryEntryHeaderControls dispatch )
         ( galleryEntryContent piece description ) 
         ( if SharedViewModule.viewPortModalBreak
             then galleryEntryDesktopFooterControls dispatch
             else galleryEntryMobileFooterControls dispatch )
+    ]

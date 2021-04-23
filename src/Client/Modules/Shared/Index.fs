@@ -74,15 +74,31 @@ let codeModalControlsContent controlList dispatch =
             ]
         ]
 
-let roundCompleteContent levelId moveCount =
+let roundCompleteContent gameStatDetails = //levelId moveCount
     div [ ClassName "levelCompletedCard" ] [ 
-        Container.container [ Container.Props [ Style [ Padding 20 ] ] ] [ str "ROUND OVER!" ]
-        Container.container [ Container.Props [ Style [ FontSize 20; Padding 20] ] ] [
-            h2 [ Style [ FontSize 50; Color "#FF2843" ] ] [ str "Details: "]
-            div [ Style [ Padding 5; Color "#69A69A" ] ] [ str ( "Round ID: " + levelId ) ]
-            div [ Style [ Padding 5; Color "#69A69A" ] ] [ str ( "# of Moves: " + moveCount ) ]
+        Container.container [] [ str "Round Over!" ]
+        Container.container [ Container.Props [ Style [ FontSize 20 ] ] ] [
+            h2 [ Style [ FontSize 40; Color "#FFF" ] ] [ str "Details: "]
+            for gameStat in gameStatDetails do
+                p [ Style [ Padding 5; Color "#FFF" ] ] [ str gameStat ]
+            // div [ Style [ Padding 5; Color "#69A69A" ] ] [ str ( "Round ID: " + levelId ) ]
+            // div [ Style [ Padding 5; Color "#69A69A" ] ] [ str ( "# of Moves: " + moveCount ) ]
         ]
     ]
+    // div [ ClassName "levelCompletedCard" ] [ 
+    //     Container.container [ Container.Props [] ] [
+    //         str "Round Over!"
+    //     ]
+    //     Container.container [ Container.Props [ Style [ FontSize 20; ] ] ] [
+    //         h2 [ Style [ FontSize 40; Color "#FFF" ] ] [ str "Round Stats: " ]  
+    //         div [ Style [ Padding 5; Color "#69A69A" ] ] [ str ( "Round Score: " + string model.CoinsCollected ) ]
+    //         div [ Style [ Padding 5; Color "#69A69A" ] ] [ str ( "Round Timer: " + ( SharedViewModule.gameTickClock model.GameClock ) ) ]
+    //     ]
+    //     // Container.container [ Container.Props [ Style [ FontSize 20; Padding 20 ] ] ] [
+    //     //     h2 [ Style [ FontSize 50; Color "#FF2843" ] ] [ str "Details: "]
+    //     //     roundOverString model
+    //     // ]
+    // ]
 
 open Browser
 
@@ -106,6 +122,14 @@ let codeModalInstructionContent instructionList =
         ]
     ]
 
+let gameInstructionContent instructionList =
+    div [ ClassName "modalAltContent" ] [
+        Container.container [] [
+            for instruction in instructionList do 
+                p [] [ str instruction ]
+        ]
+    ]
+
 // Goal Roll + Tile Sort | TileTap Overridden for special window.setInterval dispatch
 let codeModalFooter controlList dispatch =
     div [] [
@@ -118,6 +142,11 @@ let codeModalFooter controlList dispatch =
     ]
 
 //won view??
+let galleryHeaderControls hrefLink hrefImg msg dispatch =
+    div [] [
+        a [ ClassName "closeModal"; OnClick ( fun _ -> msg |> dispatch ) ] [ Image.image [ Image.Is64x64 ] [ img [ Src "./imgs/icons/X-it.png" ] ] ]
+        span [ ClassName "modalExternalLink" ] [ a [ Href hrefLink ] [ Image.image [ Image.Is64x64 ] [ img [ Src hrefImg ] ]; ] ]
+    ]
 
 open Browser
 // Helper function for determining specific viewport; some views were being cut off
@@ -153,9 +182,7 @@ let sharedSplitHeader title contentBlurb =
 let sharedSplitView header childLeft childRight =
     div [ ClassName "paddedContainerHeader" ] [
         header
-        Tile.ancestor [] [
-            // use more verticalSpace on above tablet viewPorts
-            // let style = if viewPortModalBreak then Style [ MinHeight 600 ] else Style []
+        Tile.ancestor [ Tile.Props [ Style [ Height "40vh" ] ] ] [
             Tile.parent [ Tile.Size Tile.Is6 ] [ childLeft ]
             Tile.parent [ Tile.Size Tile.Is6 ] [ childRight ]
         ]

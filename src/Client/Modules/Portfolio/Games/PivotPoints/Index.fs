@@ -10,11 +10,7 @@ open Fulma
     
 // - Extras:
 // speeds up like snake as more are picked up
-// certain coins have certain effects (?)
-    // turns to blocker
-    // speed up round
-    // reverse roll direction
-    // etc..(?)
+// certain coins have certain effects (?) // turns to blocker // speed up round // reverse roll direction // etc..(?)
 
 type PivotDirection =
     | Ascend
@@ -52,9 +48,14 @@ let pivotPointsDescriptions = [
     // "- The more points you get, the faster the movement interval scale gets." // - Need to implement
 ]
 
+let modelPivotPointRoundDetails ( model : SharedPivotPoint.Model ) =
+    [
+        "You collected " + string model.CoinsCollected + " coins."
+        "You lasted " + string ( SharedViewModule.gameTickClock model.GameClock ) + " seconds."
+    ]
+
 let controlList = [ 
     "Settings", (SetGameState (RoundState.Settings)) 
-    "Rules", (SetGameState (Instruction))
 ]
 
 let ascendLane = Some { Style = [ BackgroundColor "#801515" ]; Message = PivotArrow PivotDirection.Ascend }
@@ -64,87 +65,13 @@ let ceilingLane = [ ascendLane; descendLane; descendLane; descendLane; descendLa
 
 // Update functions ---------
 
-let getBallRollPositionIndex ballPosition direction =
-    match direction with
-    | MovementDirection.Up -> (ballPosition - 8)
-    | MovementDirection.Down -> (ballPosition + 8)
-    | MovementDirection.Left -> (ballPosition - 1)
-    | MovementDirection.Right -> (ballPosition + 1)
-
-// REFACTOR ME PLEASE
-// need to cleanup the wording on these functions
 // shared between goal roll and pivot points...
 let moveArrowForward ( model : SharedPivotPoint.Model) =
     let gameBoard = model.GameBoard
-    let ballPositionIndex = SharedGoalRoll.getBallPositionIndex gameBoard
-    if ballPositionIndex = -1
+    let piecePositionIndex = RollableGridGameHelpers.getPiecePositionIndex gameBoard Ball
+    if piecePositionIndex = -1
         then gameBoard
-        else
-            match model.BallDirection with
-            | MovementDirection.Up ->
-                let ballRollPositionIndex = getBallRollPositionIndex ballPositionIndex MovementDirection.Up
-                if (ballRollPositionIndex >= 0)
-                    then 
-                        if gameBoard.GridPositions.Item (ballPositionIndex - 8) = Blocker
-                            then gameBoard
-                            else let ballToBlankGrid = updatePositionWithObject (gameBoard) Blank (ballPositionIndex)
-                                 let ballRolledGrid = updatePositionWithObject ballToBlankGrid Ball ballRollPositionIndex
-                                 ballRolledGrid
-                    else
-                        let wrappedBallPosition = ballPositionIndex + 56 
-                        if gameBoard.GridPositions.Item (wrappedBallPosition) = Blocker
-                            then gameBoard
-                            else let ballToBlankGrid = updatePositionWithObject (gameBoard) Blank (ballPositionIndex)
-                                 let ballRolledGrid = updatePositionWithObject ballToBlankGrid Ball wrappedBallPosition
-                                 ballRolledGrid
-            | MovementDirection.Down ->
-                let ballRollPositionIndex = getBallRollPositionIndex ballPositionIndex MovementDirection.Down
-                if (ballRollPositionIndex <= 63)
-                    then 
-                        if gameBoard.GridPositions.Item (ballPositionIndex + 8) = Blocker
-                            then gameBoard
-                            else let ballToBlankGrid = updatePositionWithObject (gameBoard) Blank (ballPositionIndex)
-                                 let ballRolledGrid = updatePositionWithObject ballToBlankGrid Ball ballRollPositionIndex
-                                 ballRolledGrid
-                    else 
-                        let wrappedBallPosition = ballPositionIndex - 56 
-                        if gameBoard.GridPositions.Item (wrappedBallPosition) = Blocker
-                            then gameBoard
-                            else let ballToBlankGrid = updatePositionWithObject (gameBoard) Blank (ballPositionIndex)
-                                 let ballRolledGrid = updatePositionWithObject ballToBlankGrid Ball wrappedBallPosition
-                                 ballRolledGrid
-            | MovementDirection.Right ->
-                let ballRollPositionIndex = getBallRollPositionIndex ballPositionIndex MovementDirection.Right
-                if (((ballRollPositionIndex) % 8) <> 0)
-                    then 
-                        if gameBoard.GridPositions.Item (ballPositionIndex + 1) = Blocker
-                            then gameBoard
-                            else let ballToBlankGrid = updatePositionWithObject (gameBoard) Blank (ballPositionIndex)
-                                 let ballRolledGrid = updatePositionWithObject ballToBlankGrid Ball ballRollPositionIndex
-                                 ballRolledGrid
-                    else
-                        let wrappedBallPosition = ballPositionIndex - 7
-                        if gameBoard.GridPositions.Item (wrappedBallPosition) = Blocker
-                            then gameBoard
-                            else let ballToBlankGrid = updatePositionWithObject (gameBoard) Blank (ballPositionIndex)
-                                 let ballRolledGrid = updatePositionWithObject ballToBlankGrid Ball wrappedBallPosition
-                                 ballRolledGrid
-            | MovementDirection.Left ->
-                let ballRollPositionIndex = getBallRollPositionIndex ballPositionIndex MovementDirection.Left
-                if (((ballRollPositionIndex + 1) % 8) >= 1)
-                    then 
-                        if gameBoard.GridPositions.Item (ballPositionIndex - 1) = Blocker
-                            then gameBoard
-                            else let ballToBlankGrid = updatePositionWithObject (gameBoard) Blank (ballPositionIndex)
-                                 let ballRolledGrid = updatePositionWithObject ballToBlankGrid Ball ballRollPositionIndex
-                                 ballRolledGrid
-                    else
-                        let wrappedBallPosition = ballPositionIndex + 7
-                        if gameBoard.GridPositions.Item (wrappedBallPosition) = Blocker
-                            then gameBoard
-                            else let ballToBlankGrid = updatePositionWithObject (gameBoard) Blank (ballPositionIndex)
-                                 let ballRolledGrid = updatePositionWithObject ballToBlankGrid Ball wrappedBallPosition
-                                 ballRolledGrid
+        else RollableGridGameHelpers.checkDirectionMovement piecePositionIndex model.BallDirection gameBoard
 
 // GAME LOOP FUNCTIONS
 
@@ -164,7 +91,8 @@ let coinSpawnPosition ( gridBoard : GridBoard ) =
         [ for i in 0 .. gridBoard.GridPositions.Length - 1 do
             if gridBoard.GridPositions.Item(i) = Blank 
                 then i
-                else -1 ]
+                else -1 
+        ]
     List.filter ( fun x -> ( x <> -1 ) ) ( validPositions )
     |> fun availablePositions -> 
         availablePositions.Item(SharedTileSort.randomIndex availablePositions.Length)
@@ -248,10 +176,10 @@ let update msg ( model : SharedPivotPoint.Model ) : SharedPivotPoint.Model * Cmd
 // VIEW FUNCTIONS 
 
 let roundStateToggleString ( model : SharedPivotPoint.Model ) = 
-    if model.GameState = Won || model.GameState = Instruction || model.GameState = Settings
+    if model.GameState = Won || model.GameState = Settings
         then "Play"
         elif ( model.DispatchPointer <> 0.0 ) then "Pause" 
-        else "Start"
+        else if model.GameClock <> 0 then "Resume" else "Start"
 
 let roundStateToggle ( model : SharedPivotPoint.Model ) dispatch =
     let toggleString = roundStateToggleString model
@@ -261,32 +189,30 @@ let roundStateToggle ( model : SharedPivotPoint.Model ) dispatch =
 
 // SETTINGS VIEW
 
-let modalGameSettingsControls ( model : SharedPivotPoint.Model ) dispatch =
+let rulesAndSettingsGameControls ( model : SharedPivotPoint.Model ) dispatch =
     let toggleString = roundStateToggleString model
-    Container.container [] [
+    div [] [
         div [] [ a [ OnClick ( fun _ -> startGameLoop model dispatch |> ignore ); ] [ str ( toggleString + " Round" ) ] ]
         div [] [ a [ OnClick ( fun _ -> ResetRound |> dispatch ); ] [ str "Restart Round" ] ]
     ]
 
 let modalGameSettingsView model dispatch =
-    Column.column [] [
-        Columns.columns [ Columns.IsVCentered ] [ 
-            Column.column [] [ 
-                Tile.child [] [ 
-                    div [ ClassName "modalAltContent" ] [
-                        Container.container [] [ modalGameSettingsControls model dispatch ]
-                    ]
-                ]
-            ]
-        ]
+    div [ ClassName "modalAltContent"; Style [ TextAlign TextAlignOptions.Center ] ] [
+        Container.container [] [ rulesAndSettingsGameControls model dispatch ]
+    ]
+
+let gameRulesAndSettingsView model dispatch =
+    div [] [
+        SharedViewModule.gameInstructionContent pivotPointsDescriptions
+        modalGameSettingsView model dispatch
     ]
 
 // Rules
-let modalGameInstructionView model controlList dispatch =
+let gameContentViewControls model controlList dispatch =
     div [] [
         Level.level [ Level.Level.IsMobile; Level.Level.Props [ Style [ PaddingTop 10 ] ] ] [
             Level.item [] [ roundStateToggle model dispatch ]
-            for controlTitle, controlMsg in controlList do    
+            for controlTitle, controlMsg in controlList do
                 Level.item [] [
                     a [ OnClick ( fun _ -> controlMsg |> dispatch ) ] [
                         h1 [ ClassName "modalControls" ] [ str controlTitle ]
@@ -325,21 +251,16 @@ let parseLaneDetails details =
 
 let pivotPointsRowCreator rollDirection (laneStyle : LaneDetails option) ( rowPositions: LaneObject list ) dispatch =
     let style, message = parseLaneDetails laneStyle
-    Level.level [ Level.Level.IsMobile ] [
-        for positionObject in rowPositions do
-            Tile.child [] [
-                pivotPointTileView rollDirection positionObject style message dispatch
-            ]
-        ]
+    div [ Style [ Display DisplayOptions.Flex; AlignContent AlignContentOptions.Center; JustifyContent "center" ] ] [
+        for positionObject in rowPositions do pivotPointTileView rollDirection positionObject style message dispatch
+    ]
 
 let pivotPointsColumnCreator rollDirection (laneStyle : LaneDetails option) ( rowPositions: LaneObject list ) dispatch =
     let style, message = parseLaneDetails laneStyle
-    Container.container [] [
+    div [] [
         for positionObject in rowPositions do
-            Tile.child [] [
-                pivotPointTileView rollDirection positionObject style message dispatch
-            ]
-        ]
+            Tile.child [] [ pivotPointTileView rollDirection positionObject style message dispatch ]
+    ]
 
 let laneStyleCenterPositions ceiling position =
     [ for i in 0 .. ceiling - 1 do
@@ -369,27 +290,27 @@ let findBallLaneIndex (gridLanes: (LaneObject list) list ) =
 let pivotPointsBoardView (model : SharedPivotPoint.Model) dispatch =
     let gridBoard = model.GameBoard
     let ceiling = 8
-    match model.BallDirection with 
+    match model.BallDirection with
+
     | MovementDirection.Left
     | MovementDirection.Right ->
         let board = GridGame.getPositionsAsRows gridBoard ceiling
         let ballLaneIndex = findBallLaneIndex board
         let laneStyles = laneStyleCreator ballLaneIndex ceiling
-        Container.container [] [ 
+        div [ ] [
             for i in 0 .. ceiling - 1 do
                 pivotPointsRowCreator model.BallDirection (laneStyles.Item(i)) (board.Item(i)) dispatch
         ]
+
     | MovementDirection.Up
     | MovementDirection.Down ->
         let board = GridGame.getPositionsAsColumns gridBoard ceiling
         let ballLaneIndex = findBallLaneIndex board
         let laneStyles = laneStyleCreator ballLaneIndex ceiling
         Container.container [] [ 
-            Level.level [] [
-                Level.item [] [
+            div [ Style [ Display DisplayOptions.Flex; AlignContent AlignContentOptions.Center; JustifyContent "center"] ] [
                     for i in 0 .. board.Length - 1 do
                         pivotPointsColumnCreator model.BallDirection (laneStyles.Item(i)) (board.Item(i)) dispatch
-                ]
             ]
         ]
 
@@ -398,23 +319,8 @@ let pivotPointsModalContent ( model : SharedPivotPoint.Model ) dispatch =
     SharedViewModule.gameModalContent ( 
         Column.column [] [
             match model.GameState with
-            | RoundState.Settings -> modalGameSettingsView model dispatch
-            | Instruction -> SharedViewModule.codeModalInstructionContent pivotPointsDescriptions
-            | Won ->
-                div [ ClassName "levelCompletedCard" ] [ 
-                    Container.container [ Container.Props [ Style [ Padding 20 ] ] ] [
-                        str "You crashed!"
-                    ]
-                    Container.container [ Container.Props [ Style [ FontSize 20; Padding 20] ] ] [
-                        h2 [ Style [ FontSize 50; Color "#FF2843" ] ] [ str "Round Stats: "]  
-                        div [ Style [ Padding 5; Color "#69A69A" ] ] [ str ( "Round Score: " + string model.CoinsCollected ) ]
-                        div [ Style [ Padding 5; Color "#69A69A" ] ] [ str ( "Round Timer: " + ( SharedViewModule.gameTickClock model.GameClock ) ) ]
-                    ]
-                    // Container.container [ Container.Props [ Style [ FontSize 20; Padding 20 ] ] ] [
-                    //     h2 [ Style [ FontSize 50; Color "#FF2843" ] ] [ str "Details: "]
-                    //     roundOverString model
-                    // ]
-                ]
+            | RoundState.Settings -> div [] [ gameRulesAndSettingsView model dispatch ] 
+            | Won -> SharedViewModule.roundCompleteContent ( modelPivotPointRoundDetails model )
             | _ -> pivotPointsBoardView model dispatch 
         ]
     )
@@ -423,8 +329,8 @@ let pivotPointsModalContent ( model : SharedPivotPoint.Model ) dispatch =
 
 // main view
 let view ( model : SharedPivotPoint.Model ) dispatch =
-    SharedViewModule.sharedViewModal
-        true
+    div [] [
         ( SharedViewModule.sharedModalHeader "Pivot Points" QuitGame dispatch )
         ( pivotPointsModalContent model dispatch ) 
-        ( modalGameInstructionView model controlList dispatch )
+        ( gameContentViewControls model controlList dispatch )
+    ]

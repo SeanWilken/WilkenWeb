@@ -23,6 +23,53 @@ type Msg =
     | CheckSolution // Run the current board through the win validation check logic
     | Solved // Board is in the winning configuration
     | QuitGame // Quits back one level, exiting the game.
+
+// DIFFICULTY HELPERS
+// GET CASES FROM DESCRIMINATED UNION
+open FSharp.Reflection
+let tileDifficulties = FSharpType.GetUnionCases typeof<TileSortDifficulty>
+let decodeDifficultyByString string =
+    match string with
+    | "Simple" -> Simple
+    | "Easy" -> Easy
+    | "Medium" -> Medium
+    | "Hard" -> Hard
+    | _ -> Simple
+
+let difficultyToString difficulty =
+    match difficulty with
+    | Simple -> "3x3 - Simple"
+    | Easy -> "4x4 - Easy"
+    | Medium -> "5x5 - Medium"
+    | Hard -> "6x6 - Hard"
+
+// VIEW
+let tileSortDescriptions = [ 
+    "- Rearrange the tiles in correct ascending order, starting @ the top left position."
+    "- Select one of the tiles adjacent to the empty space to slide that tile into the blank."
+    "- The blank space must match the missing number." 
+]
+
+let controlList = [ 
+    "Play", (SetGameState (Playing))
+    "Settings", (SetGameState (Settings)) 
+]
+
+let gameControls = [
+    "New Round", NewRound
+    "Reset Round", ResetRound
+    "Undo Move", RewindMove
+    "3 x 3", UpdateDifficulty Simple
+    "4 x 4", UpdateDifficulty Easy
+    "5 x 5", UpdateDifficulty Medium
+    "6 x 6", UpdateDifficulty Hard
+]
+
+let modelTileSortRoundDetails ( model : SharedTileSort.Model ) = [
+    "You completed " + difficultyToString model.Difficulty + " difficulty."
+    "It took you " + string model.Turns.Length + " number of moves."
+]
+
 //---------------------
 
 let init (): Shared.SharedTileSort.Model * Cmd<Msg> =
@@ -71,35 +118,6 @@ open Fable.React
 open Fable.React.Props
 open Fulma
 
-// DIFFICULTY HELPERS
-// GET CASES FROM DESCRIMINATED UNION
-open FSharp.Reflection
-let tileDifficulties = FSharpType.GetUnionCases typeof<TileSortDifficulty>
-let decodeDifficultyByString string =
-    match string with
-    | "Simple" -> Simple
-    | "Easy" -> Easy
-    | "Medium" -> Medium
-    | "Hard" -> Hard
-    | _ -> Simple
-  
-// VIEW
-let tileSortDescriptions = [ 
-    "- Rearrange the tiles in correct ascending order, starting @ the top left position."
-    "- Select one of the tiles adjacent to the empty space to slide that tile into the blank."
-    "- The blank space must match the missing number." 
-]
-
-let gameControls = [
-    "New Round", NewRound
-    "Reset Round", ResetRound
-    "Undo Move", RewindMove
-    "3 x 3", UpdateDifficulty Simple
-    "4 x 4", UpdateDifficulty Easy
-    "5 x 5", UpdateDifficulty Medium
-    "6 x 6", UpdateDifficulty Hard
-]
-
 let laneObjectToTileSortTile tile dispatch = 
     match tile with
     | TileSortLaneObject tileValue ->
@@ -116,7 +134,8 @@ let laneObjectToTileSortTile tile dispatch =
 
 // main content
 let tileSortRowCreator ( tileRow: LaneObject list ) ( dispatch: Msg -> unit ) =
-    Level.level [ Level.Level.IsMobile ] [
+    div [ Style [ Display DisplayOptions.Flex; AlignItems AlignItemsOptions.Center; JustifyContent "center"; Margin "auto" ] ] [
+    // Level.level [ Level.Level.IsMobile ] [
         for tile in tileRow do
             laneObjectToTileSortTile tile dispatch
     ]
@@ -124,39 +143,35 @@ let tileSortRowCreator ( tileRow: LaneObject list ) ( dispatch: Msg -> unit ) =
 let tileSortGameBoard model dispatch =
     let tileRows = getPositionsAsRows model.CurrentTiles ( getGridDimension model.Difficulty )
     div [] [ for row in tileRows do tileSortRowCreator row dispatch ]
-    
-
-let difficultyToString difficulty =
-  match difficulty with
-    | Simple -> "3x3 - Simple"
-    | Easy -> "4x4 - Easy"
-    | Medium -> "5x5 - Medium"
-    | Hard -> "6x6 - Hard"
 
 // modal content container
 let tileSortModalContent model dispatch =
     SharedViewModule.gameModalContent ( 
         match model.GameState with 
-        | Shared.GridGame.Settings -> SharedViewModule.codeModalControlsContent gameControls dispatch
-        | Shared.GridGame.Instruction -> SharedViewModule.codeModalInstructionContent tileSortDescriptions
-        | Shared.GridGame.Won -> SharedViewModule.roundCompleteContent ( difficultyToString (model.Difficulty) ) ( string model.Turns.Length )
+        | Shared.GridGame.Settings -> 
+            div [] [
+                SharedViewModule.codeModalInstructionContent tileSortDescriptions
+                SharedViewModule.codeModalControlsContent gameControls dispatch
+            ]
+        | Shared.GridGame.Won -> SharedViewModule.roundCompleteContent ( modelTileSortRoundDetails model )
         | Shared.GridGame.Playing
-        | Shared.GridGame.Paused -> tileSortGameBoard model dispatch 
+        | Shared.GridGame.Paused -> 
+            Level.level [] [
+                Level.item [] [
+                    tileSortGameBoard model dispatch 
+                ]
+            ]
     )
 
 // 2.0
 
-open Shared.GridGame
-
-let controlList = [ "Play", (SetGameState (Playing)); "Settings", (SetGameState (Settings)); "Rules", (SetGameState (Instruction)) ]
-
 // main view
 let view model dispatch =
-    SharedViewModule.sharedViewModal
-        true 
+    div [] [
         ( SharedViewModule.sharedModalHeader "Tile Sort" QuitGame dispatch )
         ( tileSortModalContent model dispatch ) 
         ( SharedViewModule.codeModalFooter controlList dispatch )
+    ]
 
 // TEST ABOVE FUNCTIONALITY AND LOGIC
 // GENERATE A DIFFICULTY HARD TILE LIST

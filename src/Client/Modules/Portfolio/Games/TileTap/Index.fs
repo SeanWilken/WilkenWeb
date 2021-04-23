@@ -58,8 +58,13 @@ let tileTapDescriptions = [
 ]
 
 let controlList = [ 
-    "Settings", (SetGameState (RoundState.Settings)) 
-    "Rules", (SetGameState (Instruction))
+    "Settings", ( SetGameState ( RoundState.Settings ) ) 
+]
+
+let modelTileTapRoundDetails ( model : SharedTileTap.Model ) = [
+    ( modelValueAsString "Round Score: " model.CompletedRoundDetails.RoundScore )
+    "Round Timer: " + ( SharedViewModule.gameTickClock model.CompletedRoundDetails.GameClock ) + modelValueAsString " / " model.RoundTimer
+    modelValueAsString "Round Mistakes: " model.CompletedRoundDetails.RoundMistakes + modelValueAsString " / " model.AllowableRoundMistakes
 ]
 
 // ********************************
@@ -96,7 +101,7 @@ let randomTapTile randVal =
 // What about Clock, Heart or Bomb???
 let insertNewTapTile gridBoard position =
     let gridPositions = gridBoard.GridPositions
-    let tapTileValue, tapTileLifeTime = randomTapTile ( randomValue (100) )
+    let tapTileValue, tapTileLifeTime = randomTapTile ( randomValue ( 100 ) )
     { GridPositions = [
         for i in 0 .. ( gridPositions.Length - 1 ) do
             if i = position
@@ -111,7 +116,7 @@ let activeTilePositionsFromBoard gridBoard =
         match x with 
         | TapTile x -> x.TapPosition
         | _ -> 0
-    ) |> List.filter (fun x -> x <> 0)
+    ) |> List.filter ( fun x -> x <> 0 )
 
 // Increment the LifeTime value on every tile on the Gridboard
 let tickActiveTiles gridBoard =
@@ -174,11 +179,6 @@ let gameModeRoundMistake ( model : SharedTileTap.Model ) ( mistakeValue : int ) 
             { model with 
                 CurrentRoundDetails = { model.CurrentRoundDetails with RoundMistakes = model.CurrentRoundDetails.RoundMistakes + 1; GameClock = currentTimeExpired } 
             }, com
-
-let modelValueAsString strin value =
-    if value = -1 
-        then strin + "\u221E";
-        else strin + string value
 
 // Initialize the modules model
 // No command dispatched currently
@@ -299,8 +299,6 @@ let update msg ( model : SharedTileTap.Model ) =
     | EndRound -> 
         if (model.DispatchPointer <> 0.0) then SharedViewModule.stopGameLoop(model.DispatchPointer)
         SharedTileTap.endRound model, Cmd.none
-        // { model with GameState = Won; DispatchPointer = 0.0; CurrentRoundDetails = SharedTileTap.emptyTileTapRoundDetails; CompletedRoundDetails = model.CurrentRoundDetails }, Cmd.none
-        // SharedTileTap.initModel, Cmd.none
     // Resets the values for a round aside 
     // from it's difficulty parameters
     | ResetRound ->
@@ -328,23 +326,21 @@ let colorForTile ( tile : TapTile ) =
     |> fun tileColor -> Style [ Background tileColor; ]
 
 let tileTapRowCreator ( rowPositions: LaneObject list ) dispatch =
-    Level.level [ Level.Level.IsMobile ] [
+    div [ Style [ Display DisplayOptions.Flex; AlignContent AlignContentOptions.Center; JustifyContent "center" ] ] [
         for positionObject in rowPositions do // REVIEW STYLE ON THESE
-            Tile.child [] [
-                match positionObject with
-                | TapTile x -> 
-                    match x.Value with 
-                    | TapTileValue.Bomb ->
-                        Box.box' [ Props [ ClassName "gameTile"; OnClick (fun _ -> DestroyTile ( x ) |> dispatch); colorForTile x ] ] [ Image.image [] [ img [ Src "./imgs/icons/Bomb.png"] ] ]
-                    | TapTileValue.Heart ->
-                        Box.box' [ Props [ ClassName "gameTile"; OnClick (fun _ -> DestroyTile ( x ) |> dispatch); colorForTile x ] ] [ Image.image [] [ img [ Src "./imgs/icons/Heart.png"] ] ]
-                    | TapTileValue.Minor
-                    | TapTileValue.Modest
-                    | TapTileValue.Major ->
-                        Box.box' [ Props [ ClassName "gameTile"; OnClick (fun _ -> DestroyTile ( x ) |> dispatch); colorForTile x ] ] [ str ( SharedViewModule.gameTickClock x.LifeTime ) ]
-                | _ -> Box.box' [ Props [ ClassName "blankTile"; OnClick (fun _ -> Mistake (1) |> dispatch); ] ] [ Image.image [] [ img [ Src "./imgs/icons/Ball.png"] ] ]
-            ]
-        ]
+            match positionObject with
+            | TapTile x -> 
+                match x.Value with 
+                | TapTileValue.Bomb ->
+                    Box.box' [ Props [ ClassName "gameTile"; OnClick (fun _ -> DestroyTile ( x ) |> dispatch); colorForTile x ] ] [ Image.image [] [ img [ Src "./imgs/icons/Bomb.png"] ] ]
+                | TapTileValue.Heart ->
+                    Box.box' [ Props [ ClassName "gameTile"; OnClick (fun _ -> DestroyTile ( x ) |> dispatch); colorForTile x ] ] [ Image.image [] [ img [ Src "./imgs/icons/Heart.png"] ] ]
+                | TapTileValue.Minor
+                | TapTileValue.Modest
+                | TapTileValue.Major ->
+                    Box.box' [ Props [ ClassName "gameTile"; OnClick (fun _ -> DestroyTile ( x ) |> dispatch); colorForTile x ] ] [ str ( SharedViewModule.gameTickClock x.LifeTime ) ]
+            | _ -> Box.box' [ Props [ ClassName "blankTile"; OnClick (fun _ -> Mistake (1) |> dispatch); ] ] [ Image.image [] [ img [ Src "./imgs/icons/Ball.png"] ] ]
+    ]
 
 // function to place a new flag or mark as missed if not smashed in the time alotted (have tile scroll color as interval reaches end)
 let tileTapBoardView gridPositions dispatch =
@@ -382,10 +378,10 @@ let startGameLoop ( model : SharedTileTap.Model ) dispatch =
             dispatch ( SetDispatchPointer 0.0 )
 
 let roundStateToggleString ( model : SharedTileTap.Model ) = 
-    if model.GameState = Won || model.GameState = Instruction || model.GameState = Settings
+    if model.GameState = Won || model.GameState = Settings
         then "Play"
         elif ( model.DispatchPointer <> 0.0 ) then "Pause" 
-        else "Start"
+        else if model.CurrentRoundDetails.GameClock <> 0 then "Resume" else "Start"
 
 // custom non-shared right modal, needs to handle functions outside update loop to dispatch messages
 let tileTapGameLoopToggle ( model : SharedTileTap.Model ) dispatch =
@@ -420,9 +416,7 @@ let tileTapModalRight model dispatch =
                         Container.container [] [ tileTapGameLoopToggle model dispatch ]
                         Container.container [] [
                             h2 [] [ str "Round Stats: "] 
-                            div [] [ str ( modelValueAsString "Round Score: " model.CurrentRoundDetails.RoundScore ) ]
-                            div [] [ str ( "Round Timer: " + ( SharedViewModule.gameTickClock model.CurrentRoundDetails.GameClock ) + modelValueAsString " / " model.RoundTimer) ]
-                            div [] [ str ( modelValueAsString "Round Mistakes: " model.CurrentRoundDetails.RoundMistakes + modelValueAsString " / " model.AllowableRoundMistakes) ]
+                            for detail in ( modelTileTapRoundDetails model) do div [] [ str detail ]
                         ]
                     ]
                 ]
@@ -437,29 +431,15 @@ let tileTapModalContent  ( model : SharedTileTap.Model ) dispatch =
     SharedViewModule.gameModalContent ( 
         Column.column [] [
             match model.GameState with
-            | RoundState.Settings -> tileTapModalRight model dispatch
-            | Instruction -> SharedViewModule.codeModalInstructionContent tileTapDescriptions
-            | Won ->
-                div [ ClassName "levelCompletedCard" ] [ 
-                    Container.container [ Container.Props [ Style [ Padding 20 ] ] ] [
-                        str "ROUND OVER!"
-                    ]
-                    Container.container [ Container.Props [ Style [ FontSize 20; Padding 20] ] ] [
-                        h2 [ Style [ FontSize 50; Color "#FF2843" ] ] [ str "Round Stats: "] 
-                        div [ Style [ Padding 5; Color "#69A69A" ] ] [ str ( modelValueAsString "Round Score: " model.CompletedRoundDetails.RoundScore ) ]
-                        div [ Style [ Padding 5; Color "#69A69A" ] ] [ str ( "Round Timer: " + ( SharedViewModule.gameTickClock model.CompletedRoundDetails.GameClock ) + modelValueAsString " / " model.RoundTimer) ]
-                        div [ Style [ Padding 5; Color "#69A69A" ] ] [ str ( modelValueAsString "Round Mistakes: " model.CompletedRoundDetails.RoundMistakes + modelValueAsString " / " model.AllowableRoundMistakes) ]
-                    ]
-                    Container.container [ Container.Props [ Style [ FontSize 20; Padding 20 ] ] ] [
-                        h2 [ Style [ FontSize 50; Color "#FF2843" ] ] [ str "Details: "]
-                        roundOverString model
-                    ]
+            | RoundState.Settings -> 
+                div [] [
+                    SharedViewModule.codeModalInstructionContent tileTapDescriptions
+                    tileTapModalRight model dispatch
                 ]
+            | Won -> SharedViewModule.roundCompleteContent ( modelTileTapRoundDetails model )
             | _ -> tileTapBoardView model.TileTapGridBoard dispatch 
         ]
     )
-
-// ----------------
 
 let roundStateToggle ( model : SharedTileTap.Model ) dispatch =
     let toggleString = roundStateToggleString model
@@ -480,12 +460,14 @@ let codeModalFooterOverride model controlList dispatch =
                 ]
         ]
     ]
+// ----------------
+
 
 // MODULE VIEW ----
 let view model dispatch =
-    SharedViewModule.sharedViewModal
-        true
+    div [] [
         ( SharedViewModule.sharedModalHeader "Tile Tap" QuitGame dispatch )
         ( tileTapModalContent model dispatch ) 
         ( codeModalFooterOverride model controlList dispatch )
+    ]
 // ----------------
