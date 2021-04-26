@@ -10,8 +10,7 @@ open Shared
     //IMPLEMENT:
         //Move Count Display
         //Round Timer
-    // FIX THE IPHONE & BACKGROUND, SHOWS LINE ACROSS RIGHT HAND SIDE OF SCREEN
-    // CLEAN COMMENTS
+        // Unsolvable Puzzles can't be generated..check inversions...https://www.geeksforgeeks.org/check-instance-8-puzzle-solvable/
 
 type Msg =
     | SetGameState of Shared.GridGame.RoundState
@@ -97,7 +96,7 @@ let update ( msg: Msg ) ( model: Shared.SharedTileSort.Model ): Shared.SharedTil
         match gameTile.Value with
         | Some i ->
             let gridAfterTileMove = selectedCanSwapWithBlank model.CurrentTiles ( TileSortLaneObject gameTile ) ( getGridDimension model.Difficulty )
-            { model with CurrentTiles = gridAfterTileMove}, Cmd.none
+            { model with CurrentTiles = gridAfterTileMove}, Cmd.ofMsg CheckSolution
         | None ->
             model, Cmd.none
     | RewindMove ->
@@ -135,7 +134,6 @@ let laneObjectToTileSortTile tile dispatch =
 // main content
 let tileSortRowCreator ( tileRow: LaneObject list ) ( dispatch: Msg -> unit ) =
     div [ Style [ Display DisplayOptions.Flex; AlignItems AlignItemsOptions.Center; JustifyContent "center"; Margin "auto" ] ] [
-    // Level.level [ Level.Level.IsMobile ] [
         for tile in tileRow do
             laneObjectToTileSortTile tile dispatch
     ]
@@ -155,12 +153,7 @@ let tileSortModalContent model dispatch =
             ]
         | Shared.GridGame.Won -> SharedViewModule.roundCompleteContent ( modelTileSortRoundDetails model )
         | Shared.GridGame.Playing
-        | Shared.GridGame.Paused -> 
-            Level.level [] [
-                Level.item [] [
-                    tileSortGameBoard model dispatch 
-                ]
-            ]
+        | Shared.GridGame.Paused -> Level.level [] [ Level.item [] [ tileSortGameBoard model dispatch ] ]
     )
 
 // 2.0

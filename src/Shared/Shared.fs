@@ -484,7 +484,7 @@ module SharedTileSort =
     let randomIndex maxNum = rand.Next(maxNum)
 
     // selects one tile randomly from a given list
-    let selectRandomTilePosition (assignedTiles: GridBoard ) = assignedTiles.GridPositions.[randomIndex(assignedTiles.GridPositions.Length)]
+    let selectRandomTilePosition ( assignedTiles: GridBoard ) = assignedTiles.GridPositions.[randomIndex(assignedTiles.GridPositions.Length)]
 
     //---------------------
     // INITIAL GAMEBOARD FUNCTIONS
@@ -588,13 +588,9 @@ module SharedTileSort =
         if ( selectedColIndex <> -1 && selectedColIndex = blankColIndex )
             then
                 if selectedIndex + gridDimension = blankIndex || selectedIndex - gridDimension = blankIndex
-                    then
-                        printfn "%A" true
-                        true
+                    then true
                     else false
-            else 
-                printfn "%A" false
-                false
+            else false
 
     let checkSwapInRow selectedIndex blankIndex tiles selected gridDimension =
         let tileRows = 
@@ -606,13 +602,9 @@ module SharedTileSort =
         if ( selectedColIndex <> -1 && selectedColIndex = blankColIndex )
             then
                 if selectedIndex + 1 = blankIndex || selectedIndex - 1 = blankIndex
-                    then
-                        printfn "%A" true
-                        true
+                    then true
                     else false
-            else 
-                printfn "%A" false
-                false
+            else false
 
     let swapBlankWithSelected tiles selected selectedIndex blankIndex =
         let selectedSwapped = updatePositionWithObject tiles selected blankIndex
@@ -628,10 +620,8 @@ module SharedTileSort =
                 let colSwap = checkSwapInColumn selectedIndex blankIndex tiles selected gridDimension
                 let rowSwap = checkSwapInRow selectedIndex blankIndex tiles selected gridDimension
                 if (colSwap || rowSwap) 
-                    then 
-                        swapBlankWithSelected tiles selected selectedIndex blankIndex
-                    else 
-                        tiles
+                    then swapBlankWithSelected tiles selected selectedIndex blankIndex
+                    else tiles
 
     // // BLANK TILE VALUE POSITION VALIDATION
     // // gets the current index of the Blank Tile and adds one to the index
@@ -647,6 +637,7 @@ module SharedTileSort =
         let filteredByMissing = List.filter (fun x -> x = GridGame.TileSortLaneObject { Value = missingValue }) currentTiles.GridPositions
         List.isEmpty filteredByMissing
 
+
     // simplify calls of calculating and checking Blanks calculated value
     let checkBlankTileIsAtCorrectPosition currentTiles =
         calculatedBlankValueNotFoundInTiles currentTiles
@@ -656,7 +647,8 @@ module SharedTileSort =
     // gameboard list is the same as the list if sorted by value
     // need to filter out None
     let checkTilesInCorrectOrder (currentTiles: GridBoard) =
-        (List.filter (fun x -> x <> GridGame.TileSortLaneObject { Value = None }) currentTiles.GridPositions) = (List.filter (fun x -> x <> GridGame.TileSortLaneObject { Value = None }) currentTiles.GridPositions |> List.sortBy (fun x -> Some x))//huh?
+        (List.filter (fun x -> x <> GridGame.TileSortLaneObject { Value = None }) currentTiles.GridPositions) = (List.filter (fun x -> x <> GridGame.TileSortLaneObject { Value = None }) currentTiles.GridPositions |> List.sortBy (fun x -> Some x))
+
 
     //---------------------
     // WIN CONDITIONS VALIDATION

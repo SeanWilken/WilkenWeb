@@ -151,11 +151,9 @@ html {
 }
 .galleryEntryContentCard {
     @extend .generalContentCard;
-    width: 59vh;
     .image {
         border: 1px solid #000000;
         text-align: center;
-        // height: 80vh;
         margin: 20px;
     }
 }
@@ -182,7 +180,7 @@ html {
     padding: 25px;
     margin: 5px;
 }
-.generalSplitSectionTileHoverSelection  {
+.generalSplitSectionTileHoverSelection {
     color: white;
     background-size: cover;
     background-position: center;
@@ -264,7 +262,6 @@ html {
     top: 0px;
 }
 .modalExternalLink {
-    // position: fixed;
     position: absolute;
     left: 0px;
     top: 0px;
@@ -275,8 +272,6 @@ html {
     font-family: "Ubuntu";
     color: #FF2843;
     font-size: 40px;
-    // text-decoration-color: #69A69A;
-    // text-decoration-line: underline;
 }
 // **********************
 // DESIGN MODAL BUTTONS
@@ -300,16 +295,19 @@ html {
 }
 // *****************
 // CODE GALLERY CLASSES
-.gameGridContainer { .level { margin: auto; } }
+.gameGridContainer { 
+    max-width: 900px;
+    justify-content: center;
+    margin: auto;
+    .level { margin: auto; } 
+}
 .genericGameTile {
     font-size: xx-large;
     text-align: center; 
     border: 1px solid black;
-    border-radius: 6px;        
-    // max-width: 64px;
-    // max-height: 64px;
-    width: 8vh;
-    height: auto;
+    border-radius: 6px;
+    width: -webkit-fill-available;
+    width: -moz-available;
 }
 .valueTile {
     @extend .genericGameTile;

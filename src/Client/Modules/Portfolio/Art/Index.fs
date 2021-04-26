@@ -52,9 +52,10 @@ let galleryEntryHeaderControls dispatch =
     ]
 
 let galleryEntryContent piece description =
-    div [ClassName "galleryEntryContentCard"] [
+    let imageStyle = if SharedViewModule.viewPortModalBreak then [ Margin "auto"; Width "50%" ] else []
+    div [ ClassName "galleryEntryContentCard" ] [
         h1 [] [ str piece ]
-        Image.image [] [ img [ Src ( "./imgs/" + piece + ".jpeg" ) ] ]
+        Image.image [ Image.Props [ Style imageStyle ] ] [ img [ Src ( "./imgs/" + piece + ".jpeg" ) ] ]
         p [] [ str description ]
     ]
 
@@ -72,7 +73,7 @@ let galleryEntryMobileFooterControls dispatch =
 
 let view ( model: SharedDesignGallery.Model ) dispatch =
     let piece, description = getGalleryCardByIndex model.CurrentPieceIndex
-    Container.container [ Container.CustomClass "paddedContainerHeader" ] [
+    div [] [
         ( galleryEntryHeaderControls dispatch )
         ( galleryEntryContent piece description ) 
         ( if SharedViewModule.viewPortModalBreak

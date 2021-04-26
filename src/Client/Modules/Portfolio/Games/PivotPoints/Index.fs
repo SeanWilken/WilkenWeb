@@ -249,17 +249,12 @@ let parseLaneDetails details =
     | None ->   
         [], Ignore // don't like ignore
 
-let pivotPointsRowCreator rollDirection (laneStyle : LaneDetails option) ( rowPositions: LaneObject list ) dispatch =
+let pivotPointsLaneCreator isRow rollDirection (laneStyle : LaneDetails option) ( rowPositions: LaneObject list ) dispatch =
     let style, message = parseLaneDetails laneStyle
-    div [ Style [ Display DisplayOptions.Flex; AlignContent AlignContentOptions.Center; JustifyContent "center" ] ] [
-        for positionObject in rowPositions do pivotPointTileView rollDirection positionObject style message dispatch
-    ]
-
-let pivotPointsColumnCreator rollDirection (laneStyle : LaneDetails option) ( rowPositions: LaneObject list ) dispatch =
-    let style, message = parseLaneDetails laneStyle
-    div [] [
-        for positionObject in rowPositions do
-            Tile.child [] [ pivotPointTileView rollDirection positionObject style message dispatch ]
+    let laneStyle = if isRow then Style [ Display DisplayOptions.Flex; AlignContent AlignContentOptions.Center; JustifyContent "center" ] else Style []
+    div [ laneStyle ] [
+        for positionObject in rowPositions do 
+            pivotPointTileView rollDirection positionObject style message dispatch
     ]
 
 let laneStyleCenterPositions ceiling position =
@@ -285,6 +280,15 @@ let findBallLaneIndex (gridLanes: (LaneObject list) list ) =
     | Some (Some i) -> i
     | _ -> -1
 
+let laneView isRow ( model : SharedPivotPoint.Model ) ( board : list<list<LaneObject>> ) ( laneStyles : list<option<LaneDetails>> ) ceiling dispatch =
+    let laneGridStyle = 
+        [ Display DisplayOptions.Flex; AlignContent AlignContentOptions.Center; JustifyContent "center" ]
+        |> List.append ( if isRow then [ FlexDirection "column"; ] else [ FlexDirection "row"; ] )
+    div [ Style laneGridStyle ] [
+        for i in 0 .. ceiling - 1 do
+            pivotPointsLaneCreator isRow model.BallDirection (laneStyles.Item(i)) (board.Item(i)) dispatch
+    ]
+
 //----------------
 
 let pivotPointsBoardView (model : SharedPivotPoint.Model) dispatch =
@@ -297,32 +301,22 @@ let pivotPointsBoardView (model : SharedPivotPoint.Model) dispatch =
         let board = GridGame.getPositionsAsRows gridBoard ceiling
         let ballLaneIndex = findBallLaneIndex board
         let laneStyles = laneStyleCreator ballLaneIndex ceiling
-        div [ ] [
-            for i in 0 .. ceiling - 1 do
-                pivotPointsRowCreator model.BallDirection (laneStyles.Item(i)) (board.Item(i)) dispatch
-        ]
+        laneView true model board laneStyles ceiling dispatch
 
     | MovementDirection.Up
     | MovementDirection.Down ->
         let board = GridGame.getPositionsAsColumns gridBoard ceiling
         let ballLaneIndex = findBallLaneIndex board
         let laneStyles = laneStyleCreator ballLaneIndex ceiling
-        Container.container [] [ 
-            div [ Style [ Display DisplayOptions.Flex; AlignContent AlignContentOptions.Center; JustifyContent "center"] ] [
-                    for i in 0 .. board.Length - 1 do
-                        pivotPointsColumnCreator model.BallDirection (laneStyles.Item(i)) (board.Item(i)) dispatch
-            ]
-        ]
+        laneView false model board laneStyles ceiling dispatch
 
 // modal content container
 let pivotPointsModalContent ( model : SharedPivotPoint.Model ) dispatch =
     SharedViewModule.gameModalContent ( 
-        Column.column [] [
-            match model.GameState with
-            | RoundState.Settings -> div [] [ gameRulesAndSettingsView model dispatch ] 
-            | Won -> SharedViewModule.roundCompleteContent ( modelPivotPointRoundDetails model )
-            | _ -> pivotPointsBoardView model dispatch 
-        ]
+        match model.GameState with
+        | RoundState.Settings -> div [] [ gameRulesAndSettingsView model dispatch ] 
+        | Won -> SharedViewModule.roundCompleteContent ( modelPivotPointRoundDetails model )
+        | _ -> pivotPointsBoardView model dispatch 
     )
 
 //----------------
